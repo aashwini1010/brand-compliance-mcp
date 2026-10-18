@@ -1,0 +1,1006 @@
+{
+ "captured": "2026-10-06",
+ "source": "live list_tools() via mcp_clients in this repo",
+ "tools": [
+  {
+   "server": "GitHub",
+   "tool": "add_comment_to_pending_review",
+   "area": "Pull requests",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "pullNumber",
+    "path",
+    "body",
+    "subjectType"
+   ],
+   "optional": [
+    "line",
+    "side",
+    "startLine",
+    "startSide"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Add review comment to the requester's latest pending pull request review"
+  },
+  {
+   "server": "GitHub",
+   "tool": "add_issue_comment",
+   "area": "Issues",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "issue_number"
+   ],
+   "optional": [
+    "body",
+    "comment_id",
+    "reaction"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Add comment to issue or pull request"
+  },
+  {
+   "server": "GitHub",
+   "tool": "add_reply_to_pull_request_comment",
+   "area": "Pull requests",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "commentId"
+   ],
+   "optional": [
+    "body",
+    "pullNumber",
+    "reaction"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Add reply to pull request comment"
+  },
+  {
+   "server": "GitHub",
+   "tool": "create_branch",
+   "area": "Branches, commits, tags & releases",
+   "group": "both",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "branch"
+   ],
+   "optional": [
+    "from_branch"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Create branch"
+  },
+  {
+   "server": "GitHub",
+   "tool": "create_or_update_file",
+   "area": "Repositories & files",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "path",
+    "content",
+    "message",
+    "branch"
+   ],
+   "optional": [
+    "allow_symlink_write",
+    "sha"
+   ],
+   "methods": null,
+   "tested": "notebook",
+   "title": "Create or update file"
+  },
+  {
+   "server": "GitHub",
+   "tool": "create_pull_request",
+   "area": "Pull requests",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "title",
+    "head",
+    "base"
+   ],
+   "optional": [
+    "body",
+    "draft",
+    "maintainer_can_modify",
+    "reviewers"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Open new pull request"
+  },
+  {
+   "server": "GitHub",
+   "tool": "create_repository",
+   "area": "Repositories & files",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "name"
+   ],
+   "optional": [
+    "autoInit",
+    "description",
+    "organization",
+    "private"
+   ],
+   "methods": null,
+   "tested": "notebook",
+   "title": "Create repository"
+  },
+  {
+   "server": "GitHub",
+   "tool": "delete_file",
+   "area": "Repositories & files",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": true,
+   "required": [
+    "owner",
+    "repo",
+    "path",
+    "message",
+    "branch"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Delete file"
+  },
+  {
+   "server": "GitHub",
+   "tool": "fork_repository",
+   "area": "Repositories & files",
+   "group": "both",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "organization"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Fork repository"
+  },
+  {
+   "server": "GitHub",
+   "tool": "get_commit",
+   "area": "Branches, commits, tags & releases",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "sha"
+   ],
+   "optional": [
+    "detail",
+    "page",
+    "perPage"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Get commit details"
+  },
+  {
+   "server": "GitHub",
+   "tool": "get_file_contents",
+   "area": "Repositories & files",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "fields",
+    "path",
+    "ref",
+    "sha"
+   ],
+   "methods": null,
+   "tested": "notebook",
+   "title": "Get file or directory contents"
+  },
+  {
+   "server": "GitHub",
+   "tool": "get_label",
+   "area": "Issues",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "name"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Get a specific label from a repository"
+  },
+  {
+   "server": "GitHub",
+   "tool": "get_latest_release",
+   "area": "Branches, commits, tags & releases",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Get latest release"
+  },
+  {
+   "server": "GitHub",
+   "tool": "get_me",
+   "area": "Account & people",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [],
+   "optional": [],
+   "methods": null,
+   "tested": "benchmark",
+   "title": "Get my user profile"
+  },
+  {
+   "server": "GitHub",
+   "tool": "get_release_by_tag",
+   "area": "Branches, commits, tags & releases",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "tag"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Get a release by tag name"
+  },
+  {
+   "server": "GitHub",
+   "tool": "get_tag",
+   "area": "Branches, commits, tags & releases",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "tag"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Get tag details"
+  },
+  {
+   "server": "GitHub",
+   "tool": "get_team_members",
+   "area": "Account & people",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "org",
+    "team_slug"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Get team members"
+  },
+  {
+   "server": "GitHub",
+   "tool": "get_teams",
+   "area": "Account & people",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [],
+   "optional": [
+    "user"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Get teams"
+  },
+  {
+   "server": "GitHub",
+   "tool": "issue_read",
+   "area": "Issues",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "method",
+    "owner",
+    "repo",
+    "issue_number"
+   ],
+   "optional": [
+    "page",
+    "perPage"
+   ],
+   "methods": [
+    "get",
+    "get_comments",
+    "get_sub_issues",
+    "get_parent",
+    "get_labels"
+   ],
+   "tested": null,
+   "title": "Get issue details"
+  },
+  {
+   "server": "GitHub",
+   "tool": "issue_write",
+   "area": "Issues",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "method",
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "assignees",
+    "body",
+    "duplicate_of",
+    "issue_fields",
+    "issue_number",
+    "labels",
+    "milestone",
+    "parent_issue_number",
+    "parent_owner",
+    "parent_repo",
+    "state",
+    "state_reason",
+    "title",
+    "type"
+   ],
+   "methods": [
+    "create",
+    "update"
+   ],
+   "tested": null,
+   "title": "Create or update issue/pull request"
+  },
+  {
+   "server": "GitHub",
+   "tool": "list_branches",
+   "area": "Branches, commits, tags & releases",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "page",
+    "perPage"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "List branches"
+  },
+  {
+   "server": "GitHub",
+   "tool": "list_commits",
+   "area": "Branches, commits, tags & releases",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "author",
+    "fields",
+    "page",
+    "path",
+    "perPage",
+    "sha",
+    "since",
+    "until"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "List commits"
+  },
+  {
+   "server": "GitHub",
+   "tool": "list_issue_fields",
+   "area": "Issues",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner"
+   ],
+   "optional": [
+    "repo"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "List issue fields"
+  },
+  {
+   "server": "GitHub",
+   "tool": "list_issue_types",
+   "area": "Issues",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner"
+   ],
+   "optional": [
+    "repo"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "List available issue types"
+  },
+  {
+   "server": "GitHub",
+   "tool": "list_issues",
+   "area": "Issues",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "after",
+    "direction",
+    "field_filters",
+    "fields",
+    "labels",
+    "orderBy",
+    "perPage",
+    "since",
+    "state"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "List issues"
+  },
+  {
+   "server": "GitHub",
+   "tool": "list_pull_requests",
+   "area": "Pull requests",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "base",
+    "direction",
+    "fields",
+    "head",
+    "page",
+    "perPage",
+    "sort",
+    "state"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "List pull requests"
+  },
+  {
+   "server": "GitHub",
+   "tool": "list_releases",
+   "area": "Branches, commits, tags & releases",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "fields",
+    "page",
+    "perPage"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "List releases"
+  },
+  {
+   "server": "GitHub",
+   "tool": "list_repository_collaborators",
+   "area": "Account & people",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "affiliation",
+    "page",
+    "perPage"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "List repository collaborators"
+  },
+  {
+   "server": "GitHub",
+   "tool": "list_tags",
+   "area": "Branches, commits, tags & releases",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo"
+   ],
+   "optional": [
+    "page",
+    "perPage"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "List tags"
+  },
+  {
+   "server": "GitHub",
+   "tool": "merge_pull_request",
+   "area": "Pull requests",
+   "group": "both",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "pullNumber"
+   ],
+   "optional": [
+    "commit_message",
+    "commit_title",
+    "expectedHeadSha",
+    "merge_method"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Merge pull request"
+  },
+  {
+   "server": "GitHub",
+   "tool": "pull_request_read",
+   "area": "Pull requests",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "method",
+    "owner",
+    "repo",
+    "pullNumber"
+   ],
+   "optional": [
+    "after",
+    "page",
+    "perPage"
+   ],
+   "methods": [
+    "get",
+    "get_diff",
+    "get_status",
+    "get_files",
+    "get_commits",
+    "get_review_comments",
+    "get_reviews",
+    "get_comments",
+    "get_check_runs"
+   ],
+   "tested": null,
+   "title": "Get details for a single pull request"
+  },
+  {
+   "server": "GitHub",
+   "tool": "pull_request_review_write",
+   "area": "Pull requests",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "method",
+    "owner",
+    "repo",
+    "pullNumber"
+   ],
+   "optional": [
+    "body",
+    "commitID",
+    "event",
+    "threadId"
+   ],
+   "methods": [
+    "create",
+    "submit_pending",
+    "delete_pending",
+    "resolve_thread",
+    "unresolve_thread"
+   ],
+   "tested": null,
+   "title": "Write operations (create, submit, delete) on pull request reviews"
+  },
+  {
+   "server": "GitHub",
+   "tool": "push_files",
+   "area": "Repositories & files",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "branch",
+    "files",
+    "message"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Push files to repository"
+  },
+  {
+   "server": "GitHub",
+   "tool": "request_copilot_review",
+   "area": "Pull requests",
+   "group": "others",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "pullNumber"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Request Copilot review"
+  },
+  {
+   "server": "GitHub",
+   "tool": "run_secret_scanning",
+   "area": "Security",
+   "group": "others",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "files",
+    "owner",
+    "repo"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Run Secret Scanning"
+  },
+  {
+   "server": "GitHub",
+   "tool": "search_code",
+   "area": "Repositories & files",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "query"
+   ],
+   "optional": [
+    "fields",
+    "order",
+    "page",
+    "perPage",
+    "sort"
+   ],
+   "methods": null,
+   "tested": "notebook",
+   "title": "Search code"
+  },
+  {
+   "server": "GitHub",
+   "tool": "search_commits",
+   "area": "Branches, commits, tags & releases",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "query"
+   ],
+   "optional": [
+    "order",
+    "page",
+    "perPage",
+    "sort"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Search commits"
+  },
+  {
+   "server": "GitHub",
+   "tool": "search_issues",
+   "area": "Issues",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "query"
+   ],
+   "optional": [
+    "fields",
+    "order",
+    "owner",
+    "page",
+    "perPage",
+    "repo",
+    "sort"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Search issues"
+  },
+  {
+   "server": "GitHub",
+   "tool": "search_pull_requests",
+   "area": "Pull requests",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "query"
+   ],
+   "optional": [
+    "fields",
+    "order",
+    "owner",
+    "page",
+    "perPage",
+    "repo",
+    "sort"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Search pull requests"
+  },
+  {
+   "server": "GitHub",
+   "tool": "search_repositories",
+   "area": "Repositories & files",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "query"
+   ],
+   "optional": [
+    "minimal_output",
+    "order",
+    "page",
+    "perPage",
+    "sort"
+   ],
+   "methods": null,
+   "tested": "benchmark",
+   "title": "Search repositories"
+  },
+  {
+   "server": "GitHub",
+   "tool": "search_users",
+   "area": "Account & people",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "query"
+   ],
+   "optional": [
+    "order",
+    "page",
+    "perPage",
+    "sort"
+   ],
+   "methods": null,
+   "tested": "notebook",
+   "title": "Search users"
+  },
+  {
+   "server": "GitHub",
+   "tool": "sub_issue_write",
+   "area": "Issues",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "method",
+    "owner",
+    "repo",
+    "issue_number",
+    "sub_issue_id"
+   ],
+   "optional": [
+    "after_id",
+    "before_id",
+    "replace_parent"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Change sub-issue"
+  },
+  {
+   "server": "GitHub",
+   "tool": "ui_get",
+   "area": "App helpers",
+   "group": "others",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "method",
+    "owner"
+   ],
+   "optional": [
+    "repo"
+   ],
+   "methods": [
+    "labels",
+    "assignees",
+    "milestones",
+    "issue_types",
+    "branches",
+    "issue_fields",
+    "reviewers"
+   ],
+   "tested": null,
+   "title": "Get UI data"
+  },
+  {
+   "server": "GitHub",
+   "tool": "update_issue_comment",
+   "area": "Issues",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "comment_id",
+    "body"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": null,
+   "title": "Update issue comment"
+  },
+  {
+   "server": "GitHub",
+   "tool": "update_pull_request",
+   "area": "Pull requests",
+   "group": "write",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "pullNumber"
+   ],
+   "optional": [
+    "base",
+    "body",
+    "draft",
+    "maintainer_can_modify",
+    "reviewers",
+    "state",
+    "title"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Edit pull request"
+  },
+  {
+   "server": "GitHub",
+   "tool": "update_pull_request_branch",
+   "area": "Pull requests",
+   "group": "both",
+   "server_read_only": false,
+   "server_destructive": false,
+   "required": [
+    "owner",
+    "repo",
+    "pullNumber"
+   ],
+   "optional": [
+    "expectedHeadSha"
+   ],
+   "methods": null,
+   "tested": null,
+   "title": "Update pull request branch"
+  },
+  {
+   "server": "Context7",
+   "tool": "resolve-library-id",
+   "area": "Documentation",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "query",
+    "libraryName"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": "notebook + benchmark",
+   "title": null
+  },
+  {
+   "server": "Context7",
+   "tool": "query-docs",
+   "area": "Documentation",
+   "group": "read",
+   "server_read_only": true,
+   "server_destructive": false,
+   "required": [
+    "libraryId",
+    "query"
+   ],
+   "optional": [],
+   "methods": null,
+   "tested": "benchmark",
+   "title": null
+  }
+ ]
+}

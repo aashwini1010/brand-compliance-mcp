@@ -1,0 +1,1244 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>GitHub &amp; Context7 MCP</title>
+<meta name="description" content="Interactive research report on the GitHub and Context7 MCP servers: what they are, how they work, every tool, measured speed and when to use each.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<style>
+/* Layout: sticky header with view tabs and breadcrumb; each view = section rail (left, chips on phones) + content column. Drill-down: overview → server → section → tool drawer. */
+:root{
+  --bg:#f5f7fa; --surface:#ffffff; --surface-2:#edf1f6; --ink:#111720; --ink-2:#465061; --muted:#6f7888;
+  --line:#dbe1e9; --accent:#2446a8; --accent-ink:#ffffff; --accent-soft:#e5ebfa;
+  --s-read:#2a78d6; --s-write:#eb6834; --s-both:#1baf7a; --s-others:#eda100;
+  --bar:#2a78d6; --ref:#8a93a3; --grid:#e3e7ee; --axis:#c3cad5;
+  --good:#0ca30c; --good-ink:#006300; --warn:#fab219; --serious:#ec835a; --crit:#d03b3b;
+  --code-bg:#f0f3f8; --shadow:0 1px 2px rgba(17,23,32,.06),0 4px 16px rgba(17,23,32,.06);
+  --f-display:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --head-h:118px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1117; --surface:#161a21; --surface-2:#1d222b; --ink:#f1f4f8; --ink-2:#b8c0cc; --muted:#8b94a2;
+  --line:#2a313c; --accent:#8fa7f2; --accent-ink:#0e1117; --accent-soft:#1d2844;
+  --s-read:#3987e5; --s-write:#d95926; --s-both:#199e70; --s-others:#c98500;
+  --bar:#3987e5; --ref:#8b94a2; --grid:#262c36; --axis:#3a424f; --good-ink:#0ca30c;
+  --code-bg:#1b2029; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e1117; --surface:#161a21; --surface-2:#1d222b; --ink:#f1f4f8; --ink-2:#b8c0cc; --muted:#8b94a2;
+  --line:#2a313c; --accent:#8fa7f2; --accent-ink:#0e1117; --accent-soft:#1d2844;
+  --s-read:#3987e5; --s-write:#d95926; --s-both:#199e70; --s-others:#c98500;
+  --bar:#3987e5; --ref:#8b94a2; --grid:#262c36; --axis:#3a424f; --good-ink:#0ca30c;
+  --code-bg:#1b2029; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25); color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.6}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.2;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.9rem,4.4vw,2.9rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:clamp(1.35rem,2.6vw,1.75rem);font-weight:700;letter-spacing:-.01em}
+h3{font-size:1.1rem;font-weight:700}
+p{margin:0}
+code,.mono{font-family:var(--f-mono);font-size:.86em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1240px;margin:0 auto;padding-inline:16px}
+.brand-row{display:flex;align-items:center;gap:16px;flex-wrap:wrap;padding-block:10px 4px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:1.05rem;color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:10px}
+.brand svg{flex:none}
+.tabs{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto}
+.tabs a{white-space:nowrap;text-decoration:none;color:var(--ink-2);font-weight:700;font-size:.92rem;padding:8px 12px;border-radius:8px}
+.tabs a:hover{background:var(--surface-2);color:var(--ink)}
+.tabs a[aria-current="page"]{background:var(--accent);color:var(--accent-ink)}
+.crumbs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.85rem;color:var(--muted);padding-block:4px 10px;min-height:34px}
+.crumbs a{color:var(--ink-2);text-decoration:none}
+.crumbs a:hover{text-decoration:underline}
+.crumbs .sep{opacity:.6}
+.crumbs [aria-current]{color:var(--ink);font-weight:700}
+
+/* view layout */
+.view{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:24px 64px;display:grid;grid-template-columns:210px minmax(0,1fr);gap:40px}
+.rail{position:sticky;top:calc(var(--head-h) + 16px);align-self:start;max-height:calc(100vh - var(--head-h) - 32px);overflow:auto}
+.rail p{font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);font-weight:700;margin-bottom:8px}
+.rail ol{list-style:none;margin:0;padding:0;display:grid;gap:2px}
+.rail a{display:block;text-decoration:none;color:var(--ink-2);font-size:.9rem;padding:5px 10px;border-radius:6px;border-left:2px solid transparent}
+.rail a:hover{background:var(--surface-2)}
+.rail a[aria-current="true"]{color:var(--ink);font-weight:700;border-left-color:var(--accent);background:var(--accent-soft);border-radius:0 6px 6px 0}
+.content{min-width:0;display:grid;gap:56px}
+section{scroll-margin-top:calc(var(--head-h) + 16px);min-width:0;display:grid;gap:18px;align-content:start}
+.eyebrow{font-size:.75rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.sec-head{display:grid;gap:6px}
+.sec-head p{color:var(--ink-2);max-width:68ch}
+.lede{font-size:1.12rem;color:var(--ink-2);max-width:66ch}
+.prose{max-width:68ch;display:grid;gap:12px}
+.note{font-size:.88rem;color:var(--muted);max-width:72ch}
+
+@media (max-width:900px){
+  .view{grid-template-columns:minmax(0,1fr);gap:20px;padding-top:0}
+  .rail{position:sticky;top:var(--head-h);z-index:10;max-height:none;background:var(--bg);margin-inline:-16px;padding:10px 16px;border-bottom:1px solid var(--line);overflow-x:auto;scrollbar-width:none}
+  .rail p{display:none}
+  .rail ol{display:flex;gap:6px;width:max-content}
+  .rail a{border:1px solid var(--line);border-radius:999px;padding:4px 12px;white-space:nowrap;font-size:.85rem;background:var(--surface)}
+  .rail a[aria-current="true"]{border-color:var(--accent);border-radius:999px}
+  .tabs{margin-left:0;width:100%}
+  section{scroll-margin-top:calc(var(--head-h) + 64px)}
+}
+
+/* cards & grids */
+.grid{display:grid;gap:14px}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;min-width:0;display:grid;gap:8px;align-content:start}
+.card p{color:var(--ink-2);font-size:.95rem}
+.card.soft{background:var(--surface-2);border-color:transparent}
+.stat{display:grid;gap:2px}
+.stat .v{font-family:var(--f-display);font-size:2rem;font-weight:800;line-height:1.1}
+.stat .k{font-size:.85rem;color:var(--ink-2)}
+.server-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:14px;text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:transform .15s ease,border-color .15s ease}
+.server-card:hover{border-color:var(--accent);transform:translateY(-2px)}
+.server-card .row{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap}
+.server-card .go{font-weight:700;color:var(--accent);white-space:nowrap}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;margin:0;font-size:.93rem}
+.kv dt{color:var(--muted)}
+.kv dd{margin:0;min-width:0;overflow-wrap:anywhere}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr));counter-reset:st}
+.steps li{counter-increment:st;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px;display:grid;gap:6px}
+.steps li::before{content:counter(st);font-family:var(--f-display);font-weight:800;font-size:.85rem;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent)}
+.steps p{color:var(--ink-2);font-size:.93rem}
+.analogy{display:grid;grid-template-columns:auto 1fr;gap:16px;align-items:center;background:var(--accent-soft);border-radius:14px;padding:18px}
+.analogy svg{width:64px;height:64px}
+.yesno{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,300px),1fr))}
+.yesno ul{margin:0;padding:0;list-style:none;display:grid;gap:8px}
+.yesno li{display:grid;grid-template-columns:22px 1fr;gap:8px;font-size:.95rem;color:var(--ink-2)}
+.yesno .mk{font-weight:800;font-family:var(--f-display)}
+.yes .mk{color:var(--good-ink)}
+.no .mk{color:var(--crit)}
+
+/* pills & chips */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.8rem;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--surface-2);color:var(--ink);white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.d-read{background:var(--s-read)}.d-write{background:var(--s-write)}.d-both{background:var(--s-both)}.d-others{background:var(--s-others)}
+.impact{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:6px;border:1px solid var(--line);white-space:nowrap}
+.impact i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.i-high i{background:var(--crit)}.i-med i{background:var(--serious)}.i-low i{background:var(--good)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{font:inherit;font-size:.86rem;font-weight:700;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);border-radius:999px;padding:5px 12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px}
+.chip:hover{border-color:var(--accent);color:var(--ink)}
+.chip[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+.chip:disabled{opacity:.45;cursor:not-allowed}
+.chip .n{font-weight:400;opacity:.8;font-variant-numeric:tabular-nums}
+.tag{font-family:var(--f-mono);font-size:.78rem;background:var(--surface-2);border-radius:6px;padding:1px 7px;color:var(--ink);white-space:nowrap;display:inline-block}
+button.tag{border:1px solid var(--line);cursor:pointer}
+button.tag:hover{border-color:var(--accent)}
+.chain{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chain .ar{color:var(--muted)}
+
+/* tables */
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:12px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.92rem}
+th,td{text-align:left;padding:10px 14px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.76rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;background:var(--surface-2);white-space:nowrap}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+.ex tbody tr{cursor:pointer}
+.ex tbody tr:hover,.ex tbody tr:focus-visible{background:var(--accent-soft);outline:none}
+.ex td:first-child{white-space:nowrap}
+.ex .what{min-width:220px}
+
+/* explorer controls */
+.ex-controls{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+.ex-controls input[type=search],.ex-controls select,.field{font:inherit;font-size:.92rem;padding:8px 12px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+.ex-controls input[type=search]{flex:1 1 240px;min-width:0}
+.chk{display:inline-flex;align-items:center;gap:6px;font-size:.9rem;color:var(--ink-2);cursor:pointer}
+.ex-count{font-size:.88rem;color:var(--muted)}
+
+/* charts */
+.chart-card{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:18px;display:grid;gap:12px;min-width:0}
+.chart-card .sub{font-size:.88rem;color:var(--ink-2)}
+.chart{width:100%;min-height:40px}
+.chart svg{display:block;overflow:visible}
+.legend{display:flex;flex-wrap:wrap;gap:6px 16px;font-size:.85rem;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw-line{width:18px;height:0;border-top:2px dashed var(--ref);display:inline-block}
+.ax{font-family:var(--f-body);font-size:12px;fill:var(--muted)}
+.ax-l{font-family:var(--f-body);font-size:13px;fill:var(--ink)}
+.ax-h{font-family:var(--f-display);font-size:12px;font-weight:700;fill:var(--ink-2);letter-spacing:.06em;text-transform:uppercase}
+.vl{font-family:var(--f-body);font-size:12.5px;fill:var(--ink);font-variant-numeric:tabular-nums}
+.vl-in{font-family:var(--f-body);font-size:12px;font-weight:700;fill:#ffffff}
+.vl-in.dk{fill:#111720}
+.gl{stroke:var(--grid);stroke-width:1}
+.bl{stroke:var(--axis);stroke-width:1}
+.seg,.bar{cursor:default}
+.seg.pick{cursor:pointer}
+.seg:hover,.bar:hover,.seg:focus,.bar:focus{opacity:.85;outline:none}
+.g-read{fill:var(--s-read)}.g-write{fill:var(--s-write)}.g-both{fill:var(--s-both)}.g-others{fill:var(--s-others)}
+.bar{fill:var(--bar)}
+.bar.alt{fill:var(--ref)}
+.refline{stroke:var(--ref);stroke-width:2;stroke-dasharray:5 4;fill:none}
+.refdot{fill:var(--surface);stroke:var(--ref);stroke-width:2}
+details.nums summary{cursor:pointer;font-size:.86rem;color:var(--accent);font-weight:700}
+details.nums[open] summary{margin-bottom:8px}
+details.nums table{font-size:.86rem}
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--surface);font-size:.82rem;line-height:1.45;padding:7px 10px;border-radius:8px;max-width:260px;box-shadow:var(--shadow)}
+
+/* diagrams */
+.diagram{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px}
+.diagram svg{display:block;width:100%;min-width:640px;height:auto}
+.nd rect{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.nd .t1{font-family:var(--f-display);font-weight:700;font-size:14px;fill:var(--ink)}
+.nd .t2{font-family:var(--f-body);font-size:12px;fill:var(--muted)}
+.nd.click{cursor:pointer}
+.nd.click:hover rect,.nd:focus rect{stroke:var(--accent)}
+.nd:focus{outline:none}
+.nd.on rect{stroke:var(--accent);stroke-width:2.5;fill:var(--accent-soft)}
+.zone{fill:var(--surface-2);stroke:none}
+.zone-l{font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:.08em;fill:var(--muted);text-transform:uppercase}
+.ed{stroke:var(--axis);stroke-width:2;fill:none}
+.ed.dash{stroke-dasharray:4 4}
+.ed.on{stroke:var(--accent);stroke-width:3}
+.el{font-family:var(--f-body);font-size:11.5px;fill:var(--ink-2)}
+.arrowhead{fill:var(--axis)}
+.diag-panel{display:grid;gap:12px;grid-template-columns:minmax(0,1fr)}
+.info{background:var(--surface-2);border-radius:12px;padding:16px;display:grid;gap:6px;min-height:96px}
+.info p{color:var(--ink-2);font-size:.95rem}
+.stepper{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:inherit;font-weight:700;font-size:.9rem;border-radius:8px;padding:7px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* code */
+.code{position:relative;min-width:0}
+.code pre{margin:0;background:var(--code-bg);border:1px solid var(--line);border-radius:12px;padding:16px;overflow-x:auto;font-family:var(--f-mono);font-size:.84rem;line-height:1.6;color:var(--ink)}
+.code .copy{position:absolute;top:8px;right:8px;font-size:.78rem;padding:4px 10px}
+.c-com{color:var(--muted)}
+.c-str{color:var(--good-ink)}
+.c-kw{color:var(--accent);font-weight:600}
+.codetabs{display:flex;flex-wrap:wrap;gap:6px}
+
+/* timeline */
+.timeline{list-style:none;margin:0;padding:0;display:grid;gap:0}
+.timeline li{display:grid;grid-template-columns:40px minmax(0,1fr);gap:14px;padding-bottom:16px;position:relative}
+.timeline li::after{content:"";position:absolute;left:19px;top:34px;bottom:0;width:2px;background:var(--line)}
+.timeline li:last-child::after{display:none}
+.timeline .num{width:40px;height:34px;border-radius:8px;background:var(--surface-2);display:grid;place-items:center;font-family:var(--f-display);font-weight:800;color:var(--ink-2);font-size:.9rem}
+.timeline .body{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:4px}
+.timeline .hd{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.timeline p{color:var(--ink-2);font-size:.93rem}
+.where{font-size:.78rem;color:var(--muted)}
+
+/* io */
+.io{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.warnbox{border:1px solid var(--line);border-left:4px solid var(--warn);background:var(--surface);border-radius:8px;padding:12px 14px;font-size:.93rem;color:var(--ink-2)}
+.warnbox b{color:var(--ink)}
+
+/* wizard */
+.wiz{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:22px;display:grid;gap:16px;box-shadow:var(--shadow)}
+.wiz-path{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:.85rem;color:var(--muted)}
+.wiz-opts{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.wiz-opt{font:inherit;text-align:left;background:var(--surface-2);border:1px solid transparent;border-radius:12px;padding:14px;cursor:pointer;display:grid;gap:4px;color:var(--ink)}
+.wiz-opt:hover{border-color:var(--accent)}
+.wiz-opt b{font-family:var(--f-display);font-size:1.02rem}
+.wiz-opt span{font-size:.9rem;color:var(--ink-2)}
+.result{display:grid;gap:12px}
+.result .rhead{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+
+/* drawer */
+#scrim{position:fixed;inset:0;background:rgba(10,14,20,.45);z-index:40}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(520px,100%);z-index:50;background:var(--surface);border-left:1px solid var(--line);box-shadow:-8px 0 32px rgba(0,0,0,.18);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 18px) 20px calc(env(safe-area-inset-bottom,0px) + 28px);display:grid;gap:16px;align-content:start}
+#drawer .dh{display:flex;justify-content:space-between;align-items:start;gap:12px}
+#drawer h2{font-family:var(--f-mono);font-size:1.15rem;overflow-wrap:anywhere}
+#drawer .dsec{display:grid;gap:6px}
+#drawer .dsec h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted)}
+#drawer .official{font-size:.9rem;color:var(--ink-2);background:var(--surface-2);padding:12px;border-radius:8px}
+#drawer .dnav{display:flex;justify-content:space-between;gap:8px}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+
+<header class="top" id="top">
+  <div class="top-in">
+    <div class="brand-row">
+      <a class="brand" href="#overview" data-go="overview">
+        <svg width="26" height="26" viewBox="0 0 26 26" aria-hidden="true"><rect x="1" y="7" width="10" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><rect x="15" y="7" width="10" height="12" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path d="M11 11h4M11 15h4" stroke="currentColor" stroke-width="2"/></svg>
+        GitHub &amp; Context7 MCP
+      </a>
+      <nav class="tabs" aria-label="Report views">
+        <a href="#overview" data-view="overview">Overview</a>
+        <a href="#github" data-view="github">GitHub MCP</a>
+        <a href="#context7" data-view="context7">Context7 MCP</a>
+        <a href="#decide" data-view="decide">Which to use?</a>
+      </nav>
+    </div>
+    <nav class="crumbs" id="crumbs" aria-label="Breadcrumb"></nav>
+  </div>
+</header>
+
+<!-- ============================ OVERVIEW ============================ -->
+<main class="view" id="view-overview" data-name="Overview">
+  <aside class="rail" aria-label="Sections in Overview"><p>On this page</p><ol></ol></aside>
+  <div class="content">
+    <section id="overview-top" data-title="Summary">
+      <div class="sec-head">
+        <span class="eyebrow">Research report · tested 5–6 October 2026</span>
+        <h1>Two MCP servers, explained simply</h1>
+      </div>
+      <p class="lede">This workspace connects Python code to two online services through <b>MCP</b>. <b>GitHub MCP</b> does work on GitHub for you. <b>Context7 MCP</b> looks up current programming documentation. Start with the big picture here, then open either server to drill down to every tool.</p>
+      <div class="grid g2">
+        <a class="server-card" href="#github" data-go="github">
+          <div class="row"><h2>GitHub MCP</h2><span class="go">Open →</span></div>
+          <p>A remote assistant with your GitHub login. It reads and changes repositories, files, issues and pull requests.</p>
+          <div class="chart" data-chart="mini-gh" aria-hidden="true"></div>
+          <dl class="kv"><dt>Tools</dt><dd>46 (26 read · 20 change things)</dd><dt>Risk</dt><dd><span class="impact i-high"><i></i>High if misused</span></dd><dt>Tested</dt><dd>7 tools + discovery</dd></dl>
+        </a>
+        <a class="server-card" href="#context7" data-go="context7">
+          <div class="row"><h2>Context7 MCP</h2><span class="go">Open →</span></div>
+          <p>A librarian for programming manuals. It finds a library and returns current documentation and code examples.</p>
+          <div class="chart" data-chart="mini-c7" aria-hidden="true"></div>
+          <dl class="kv"><dt>Tools</dt><dd>2 (both read-only)</dd><dt>Risk</dt><dd><span class="impact i-low"><i></i>Low, never changes anything</span></dd><dt>Tested</dt><dd>2 tools + discovery</dd></dl>
+        </a>
+      </div>
+      <div class="grid g4">
+        <div class="card stat"><span class="v">48</span><span class="k">tools across both servers</span></div>
+        <div class="card stat"><span class="v">9</span><span class="k">tools actually called in this workspace</span></div>
+        <div class="card stat"><span class="v">1.9×</span><span class="k">faster when both servers are asked at once</span></div>
+        <div class="card stat"><span class="v">27×</span><span class="k">smaller tool menu for Context7 than for GitHub</span></div>
+      </div>
+    </section>
+
+    <section id="overview-mcp" data-title="What is MCP?">
+      <div class="sec-head"><span class="eyebrow">The basics</span><h2>What is MCP?</h2>
+        <p><b>MCP (Model Context Protocol)</b> is a standard way for software, including AI assistants, to use outside services.</p></div>
+      <div class="analogy">
+        <svg viewBox="0 0 64 64" aria-hidden="true"><rect x="10" y="20" width="44" height="24" rx="12" fill="none" stroke="currentColor" stroke-width="3"/><rect x="20" y="28" width="24" height="8" rx="4" fill="currentColor"/></svg>
+        <div class="prose"><h3>Think of it like USB-C</h3><p>Before USB-C, every device needed its own cable. Now one plug fits many devices. Before MCP, every app wrote its own connection to every service. With MCP, any app that "speaks MCP" connects to any MCP server the same way.</p></div>
+      </div>
+      <h3>Every MCP server does the same three things</h3>
+      <ol class="steps">
+        <li><h3>Say hello</h3><p>Client and server agree on the rules. Technical name: <code>initialize</code>.</p></li>
+        <li><h3>Show the menu</h3><p>The server lists its tools and the inputs each one needs. <code>list_tools</code>.</p></li>
+        <li><h3>Run a tool</h3><p>The client asks for one tool with its inputs and gets an answer back. <code>call_tool</code>.</p></li>
+      </ol>
+      <h3>Three roles</h3>
+      <div class="grid g3">
+        <div class="card"><span class="eyebrow">Host</span><h3>The person ordering food</h3><p>The app the work happens in. Here: the Jupyter notebook <code>github_mcp_client.ipynb</code>.</p></div>
+        <div class="card"><span class="eyebrow">Client</span><h3>The waiter carrying orders</h3><p>Code that connects to a server. Here: <code>GitHubMCPClient</code> and <code>Context7MCPClient</code>.</p></div>
+        <div class="card"><span class="eyebrow">Server</span><h3>The kitchen</h3><p>The online service that does the work. Here: GitHub's and Context7's servers. Both are remote.</p></div>
+      </div>
+    </section>
+
+    <section id="overview-arch" data-title="How it fits together">
+      <div class="sec-head"><span class="eyebrow">Architecture</span><h2>How it fits together</h2>
+        <p>Click any box to see what it does, or follow one request from start to finish.</p></div>
+      <div class="diagram" data-diagram="arch"></div>
+      <div class="diag-panel">
+        <div class="stepper">
+          <label class="sr" for="arch-path">Request to follow</label>
+          <select id="arch-path" class="field"><option value="gh">Follow a GitHub request</option><option value="c7">Follow a Context7 request</option></select>
+          <button class="btn" id="arch-prev" type="button">Back</button>
+          <button class="btn primary" id="arch-next" type="button">Next step</button>
+          <button class="btn" id="arch-reset" type="button">Reset</button>
+        </div>
+        <div class="info" id="arch-info" aria-live="polite"><h3>Pick a box or press "Next step"</h3><p>Everything inside "Your computer" is the Python code in this workspace. Both servers run on the internet, operated by GitHub and Context7.</p></div>
+      </div>
+    </section>
+
+    <section id="overview-compare" data-title="Side by side">
+      <div class="sec-head"><span class="eyebrow">Comparison</span><h2>GitHub MCP and Context7 side by side</h2>
+        <p>Click a coloured bar to open that server's tools, filtered to that group.</p></div>
+      <div class="chart-card">
+        <h3>Tools by group</h3>
+        <div class="legend" data-legend="groups"></div>
+        <div class="chart" data-chart="groups-both"></div>
+      </div>
+      <div class="grid g4" id="group-defs"></div>
+      <div class="tablewrap"><table>
+        <thead><tr><th></th><th>GitHub MCP</th><th>Context7 MCP</th></tr></thead>
+        <tbody>
+          <tr><td><b>Main job</b></td><td>Do things on GitHub</td><td>Look up library documentation</td></tr>
+          <tr><td><b>Can it break things?</b></td><td>Yes: create, change, merge, delete</td><td>No, read-only</td></tr>
+          <tr><td><b>Login</b></td><td>GitHub personal access token</td><td>Context7 API key</td></tr>
+          <tr><td><b>Typical inputs</b></td><td><code>owner</code>, <code>repo</code>, numbers, filters</td><td>Library name or ID + a question</td></tr>
+          <tr><td><b>Answer format</b></td><td>Text containing JSON</td><td>Readable text (Markdown)</td></tr>
+          <tr><td><b>Typical speed</b></td><td>0.85–1.2 s per call</td><td>2.3–2.6 s per call</td></tr>
+          <tr><td><b>Biggest risk</b></td><td>Unintended real changes</td><td>Outdated or wrong community docs; secrets in questions</td></tr>
+        </tbody></table></div>
+    </section>
+
+    <section id="overview-speed" data-title="Speed & cost">
+      <div class="sec-head"><span class="eyebrow">Measurements</span><h2>Speed and cost</h2>
+        <p>One benchmark run from this machine on 5 October 2026, calling only read tools. Treat the numbers as rough sizes, not guarantees.</p></div>
+      <div class="grid g2">
+        <div class="chart-card"><h3>How long each step takes</h3><p class="sub">Middle value of up to 3 tries, in milliseconds (1,000 ms = 1 second)</p><div class="chart" data-chart="latency"></div></div>
+        <div class="chart-card"><h3>Ask both servers: one by one or at once</h3><p class="sub">Connect, get the menu and make one call on each server</p><div class="chart" data-chart="dual"></div>
+          <h3>Size of the tool menu an AI must read</h3><p class="sub">Estimated AI tokens (about 4 characters each) just to describe the tools</p><div class="chart" data-chart="menu"></div></div>
+      </div>
+    </section>
+
+    <section id="overview-client" data-title="The shared client">
+      <div class="sec-head"><span class="eyebrow">Reusable code</span><h2>One shared client, two tiny subclasses</h2>
+        <p>All connection logic lives in <code>BaseMCPClient</code>. Each server only sets three values. Adding a third server takes three lines.</p></div>
+      <div class="code"><pre><code><span class="c-kw">class</span> GitHubMCPClient(BaseMCPClient):
+    server_name = <span class="c-str">"GitHub"</span>
+    url_env_var = <span class="c-str">"GITHUB_MCP_URL"</span>
+    token_env_var = <span class="c-str">"GITHUB_TOKEN"</span>
+
+<span class="c-kw">async with</span> GitHubMCPClient() <span class="c-kw">as</span> client:     <span class="c-com"># 1. connect + say hello</span>
+    <span class="c-kw">await</span> client.list_tools()                  <span class="c-com"># 2. get the menu (required)</span>
+    result = <span class="c-kw">await</span> client.call_tool(<span class="c-str">"get_me"</span>)  <span class="c-com"># 3. run one tool</span>
+    print(result.content[0].text)              <span class="c-com"># 4. read the answer</span></code></pre></div>
+      <div class="grid g4">
+        <div class="card"><h3>Menu first</h3><p>Call <code>list_tools()</code> before <code>call_tool()</code>. The client refuses tool names it hasn't seen.</p></div>
+        <div class="card"><h3>Use <code>async with</code></h3><p>It closes the connection even when something fails.</p></div>
+        <div class="card"><h3>Read <code>content</code></h3><p>Answers arrive as pieces. The first is usually text, often JSON.</p></div>
+        <div class="card"><h3>Check <code>is_error</code></h3><p>A tool can fail politely and return a message instead of crashing.</p></div>
+      </div>
+      <dl class="kv card"><dt><code>GITHUB_MCP_URL</code></dt><dd>GitHub MCP address</dd><dt><code>GITHUB_TOKEN</code></dt><dd>GitHub personal access token (secret)</dd><dt><code>CONTEXT_MCP_URL</code></dt><dd>Context7 MCP address</dd><dt><code>CONTEXT_TOKEN</code></dt><dd>Context7 API key (secret)</dd></dl>
+      <p class="note">All four settings live in the workspace's <code>.env</code> file, never in the code.</p>
+    </section>
+
+    <section id="overview-glossary" data-title="Glossary">
+      <div class="sec-head"><span class="eyebrow">Words used in this report</span><h2>Glossary</h2></div>
+      <div class="grid g3" id="glossary"></div>
+      <p class="note">Source material: the research pack in <code>research/</code> (<code>mcp-basics.md</code>, <code>github-mcp.md</code>, <code>context7-mcp.md</code>, <code>decision-guide.md</code>, <code>data/tools-catalog.json</code>).</p>
+    </section>
+  </div>
+</main>
+
+<!-- ============================ GITHUB ============================ -->
+<main class="view" id="view-github" data-name="GitHub MCP" hidden>
+  <aside class="rail" aria-label="Sections in GitHub MCP"><p>GitHub MCP</p><ol></ol></aside>
+  <div class="content">
+    <section id="github-top" data-title="Overview">
+      <div class="sec-head"><span class="eyebrow">Server 1 of 2 · run by GitHub</span><h1>GitHub MCP</h1></div>
+      <p class="lede">Lets a program or an AI assistant do on GitHub what you would normally click through yourself: read code, open issues, create repositories, review and merge changes. It acts <b>as you</b>, with exactly the permissions of your token.</p>
+      <div class="grid g4">
+        <div class="card stat"><span class="v">46</span><span class="k">tools with default settings</span></div>
+        <div class="card stat"><span class="v">26</span><span class="k">only read <span class="dot d-read"></span></span></div>
+        <div class="card stat"><span class="v">20</span><span class="k">change real things (write, both, 1 helper)</span></div>
+        <div class="card stat"><span class="v">7</span><span class="k">tools tested here</span></div>
+      </div>
+      <dl class="kv card"><dt>Address</dt><dd><code>https://api.githubcopilot.com/mcp/</code></dd><dt>Login</dt><dd>GitHub personal access token, sent as a Bearer header</dd><dt>Risk</dt><dd><span class="impact i-high"><i></i>High if misused</span> It can create, change, merge and delete on your real account</dd></dl>
+    </section>
+
+    <section id="github-what" data-title="What & why">
+      <div class="sec-head"><span class="eyebrow">What is it? Why use it?</span><h2>A remote assistant with your GitHub login</h2></div>
+      <div class="prose"><p>GitHub is where programmers store and share code. Normally a person clicks through the website to read files, report bugs or approve changes. GitHub MCP lets a program make those same clicks. You send a request like "show me the open bugs in this project", it does the work on GitHub and sends back the result.</p></div>
+      <div class="grid g3">
+        <div class="card"><h3>Automate routine work</h3><p>Create repos, add files and open issues without clicking.</p></div>
+        <div class="card"><h3>Give AI real access</h3><p>"Summarise the open pull requests" works because the assistant can actually read them.</p></div>
+        <div class="card"><h3>One standard plug</h3><p>The same client code also talks to Context7.</p></div>
+        <div class="card"><h3>Self-describing</h3><p>The server publishes its own menu, including the inputs each tool needs.</p></div>
+        <div class="card"><h3>Nothing to host</h3><p>GitHub runs the server. You only need the client and a token.</p></div>
+      </div>
+    </section>
+
+    <section id="github-arch" data-title="How it works">
+      <div class="sec-head"><span class="eyebrow">Architecture &amp; transport</span><h2>How a request travels</h2>
+        <p>Your request goes to GitHub's MCP server, which turns it into ordinary GitHub actions performed with your permissions. Click a box for details.</p></div>
+      <div class="diagram" data-diagram="flow-gh"></div>
+      <div class="info" id="flow-gh-info" aria-live="polite"><h3>Click a box</h3><p>Each box is one stop on the way from your request to GitHub and back.</p></div>
+      <div class="grid g2">
+        <dl class="kv card"><dt>Transport</dt><dd>Streamable HTTP: HTTPS POST with JSON-RPC messages; answers can stream back</dd><dt>Login</dt><dd><code>Authorization: Bearer &lt;token&gt;</code></dd><dt>Timeouts</dt><dd>30 s to connect, up to 300 s for an answer</dd><dt>Parallel</dt><dd>One connection can carry several requests at once</dd></dl>
+        <div class="card"><h3>Optional settings (from GitHub's docs, not tested here)</h3>
+          <dl class="kv"><dt><code>…/mcp/readonly</code></dt><dd>Only read tools are offered (safest)</dd><dt><code>…/mcp/x/repos</code></dt><dd>Only one toolset, here repos</dd><dt><code>…/mcp/x/all</code></dt><dd>Every toolset</dd></dl>
+          <p>To use one, change <code>GITHUB_MCP_URL</code>. The workspace client sends only the login header, so the address form is the easy option.</p></div>
+      </div>
+    </section>
+
+    <section id="github-cap" data-title="Capabilities">
+      <div class="sec-head"><span class="eyebrow">Capabilities</span><h2>What it can do</h2></div>
+      <div class="grid g3">
+        <div class="card"><h3>Know who you are</h3><p>Your profile and teams.</p></div>
+        <div class="card"><h3>Find things</h3><p>Search all of GitHub for code, repositories, users, issues, pull requests and commits.</p></div>
+        <div class="card"><h3>Read projects</h3><p>Files and folders, branches, commits, tags and releases.</p></div>
+        <div class="card"><h3>Manage repositories</h3><p>Create, fork, add, change or delete files, and push many files at once.</p></div>
+        <div class="card"><h3>Manage issues</h3><p>Create, update and close issues, comment, react, organise sub-issues.</p></div>
+        <div class="card"><h3>Manage pull requests</h3><p>Open, edit, review, comment, merge, update, ask Copilot to review.</p></div>
+        <div class="card"><h3>Security check</h3><p>Scan text or files for leaked passwords, keys and tokens.</p></div>
+        <div class="card soft"><h3>Off by default</h3><p>Actions, security alerts, Dependabot, discussions, gists, notifications, projects and more. They need extra <i>toolsets</i>.</p></div>
+      </div>
+    </section>
+
+    <section id="github-cats" data-title="Tool map">
+      <div class="sec-head"><span class="eyebrow">Tool categories</span><h2>Where the 46 tools sit</h2>
+        <p>Each bar is one area of GitHub, split by what the tools do. Click a segment to list those tools below.</p></div>
+      <div class="chart-card"><div class="legend" data-legend="groups"></div><div class="chart" data-chart="gh-areas"></div></div>
+      <div class="grid g4" data-groupdefs></div>
+    </section>
+
+    <section id="github-tools" data-title="Tool explorer">
+      <div class="sec-head"><span class="eyebrow">Individual tools</span><h2>Tool explorer</h2>
+        <p>Search or filter, then open any tool for its inputs, the server's own labels and an example call.</p></div>
+      <div data-explorer="gh"></div>
+    </section>
+
+    <section id="github-tested" data-title="What we tested">
+      <div class="sec-head"><span class="eyebrow">Evidence</span><h2>What was tested in this workspace</h2>
+        <p>In the order it was run. The notebook made real changes, and the benchmark only read. The other 39 tools were not called.</p></div>
+      <ol class="timeline" data-timeline="gh"></ol>
+    </section>
+
+    <section id="github-io" data-title="Inputs & outputs">
+      <div class="sec-head"><span class="eyebrow">Inputs and outputs</span><h2>What you send, what comes back</h2></div>
+      <div class="io">
+        <div class="card"><h3>You send: named values</h3><div class="code"><pre><code>{
+  <span class="c-str">"owner"</span>: <span class="c-str">"aashwini1010"</span>,
+  <span class="c-str">"repo"</span>:  <span class="c-str">"my-repo"</span>,
+  <span class="c-str">"path"</span>:  <span class="c-str">"hello.py"</span>
+}</code></pre></div>
+          <p>Most tools need <code>owner</code> and <code>repo</code>. Some take a <code>method</code> that picks one of several actions. Long lists come in pages (<code>page</code>, <code>perPage</code>).</p></div>
+        <div class="card"><h3>You get: pieces of content</h3><div class="code"><pre><code><span class="c-com"># create_repository, real answer</span>
+{<span class="c-str">"id"</span>:<span class="c-str">"1407054450"</span>,
+ <span class="c-str">"url"</span>:<span class="c-str">"https://github.com/aashwini1010/my-repo"</span>}</code></pre></div>
+          <p>Usually text containing JSON, which you parse with <code>json.loads</code>. <code>get_file_contents</code> also returns the file itself as a second piece. The tidy-data field <code>structured_content</code> was empty in every test.</p></div>
+      </div>
+      <div class="warnbox"><b>Two traps.</b> Name styles are mixed (<code>pullNumber</code> next to <code>issue_number</code>). Misspelled names are ignored silently: the notebook sent <code>"auto-init"</code> instead of <code>autoInit</code> and no error came back. Copy names from the tool explorer above.</div>
+    </section>
+
+    <section id="github-speed" data-title="Speed">
+      <div class="sec-head"><span class="eyebrow">Transport, measured</span><h2>How fast is it?</h2><p>Benchmark run on 5 October 2026, read tools only.</p></div>
+      <div class="grid g2">
+        <div class="chart-card"><h3>Many calls at once on one connection</h3><p class="sub">Total wait in ms. Bars: measured. Dashed line: estimate if done one after another.</p><div class="legend"><span><i class="sw" style="background:var(--bar)"></i>All at once (measured)</span><span><i class="sw-line"></i>One by one (estimate)</span></div><div class="chart" data-chart="conc-gh"></div><p class="note">Up to 4 calls at once cost about the same as 1. At 8, one call waited much longer.</p></div>
+        <div class="chart-card"><h3>Heaviest tool descriptions</h3><p class="sub">Size of each tool's input description in bytes. Bigger means more for an AI to read.</p><div class="chart" data-chart="schema-gh"></div><p class="note">All 46 descriptions together are about 137 KB, roughly 34,000 AI tokens. Turning on only the toolsets you need is the main way to cut this.</p></div>
+      </div>
+    </section>
+
+    <section id="github-uses" data-title="Use cases">
+      <div class="sec-head"><span class="eyebrow">Example use cases</span><h2>Things people do with it</h2><p>Click a tool name to open its details.</p></div>
+      <div class="grid g2" data-usecases="gh"></div>
+    </section>
+
+    <section id="github-limits" data-title="Limitations">
+      <div class="sec-head"><span class="eyebrow">Limitations</span><h2>What to watch out for</h2><p>Impact levels are our own estimate for this workspace.</p></div>
+      <div class="chips" data-limitfilter="gh"></div>
+      <div class="grid g2" data-limits="gh"></div>
+    </section>
+
+    <section id="github-when" data-title="When to use">
+      <div class="sec-head"><span class="eyebrow">When to use it</span><h2>Good fit, poor fit</h2></div>
+      <div class="yesno">
+        <div class="card yes"><h3>Use GitHub MCP when</h3><ul>
+          <li><span class="mk">✓</span>the task is about GitHub content: repos, files on GitHub, issues, pull requests, releases</li>
+          <li><span class="mk">✓</span>you want an AI assistant to read or act on GitHub for you</li>
+          <li><span class="mk">✓</span>you want to automate a repeated GitHub routine from Python</li></ul></div>
+        <div class="card no"><h3>Don't use it when</h3><ul>
+          <li><span class="mk">✕</span>you need library documentation. Use Context7</li>
+          <li><span class="mk">✕</span>the files are only on your computer. Use local tools or git</li>
+          <li><span class="mk">✕</span>you only need to read but hold a full-power token. Switch to <code>/readonly</code> first</li>
+          <li><span class="mk">✕</span>one click on the website is quicker than writing code</li></ul></div>
+      </div>
+    </section>
+
+    <section id="github-code" data-title="Code">
+      <div class="sec-head"><span class="eyebrow">Programmatic usage</span><h2>Copy-ready code</h2><p>Uses the workspace client. Run it in the notebook, or wrap it in <code>asyncio.run(...)</code>.</p></div>
+      <div data-codetabs="gh"></div>
+    </section>
+
+    <section id="github-decide" data-title="Decision guide">
+      <div class="sec-head"><span class="eyebrow">Decision guide</span><h2>If you want to… use this</h2></div>
+      <div class="tablewrap"><table data-decide="gh"><thead><tr><th>If you want to…</th><th>Use</th><th>Group</th></tr></thead><tbody></tbody></table></div>
+      <div class="card soft"><h3>Before any Write or Both tool, ask</h3>
+        <ol class="prose" style="margin:0;padding-left:1.2em"><li>Is this the right account and repo?</li><li>Can it be undone? For delete and merge, assume no.</li><li>Would read-only mode be enough?</li><li>Did I check the exact input names?</li></ol></div>
+    </section>
+  </div>
+</main>
+
+<!-- ============================ CONTEXT7 ============================ -->
+<main class="view" id="view-context7" data-name="Context7 MCP" hidden>
+  <aside class="rail" aria-label="Sections in Context7 MCP"><p>Context7 MCP</p><ol></ol></aside>
+  <div class="content">
+    <section id="context7-top" data-title="Overview">
+      <div class="sec-head"><span class="eyebrow">Server 2 of 2 · run by Upstash</span><h1>Context7 MCP</h1></div>
+      <p class="lede">Gives programs and AI assistants <b>current documentation and code examples</b> for programming libraries, so answers come from today's docs instead of an AI's out-of-date memory.</p>
+      <div class="grid g4">
+        <div class="card stat"><span class="v">2</span><span class="k">tools</span></div>
+        <div class="card stat"><span class="v">2</span><span class="k">only read <span class="dot d-read"></span></span></div>
+        <div class="card stat"><span class="v">0</span><span class="k">tools that change anything</span></div>
+        <div class="card stat"><span class="v">2</span><span class="k">tools tested here</span></div>
+      </div>
+      <dl class="kv card"><dt>Address</dt><dd><code>https://mcp.context7.com/mcp</code></dd><dt>Login</dt><dd>Context7 API key, sent as a Bearer header (a free tier exists)</dd><dt>Risk</dt><dd><span class="impact i-low"><i></i>Low</span> Nothing can break. Keep secrets out of your questions</dd></dl>
+    </section>
+
+    <section id="context7-what" data-title="What & why">
+      <div class="sec-head"><span class="eyebrow">What is it? Why use it?</span><h2>A librarian for programming manuals</h2></div>
+      <div class="prose"><p>Programmers build on <b>libraries</b>, ready-made code such as Next.js or pandas. Libraries change often, and so do their instructions. AI assistants learn from old snapshots of the internet, so they often suggest outdated or made-up instructions. Context7 fetches the current documentation on demand.</p></div>
+      <ol class="steps">
+        <li><h3>"Which book do you mean?"</h3><p>Find the exact library: "Next.js" becomes <code>/vercel/next.js</code>.</p></li>
+        <li><h3>"What do you want to know?"</h3><p>Return the right pages from that library's docs.</p></li>
+      </ol>
+      <div class="grid g3">
+        <div class="card"><h3>Up to date</h3><p>Current docs, even for one specific version.</p></div>
+        <div class="card"><h3>Fewer made-up answers</h3><p>An AI answers from real docs instead of memory.</p></div>
+        <div class="card"><h3>Safe</h3><p>Both tools only read. Nothing can be broken.</p></div>
+        <div class="card"><h3>Light</h3><p>Its whole menu is about 1,300 AI tokens, 27 times smaller than GitHub's.</p></div>
+        <div class="card"><h3>Same plug</h3><p>The same client code works as for GitHub.</p></div>
+      </div>
+    </section>
+
+    <section id="context7-arch" data-title="How it works">
+      <div class="sec-head"><span class="eyebrow">Architecture &amp; transport</span><h2>How a request travels</h2>
+        <p>You name a library and ask a question. Context7 finds the library's ID, then searches its docs for your question. Click a box for details.</p></div>
+      <div class="diagram" data-diagram="flow-c7"></div>
+      <div class="info" id="flow-c7-info" aria-live="polite"><h3>Click a box</h3><p>Each box is one stop on the way from your question to the documentation and back.</p></div>
+      <dl class="kv card"><dt>Transport</dt><dd>Streamable HTTP: HTTPS POST with JSON-RPC messages</dd><dt>Login</dt><dd><code>Authorization: Bearer &lt;API key&gt;</code></dd><dt>Timeouts</dt><dd>30 s to connect, up to 300 s for an answer</dd><dt>Backend</dt><dd>How docs are collected and ranked isn't public</dd></dl>
+    </section>
+
+    <section id="context7-cap" data-title="Capabilities">
+      <div class="sec-head"><span class="eyebrow">Capabilities</span><h2>What it can do</h2></div>
+      <div class="grid g3">
+        <div class="card"><h3>Find a library by name</h3><p>"Next.js" → <code>/vercel/next.js</code> and similar matches.</p></div>
+        <div class="card"><h3>Rank the matches</h3><p>Each match shows code-snippet count, source reputation (High, Medium, Low) and a quality score out of 100.</p></div>
+        <div class="card"><h3>Pick a version</h3><p>Lists versions, e.g. <code>/vercel/next.js/v16.2.9</code>.</p></div>
+        <div class="card"><h3>Answer a docs question</h3><p>Returns relevant documentation text and code examples.</p></div>
+        <div class="card soft"><h3>Can't do</h3><p>Change anything, read your own code, or read private company documents.</p></div>
+      </div>
+    </section>
+
+    <section id="context7-cats" data-title="Tool map">
+      <div class="sec-head"><span class="eyebrow">Tool categories</span><h2>Two tools, one job</h2><p>Both tools are documentation lookups, and the server marks both as read-only and not destructive.</p></div>
+      <div class="chart-card"><div class="legend" data-legend="groups"></div><div class="chart" data-chart="c7-areas"></div></div>
+    </section>
+
+    <section id="context7-tools" data-title="Tool explorer">
+      <div class="sec-head"><span class="eyebrow">Individual tools</span><h2>Tool explorer</h2><p>Open a tool for its inputs, labels and an example call.</p></div>
+      <div data-explorer="c7"></div>
+    </section>
+
+    <section id="context7-tested" data-title="What we tested">
+      <div class="sec-head"><span class="eyebrow">Evidence</span><h2>What was tested in this workspace</h2></div>
+      <ol class="timeline" data-timeline="c7"></ol>
+      <div class="chart-card"><h3>Matches for "next.js" (real answer from step 1)</h3><p class="sub">Quality score out of 100. The label shows the number of code snippets. All five had "High" reputation.</p><div class="chart" data-chart="nextjs"></div><p class="note">Two different IDs are both called "Next.js". The first has the higher score, so it was the one used.</p></div>
+    </section>
+
+    <section id="context7-io" data-title="Inputs & outputs">
+      <div class="sec-head"><span class="eyebrow">Inputs and outputs</span><h2>What you send, what comes back</h2></div>
+      <div class="tablewrap"><table><thead><tr><th>Tool</th><th>Input</th><th>Meaning</th><th>Good example</th></tr></thead><tbody>
+        <tr><td rowspan="2"><code>resolve-library-id</code></td><td><code>libraryName</code></td><td>The official name, punctuation included</td><td><code>"Next.js"</code>, not <code>"nextjs"</code></td></tr>
+        <tr><td><code>query</code></td><td>What you're trying to do. Used to rank matches</td><td><code>"set up middleware to check a JWT cookie"</code></td></tr>
+        <tr><td rowspan="2"><code>query-docs</code></td><td><code>libraryId</code></td><td>The exact ID from step 1, optionally with a version</td><td><code>"/vercel/next.js"</code></td></tr>
+        <tr><td><code>query</code></td><td><b>One</b> topic per call</td><td><code>"middleware JWT cookie validation"</code></td></tr>
+      </tbody></table></div>
+      <div class="io">
+        <div class="card"><h3>Step 1 answer (real, shortened)</h3><div class="code"><pre><code>- Title: Next.js
+- Context7-compatible library ID: /vercel/next.js
+- Code Snippets: 5143
+- Source Reputation: High
+- Benchmark Score: 90.67
+- Versions: v16.2.9, v16.1.6, v15.1.8, …
+----------
+- Title: Next.js
+- Context7-compatible library ID: /websites/nextjs
+…</code></pre></div></div>
+        <div class="card"><h3>Step 2 answer</h3><p>Documentation passages and code examples as readable text (Markdown), about 7 KB in the test. It's ready to read or to hand to an AI. It is not JSON, so programs pull out what they need from the text.</p></div>
+      </div>
+      <div class="warnbox"><b>Your question leaves your machine.</b> Everything in <code>query</code> is sent to Context7. Never include passwords, keys or private information.</div>
+    </section>
+
+    <section id="context7-speed" data-title="Speed">
+      <div class="sec-head"><span class="eyebrow">Transport, measured</span><h2>How fast is it?</h2><p>Benchmark run on 5 October 2026. Context7 calls take 2–3 times longer than simple GitHub reads, because they search a large docs index.</p></div>
+      <div class="chart-card"><h3>Many calls at once on one connection</h3><p class="sub">Total wait in ms. Bars: measured. Dashed line: estimate if done one after another.</p><div class="legend"><span><i class="sw" style="background:var(--bar)"></i>All at once (measured)</span><span><i class="sw-line"></i>One by one (estimate)</span></div><div class="chart" data-chart="conc-c7"></div><p class="note">8 lookups at once took about 3.4 s, against about 22 s one by one. The 2-call run beat the 1-call run, which is normal network variation.</p></div>
+    </section>
+
+    <section id="context7-uses" data-title="Use cases">
+      <div class="sec-head"><span class="eyebrow">Example use cases</span><h2>Things people do with it</h2></div>
+      <div class="grid g2" data-usecases="c7"></div>
+    </section>
+
+    <section id="context7-limits" data-title="Limitations">
+      <div class="sec-head"><span class="eyebrow">Limitations</span><h2>What to watch out for</h2><p>Impact levels are our own estimate for this workspace.</p></div>
+      <div class="chips" data-limitfilter="c7"></div>
+      <div class="grid g2" data-limits="c7"></div>
+    </section>
+
+    <section id="context7-when" data-title="When to use">
+      <div class="sec-head"><span class="eyebrow">When to use it</span><h2>Good fit, poor fit</h2></div>
+      <div class="yesno">
+        <div class="card yes"><h3>Use Context7 when</h3><ul>
+          <li><span class="mk">✓</span>you or an AI need current documentation for a programming library</li>
+          <li><span class="mk">✓</span>you need docs for one specific version</li>
+          <li><span class="mk">✓</span>you want fewer outdated or made-up code suggestions</li>
+          <li><span class="mk">✓</span>you need a quick "what's the right way to do X with library Y?"</li></ul></div>
+        <div class="card no"><h3>Don't use it when</h3><ul>
+          <li><span class="mk">✕</span>the task is about GitHub repos, issues or pull requests. Use GitHub MCP</li>
+          <li><span class="mk">✕</span>you need your own or your company's internal docs</li>
+          <li><span class="mk">✕</span>the question isn't about a programming library</li>
+          <li><span class="mk">✕</span>your question would contain secrets</li></ul></div>
+      </div>
+    </section>
+
+    <section id="context7-code" data-title="Code">
+      <div class="sec-head"><span class="eyebrow">Programmatic usage</span><h2>Copy-ready code</h2><p>Uses the workspace client. Run it in the notebook, or wrap it in <code>asyncio.run(...)</code>.</p></div>
+      <div data-codetabs="c7"></div>
+    </section>
+
+    <section id="context7-decide" data-title="Decision guide">
+      <div class="sec-head"><span class="eyebrow">Decision guide</span><h2>If you want to… do this</h2></div>
+      <div class="tablewrap"><table data-decide="c7"><thead><tr><th>If you want to…</th><th>Do this</th></tr></thead><tbody></tbody></table></div>
+      <div class="card soft"><h3>Before calling, ask</h3>
+        <ol class="prose" style="margin:0;padding-left:1.2em"><li>Is this about a programming library?</li><li>Am I using the official library name?</li><li>Is my question one topic, with no secrets in it?</li></ol></div>
+    </section>
+  </div>
+</main>
+
+<!-- ============================ DECIDE ============================ -->
+<main class="view" id="view-decide" data-name="Which to use?" hidden>
+  <aside class="rail" aria-label="Sections in Which to use"><p>Which to use?</p><ol></ol></aside>
+  <div class="content">
+    <section id="decide-top" data-title="Find your tool">
+      <div class="sec-head"><span class="eyebrow">Decision guide</span><h1>Which server should I use?</h1></div>
+      <p class="lede">Working on GitHub itself: <b>GitHub MCP</b>. Needing to know how a programming library works: <b>Context7</b>. Writing code with a library and saving it to GitHub: <b>both, Context7 first</b>.</p>
+      <div class="wiz" id="wiz" aria-live="polite"></div>
+    </section>
+
+    <section id="decide-tasks" data-title="Task lookup">
+      <div class="sec-head"><span class="eyebrow">Task → tool</span><h2>Look up a task</h2><p>Type what you want to do. Click a tool to open it.</p></div>
+      <div class="ex-controls"><label class="sr" for="task-q">Search tasks</label><input id="task-q" type="search" placeholder="e.g. file, bug, docs, merge"></div>
+      <div class="tablewrap"><table id="task-table"><thead><tr><th>I want to…</th><th>Server</th><th>Tool(s)</th><th>Group</th></tr></thead><tbody></tbody></table></div>
+    </section>
+
+    <section id="decide-both" data-title="Use both together">
+      <div class="sec-head"><span class="eyebrow">Combined workflow</span><h2>Learn the right way, then save it</h2><p>Steps 1–2 are safe. Steps 4–6 make real changes, so confirm before running them.</p></div>
+      <ol class="timeline" id="combo"></ol>
+    </section>
+
+    <section id="decide-safety" data-title="Safety checklist">
+      <div class="sec-head"><span class="eyebrow">Safety</span><h2>Checklist by group</h2></div>
+      <div class="grid g2" id="safety"></div>
+    </section>
+
+    <section id="decide-neither" data-title="When to use neither">
+      <div class="sec-head"><span class="eyebrow">Neither</span><h2>When neither server fits</h2></div>
+      <div class="tablewrap"><table><thead><tr><th>Situation</th><th>Better choice</th></tr></thead><tbody>
+        <tr><td>Files only on your computer</td><td>Local file tools, local git</td></tr>
+        <tr><td>Your company's private documentation</td><td>Internal wiki or search</td></tr>
+        <tr><td>General questions, news, non-programming topics</td><td>A web search or general assistant</td></tr>
+        <tr><td>One quick click on github.com</td><td>Just use the website</td></tr>
+      </tbody></table></div>
+    </section>
+  </div>
+</main>
+
+<div id="tip" role="tooltip" hidden></div>
+<div id="scrim" hidden></div>
+<aside id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title" hidden></aside>
+
+<script type="application/json" id="tool-data">[{"n":"add_comment_to_pending_review","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["owner","repo","pullNumber","path","body","subjectType"],"opt":["line","side","startLine","startSide"],"m":null,"t":null,"tt":"Add review comment to the requester's latest pending pull request review","d":"Add review comment to the requester's latest pending pull request review. A pending review needs to already exist to call this (check with the user if not sure).","sb":1294},{"n":"add_issue_comment","s":"gh","a":"Issues","g":"write","ro":false,"x":false,"req":["owner","repo","issue_number"],"opt":["body","comment_id","reaction"],"m":null,"t":null,"tt":"Add comment to issue or pull request","d":"Add a comment and/or reaction to a specific issue or issue comment in a GitHub repository. Use this tool with pull requests as well (in this case pass pull request number as issue_number), but only if user is not asking specifically to add or react to review comments. At least one of body or reaction is required.","sb":869},{"n":"add_reply_to_pull_request_comment","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["owner","repo","commentId"],"opt":["body","pullNumber","reaction"],"m":null,"t":null,"tt":"Add reply to pull request comment","d":"Add a reply and/or reaction to an existing pull request comment. This can create a new comment linked as a reply to the specified comment, add an emoji reaction to the specified comment, or do both. At least one of body or reaction is required.","sb":828},{"n":"create_branch","s":"gh","a":"Branches, commits, tags & releases","g":"both","ro":false,"x":false,"req":["owner","repo","branch"],"opt":["from_branch"],"m":null,"t":null,"tt":"Create branch","d":"Create a new branch in a GitHub repository","sb":382},{"n":"create_or_update_file","s":"gh","a":"Repositories & files","g":"write","ro":false,"x":false,"req":["owner","repo","path","content","message","branch"],"opt":["allow_symlink_write","sha"],"m":null,"t":"Added hello.py to the main branch. Answer: file details and the new commit.","tt":"Create or update file","d":"Create or update a single file in a GitHub repository.  If updating, you should provide the SHA of the file you want to update. Use this tool to create or update a file in a GitHub repository remotely; do not use it for local file operations.","sb":1069},{"n":"create_pull_request","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["owner","repo","title","head","base"],"opt":["body","draft","maintainer_can_modify","reviewers"],"m":null,"t":null,"tt":"Open new pull request","d":"Create a new pull request in a GitHub repository.","sb":767},{"n":"create_repository","s":"gh","a":"Repositories & files","g":"write","ro":false,"x":false,"req":["name"],"opt":["autoInit","description","organization","private"],"m":null,"t":"Created private repo aashwini1010/my-repo. Answer: its id and web address.","tt":"Create repository","d":"Create a new GitHub repository in your account or specified organization","sb":524},{"n":"delete_file","s":"gh","a":"Repositories & files","g":"write","ro":false,"x":true,"req":["owner","repo","path","message","branch"],"opt":[],"m":null,"t":null,"tt":"Delete file","d":"Delete a file from a GitHub repository","sb":475},{"n":"fork_repository","s":"gh","a":"Repositories & files","g":"both","ro":false,"x":false,"req":["owner","repo"],"opt":["organization"],"m":null,"t":null,"tt":"Fork repository","d":"Fork a GitHub repository to your account or specified organization","sb":294},{"n":"get_commit","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo","sha"],"opt":["detail","page","perPage"],"m":null,"t":null,"tt":"Get commit details","d":"Get details for a commit from a GitHub repository","sb":942},{"n":"get_file_contents","s":"gh","a":"Repositories & files","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["fields","path","ref","sha"],"m":null,"t":"Read hello.py back. Answer: a note plus the file text print('Hello from GitHub MCP!').","tt":"Get file or directory contents","d":"Get the contents of a file or directory from a GitHub repository","sb":1011},{"n":"get_label","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["owner","repo","name"],"opt":[],"m":null,"t":null,"tt":"Get a specific label from a repository","d":"Get a specific label from a repository.","sb":313},{"n":"get_latest_release","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":[],"m":null,"t":null,"tt":"Get latest release","d":"Get the latest release in a GitHub repository","sb":221},{"n":"get_me","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":[],"opt":[],"m":null,"t":"Benchmark, 3 runs: about 0.85 s each, about 500-byte answer.","tt":"Get my user profile","d":"Get details of the authenticated GitHub user. Use this when a request is about the user's own profile for GitHub. Or when information is missing to build other tool calls.","sb":33},{"n":"get_release_by_tag","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo","tag"],"opt":[],"m":null,"t":null,"tt":"Get a release by tag name","d":"Get a specific release by its tag name in a GitHub repository","sb":293},{"n":"get_tag","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo","tag"],"opt":[],"m":null,"t":null,"tt":"Get tag details","d":"Get details about a specific git tag in a GitHub repository","sb":276},{"n":"get_team_members","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":["org","team_slug"],"opt":[],"m":null,"t":null,"tt":"Get team members","d":"Get member usernames of a specific team in an organization. Limited to organizations accessible with current credentials","sb":210},{"n":"get_teams","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":[],"opt":["user"],"m":null,"t":null,"tt":"Get teams","d":"Get details of the teams the user is a member of. Limited to organizations accessible with current credentials","sb":146},{"n":"issue_read","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["method","owner","repo","issue_number"],"opt":["page","perPage"],"m":["get","get_comments","get_sub_issues","get_parent","get_labels"],"t":null,"tt":"Get issue details","d":"Get information about a specific issue in a GitHub repository.","sb":1265},{"n":"issue_write","s":"gh","a":"Issues","g":"write","ro":false,"x":false,"req":["method","owner","repo"],"opt":["assignees","body","duplicate_of","issue_fields","issue_number","labels","milestone","parent_issue_number","parent_owner","parent_repo","state","state_reason","title","type"],"m":["create","update"],"t":null,"tt":"Create or update issue/pull request","d":"Create a new or update an existing issue in a GitHub repository.","sb":3518},{"n":"list_branches","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["page","perPage"],"m":null,"t":null,"tt":"List branches","d":"List branches in a GitHub repository","sb":428},{"n":"list_commits","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["author","fields","page","path","perPage","sha","since","until"],"m":null,"t":null,"tt":"List commits","d":"Get list of commits of a branch in a GitHub repository. Returns at least 30 results per page by default, but can return more if specified using the perPage parameter (up to 100).","sb":1427},{"n":"list_issue_fields","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["owner"],"opt":["repo"],"m":null,"t":null,"tt":"List issue fields","d":"List issue fields for a repository or organization. Returns field definitions including name, type (text, number, date, single_select), and for single_select fields the list of valid option names. When repo is omitted, returns org-level fields directly.","sb":437},{"n":"list_issue_types","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["owner"],"opt":["repo"],"m":null,"t":null,"tt":"List available issue types","d":"List supported issue types for a repository or its owner organization. When repo is omitted, returns org-level issue types directly.","sb":381},{"n":"list_issues","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["after","direction","field_filters","fields","labels","orderBy","perPage","since","state"],"m":null,"t":null,"tt":"List issues","d":"List issues in a GitHub repository. For pagination, use the 'endCursor' from the previous response's 'pageInfo' in the 'after' parameter.","sb":2149},{"n":"list_pull_requests","s":"gh","a":"Pull requests","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["base","direction","fields","head","page","perPage","sort","state"],"m":null,"t":null,"tt":"List pull requests","d":"List pull requests in a GitHub repository. If the user specifies an author, then DO NOT use this tool and use the search_pull_requests tool instead.","sb":1420},{"n":"list_releases","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["fields","page","perPage"],"m":null,"t":null,"tt":"List releases","d":"List releases in a GitHub repository","sb":808},{"n":"list_repository_collaborators","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["affiliation","page","perPage"],"m":null,"t":null,"tt":"List repository collaborators","d":"List collaborators of a GitHub repository. Results are paginated; the response includes `nextPage`, `prevPage`, `firstPage`, and `lastPage` fields. To get the next page, use the `nextPage` value as the `page` parameter.","sb":710},{"n":"list_tags","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["page","perPage"],"m":null,"t":null,"tt":"List tags","d":"List git tags in a GitHub repository","sb":428},{"n":"merge_pull_request","s":"gh","a":"Pull requests","g":"both","ro":false,"x":false,"req":["owner","repo","pullNumber"],"opt":["commit_message","commit_title","expectedHeadSha","merge_method"],"m":null,"t":null,"tt":"Merge pull request","d":"Merge a pull request in a GitHub repository.","sb":651},{"n":"pull_request_read","s":"gh","a":"Pull requests","g":"read","ro":true,"x":false,"req":["method","owner","repo","pullNumber"],"opt":["after","page","perPage"],"m":["get","get_diff","get_status","get_files","get_commits","get_review_comments","get_reviews","get_comments","get_check_runs"],"t":null,"tt":"Get details for a single pull request","d":"Get information on a specific pull request in GitHub repository.","sb":2438},{"n":"pull_request_review_write","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["method","owner","repo","pullNumber"],"opt":["body","commitID","event","threadId"],"m":["create","submit_pending","delete_pending","resolve_thread","unresolve_thread"],"t":null,"tt":"Write operations (create, submit, delete) on pull request reviews","d":"Create and/or submit, delete review of a pull request.","sb":970},{"n":"push_files","s":"gh","a":"Repositories & files","g":"write","ro":false,"x":false,"req":["owner","repo","branch","files","message"],"opt":[],"m":null,"t":null,"tt":"Push files to repository","d":"Push multiple files to a GitHub repository in a single commit","sb":707},{"n":"request_copilot_review","s":"gh","a":"Pull requests","g":"others","ro":false,"x":false,"req":["owner","repo","pullNumber"],"opt":[],"m":null,"t":null,"tt":"Request Copilot review","d":"Request a GitHub Copilot code review for a pull request. Use this for automated feedback on pull requests, usually before requesting a human reviewer.","sb":301},{"n":"run_secret_scanning","s":"gh","a":"Security","g":"others","ro":true,"x":false,"req":["files","owner","repo"],"opt":[],"m":null,"t":null,"tt":"Run Secret Scanning","d":"Scan files, content, or recent changes for secrets such as API keys, passwords, tokens, and credentials.","sb":533},{"n":"search_code","s":"gh","a":"Repositories & files","g":"read","ro":true,"x":false,"req":["query"],"opt":["fields","order","page","perPage","sort"],"m":null,"t":"Searched 'hello.py'. Answer: 163,328 matching files across all of GitHub.","tt":"Search code","d":"Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions, classes, or specific code patterns.","sb":1311},{"n":"search_commits","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["query"],"opt":["order","page","perPage","sort"],"m":null,"t":null,"tt":"Search commits","d":"Search for commits across GitHub repositories using GitHub's commit search syntax. Useful for finding specific changes, authors, or messages across one or many repositories. Searches the default branch only.","sb":1209},{"n":"search_issues","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["query"],"opt":["fields","order","owner","page","perPage","repo","sort"],"m":null,"t":null,"tt":"Search issues","d":"Search issues using natural-language semantic matching. Best for conceptual or paraphrased queries (e.g. \"login fails after password reset\"). Already scoped to is:issue.","sb":1722},{"n":"search_pull_requests","s":"gh","a":"Pull requests","g":"read","ro":true,"x":false,"req":["query"],"opt":["fields","order","owner","page","perPage","repo","sort"],"m":null,"t":null,"tt":"Search pull requests","d":"Search for pull requests in GitHub repositories using issues search syntax already scoped to is:pr","sb":1631},{"n":"search_repositories","s":"gh","a":"Repositories & files","g":"read","ro":true,"x":false,"req":["query"],"opt":["minimal_output","order","page","perPage","sort"],"m":null,"t":"Benchmark, 3 runs: about 1.2 s each for 5 results, about 2.7 KB.","tt":"Search repositories","d":"Find GitHub repositories by name, description, readme, topics, or other metadata. Perfect for discovering projects, finding examples, or locating specific repositories across GitHub.","sb":881},{"n":"search_users","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":["query"],"opt":["order","page","perPage","sort"],"m":null,"t":"Searched 'aashwini1010'. Answer: 1 matching user.","tt":"Search users","d":"Find GitHub users by username, real name, or other profile information. Useful for locating developers, contributors, or team members.","sb":674},{"n":"sub_issue_write","s":"gh","a":"Issues","g":"write","ro":false,"x":false,"req":["method","owner","repo","issue_number","sub_issue_id"],"opt":["after_id","before_id","replace_parent"],"m":null,"t":null,"tt":"Change sub-issue","d":"Add a sub-issue to a parent issue in a GitHub repository.","sb":1431},{"n":"ui_get","s":"gh","a":"App helpers","g":"others","ro":true,"x":false,"req":["method","owner"],"opt":["repo"],"m":["labels","assignees","milestones","issue_types","branches","issue_fields","reviewers"],"t":null,"tt":"Get UI data","d":"Fetch UI data for MCP Apps (labels, assignees, milestones, issue types, branches, issue fields, reviewers).","sb":494},{"n":"update_issue_comment","s":"gh","a":"Issues","g":"write","ro":false,"x":false,"req":["owner","repo","comment_id","body"],"opt":[],"m":null,"t":null,"tt":"Update issue comment","d":"Update the body of an existing issue or pull request conversation comment. This tool cannot update pull request review comments.","sb":497},{"n":"update_pull_request","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["owner","repo","pullNumber"],"opt":["base","body","draft","maintainer_can_modify","reviewers","state","title"],"m":null,"t":null,"tt":"Edit pull request","d":"Update an existing pull request in a GitHub repository.","sb":890},{"n":"update_pull_request_branch","s":"gh","a":"Pull requests","g":"both","ro":false,"x":false,"req":["owner","repo","pullNumber"],"opt":["expectedHeadSha"],"m":null,"t":null,"tt":"Update pull request branch","d":"Update the branch of a pull request with the latest changes from the base branch.","sb":401},{"n":"resolve-library-id","s":"c7","a":"Documentation","g":"read","ro":true,"x":false,"req":["query","libraryName"],"opt":[],"m":null,"t":"'next.js' + a JWT-middleware question gave 5 matches; best /vercel/next.js. About 2.3 s.","tt":null,"d":"Resolves a package/product name to a Context7-compatible library ID and returns matching libraries.","sb":801},{"n":"query-docs","s":"c7","a":"Documentation","g":"read","ro":true,"x":false,"req":["libraryId","query"],"opt":[],"m":null,"t":"/vercel/next.js + 'middleware JWT cookie' gave doc snippets. About 2.6 s, about 7.1 KB.","tt":null,"d":"Retrieves and queries up-to-date documentation and code examples from Context7 for any programming library or framework.","sb":1207}]</script>
+<script type="application/json" id="plain-data">{"get_me":"Shows your own GitHub profile","get_teams":"Lists the teams you belong to","get_team_members":"Lists the people in one team","search_users":"Finds GitHub users by name or username","list_repository_collaborators":"Lists who has access to a repo","get_file_contents":"Reads a file, or lists a folder","search_repositories":"Finds repositories by name, topic and so on","search_code":"Searches code across **all** of GitHub","list_branches":"Lists a repo's branches","get_commit":"Details of one saved change (commit)","list_commits":"History of changes on a branch","search_commits":"Searches commit messages and authors","get_tag":"Details of one version tag","list_tags":"Lists version tags","get_latest_release":"The newest published release","get_release_by_tag":"One release, by its tag","list_releases":"All releases","issue_read":"One issue's details, comments, sub-issues, parent or labels","list_issues":"Lists issues in a repo, with filters","search_issues":"Finds issues by meaning (\"login fails after reset\")","get_label":"One label's details","list_issue_types":"Which issue types exist (bug, task…)","list_issue_fields":"Which custom issue fields exist","list_pull_requests":"Lists pull requests in a repo","pull_request_read":"One PR's details, changes, files, reviews, comments or checks","search_pull_requests":"Finds pull requests","create_repository":"Creates a new repository","create_or_update_file":"Adds one file, or changes it (changing needs the file's current `sha`)","push_files":"Saves several files in one change","delete_file":"Deletes a file. **The server marks this as destructive**","issue_write":"Creates or updates an issue (`method` = `create` / `update`)","add_issue_comment":"Comments or reacts on an issue or PR","update_issue_comment":"Edits an existing comment","sub_issue_write":"Adds, removes or reorders sub-issues","create_pull_request":"Opens a pull request","update_pull_request":"Edits a PR's title, text, state or reviewers","pull_request_review_write":"Starts, submits or deletes a review; resolves comment threads","add_comment_to_pending_review":"Adds a line comment to your unfinished review","add_reply_to_pull_request_comment":"Replies or reacts to a PR comment","fork_repository":"Copies someone's repository into your account","create_branch":"Makes a new branch, copied from an existing one","update_pull_request_branch":"Brings a PR up to date with the latest base branch","merge_pull_request":"Merges a PR's changes into the main code. **Hard to undo**","run_secret_scanning":"Checks text or files for leaked passwords, keys or tokens. Nothing is saved to the repo","request_copilot_review":"Asks GitHub's AI (Copilot) to review a pull request","ui_get":"Gets pick-list data (labels, assignees, branches…) for apps that draw screens","resolve-library-id":"Turns a library name into Context7's exact library ID, with a ranked list of matches","query-docs":"Returns documentation snippets and code examples for one library and one question"}</script>
+<script>
+(()=>{
+"use strict";
+const TOOLS=JSON.parse(document.getElementById("tool-data").textContent);
+const PLAIN=JSON.parse(document.getElementById("plain-data").textContent);
+const BY=Object.fromEntries(TOOLS.map(t=>[t.n,t]));
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=n=>Math.round(n).toLocaleString("en-US");
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const GO=["read","write","both","others"];
+const G={read:{label:"Read",hint:"Only looks. Nothing on GitHub changes.",risk:"Safe"},
+  write:{label:"Write",hint:"Creates, changes or deletes something.",risk:"Real and visible. Some can't be undone"},
+  both:{label:"Both",hint:"Changes something by copying or combining content that already exists.",risk:"Real and visible"},
+  others:{label:"Others",hint:"Special helpers: security scan, AI review, data for app screens.",risk:"Varies by tool"}};
+const SRV={gh:{name:"GitHub MCP",view:"github",cls:"GitHubMCPClient",var:"gh"},c7:{name:"Context7 MCP",view:"context7",cls:"Context7MCPClient",var:"c7"}};
+const M={gh:{connect:937,list:2450,calls:[["get_me",[838,848,864],500],["search_repositories",[1269,1180,1199],2748]],conc:{1:852,2:907,4:1053,8:2636},catalog:137194},
+  c7:{connect:688,list:1389,calls:[["resolve-library-id",[2330,2383,2225],2185],["query-docs",[2587],7096]],conc:{1:2777,2:2317,4:3205,8:3438},catalog:5119},
+  dual:{seq:9357,par:4936}};
+const med=a=>{const s=[...a].sort((x,y)=>x-y);return s[Math.floor(s.length/2)]};
+const dot=g=>`<span class="dot d-${g}"></span>`;
+const gpill=g=>`<span class="pill">${dot(g)}${G[g].label}</span>`;
+
+/* ---------- tooltip ---------- */
+const tip=$("#tip");
+function moveTip(e){const p=14,r=tip.getBoundingClientRect();let x=e.clientX+p,y=e.clientY+p;
+  if(x+r.width>innerWidth-8)x=e.clientX-r.width-p; if(y+r.height>innerHeight-8)y=e.clientY-r.height-p;
+  tip.style.left=Math.max(8,x)+"px";tip.style.top=Math.max(8,y)+"px"}
+function bindTip(n,html){n.addEventListener("pointerenter",e=>{tip.innerHTML=html;tip.hidden=false;moveTip(e)});
+  n.addEventListener("pointermove",moveTip);n.addEventListener("pointerleave",()=>tip.hidden=true);
+  n.addEventListener("focus",()=>{const r=n.getBoundingClientRect();tip.innerHTML=html;tip.hidden=false;moveTip({clientX:r.left+r.width/2,clientY:r.bottom})});
+  n.addEventListener("blur",()=>tip.hidden=true)}
+
+/* ---------- svg helpers ---------- */
+const NS="http://www.w3.org/2000/svg";
+function S(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function T(p,x,y,txt,cls,extra={}){const e=S("text",{x,y,class:cls,...extra},p);e.textContent=txt;return e}
+const fit=(s,px)=>{s=String(s);const n=Math.max(4,Math.floor(px/7));return s.length>n?s.slice(0,n-1)+"…":s};
+function niceMax(max){const raw=max/4,mag=Math.pow(10,Math.floor(Math.log10(raw))),r=raw/mag,st=(r>5?10:r>2?5:r>1?2:1)*mag;return{top:Math.ceil(max/st)*st,step:st}}
+function onSize(el,draw){let w=0;new ResizeObserver(()=>{const nw=el.clientWidth;if(nw&&nw!==w){w=nw;draw(nw)}}).observe(el)}
+function numbers(el,head,rows){const d=document.createElement("details");d.className="nums";
+  d.innerHTML=`<summary>Show the numbers</summary><div class="tablewrap"><table><thead><tr>${head.map((h,i)=>`<th${i?' class="num"':""}>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${i?' class="num"':""}>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+  el.after(d)}
+function act(n,fn){n.classList.add("pick");n.setAttribute("tabindex","0");n.setAttribute("role","button");n.addEventListener("click",fn);n.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fn()}})}
+
+/* stacked horizontal bars by group */
+function stackChart(el,rows,opt={}){
+  const max=opt.max||Math.max(...rows.map(r=>GO.reduce((a,g)=>a+(r.p[g]||0),0)));
+  onSize(el,W=>{el.innerHTML="";const lab=opt.noLabels?0:Math.min(210,Math.max(96,W*.3)),rh=opt.rh||28,gap=12,top=opt.axis?4:2,
+    pw=Math.max(60,W-lab-34),H=top+rows.length*(rh+gap)-gap+(opt.axis?22:2);
+    const svg=S("svg",{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:"img","aria-label":opt.label||"Tools by group"},el);
+    if(opt.axis){const nm=niceMax(max),step=Math.max(1,nm.step),tm=Math.ceil(max/step)*step;for(let v=0;v<=tm;v+=step){const x=lab+v/tm*pw;S("line",{x1:x,x2:x,y1:0,y2:H-20,class:"gl"},svg);T(svg,x,H-4,v,"ax",{"text-anchor":"middle"})} var sc=pw/tm}else var sc=pw/max;
+    rows.forEach((r,i)=>{const y=top+i*(rh+gap);let x=lab,tot=0;
+      if(!opt.noLabels)T(svg,lab-10,y+rh/2,fit(r.label,lab-12),"ax-l",{"text-anchor":"end","dominant-baseline":"central"});
+      GO.forEach(g=>{const v=r.p[g]||0;if(!v)return;const w=v*sc;tot+=v;
+        const rc=S("rect",{x:x,y,width:Math.max(1,w-2),height:rh,rx:3,class:"seg g-"+g},svg);
+        if(w>24)T(svg,x+(w-2)/2,y+rh/2,v,"vl-in"+(g==="both"||g==="others"?" dk":""),{"text-anchor":"middle","dominant-baseline":"central","pointer-events":"none"});
+        bindTip(rc,`<b>${esc(r.label)}</b><br>${G[g].label}: ${v} tool${v>1?"s":""}${opt.onPick?"<br><i>Click to list them</i>":""}`);
+        if(opt.onPick)act(rc,()=>opt.onPick(r,g)); else if(!opt.noLabels)rc.setAttribute("tabindex","0");
+        x+=w});
+      T(svg,x+6,y+rh/2,tot,"vl",{"dominant-baseline":"central"})});
+  });
+  if(opt.table!==false)numbers(el,["Row",...GO.map(g=>G[g].label),"Total"],rows.map(r=>[esc(r.label),...GO.map(g=>r.p[g]||0),GO.reduce((a,g)=>a+(r.p[g]||0),0)]));
+}
+
+/* single-series horizontal bars; rows may be {head:"..."} */
+function hbar(el,rows,opt={}){
+  const vals=rows.filter(r=>!r.head);const max=opt.max||Math.max(...vals.map(r=>r.v));
+  onSize(el,W=>{el.innerHTML="";const lab=Math.min(opt.labW||200,Math.max(110,W*.36)),rh=opt.rh||22,gap=10,valW=opt.valW||70,
+    pw=Math.max(60,W-lab-valW);let y=2;const items=[];
+    rows.forEach(r=>{if(r.head){items.push({r,y:y+12});y+=24}else{items.push({r,y});y+=rh+gap}});
+    const H=y+(opt.axis===false?0:18);const {top:tm,step}=niceMax(max);
+    const svg=S("svg",{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:"img","aria-label":opt.label||"bar chart"},el);
+    if(opt.axis!==false){for(let v=0;v<=tm;v+=step){const x=lab+v/tm*pw;S("line",{x1:x,x2:x,y1:0,y2:H-18,class:"gl"},svg);T(svg,x,H-3,opt.tick?opt.tick(v):fmt(v),"ax",{"text-anchor":"middle"})}}
+    S("line",{x1:lab,x2:lab,y1:0,y2:H-(opt.axis===false?0:18),class:"bl"},svg);
+    items.forEach(({r,y})=>{if(r.head){T(svg,0,y,r.head,"ax-h",{"dominant-baseline":"central"});return}
+      T(svg,lab-10,y+rh/2,fit(r.label,lab-12),"ax-l",{"text-anchor":"end","dominant-baseline":"central"});
+      const w=Math.max(2,r.v/tm*pw);
+      const b=S("rect",{x:lab,y,width:w,height:rh,rx:4,class:"bar"+(r.alt?" alt":""),tabindex:0},svg);
+      bindTip(b,r.tip||`<b>${esc(r.label)}</b><br>${esc(r.text||fmt(r.v))}`);
+      if(r.onPick)act(b,r.onPick);
+      T(svg,lab+w+6,y+rh/2,r.text||fmt(r.v),"vl",{"dominant-baseline":"central"})});
+  });
+  if(opt.table!==false)numbers(el,opt.head||["Item","Value"],vals.map(r=>[esc(r.full||r.label),esc(r.text||fmt(r.v))]));
+}
+
+/* concurrency: bars + dashed estimate line */
+function concChart(el,c){
+  const Ns=[1,2,4,8],one=c[1],est=Ns.map(n=>n*one),max=Math.max(...est,...Ns.map(n=>c[n]));
+  onSize(el,W=>{el.innerHTML="";const H=230,l=52,r=12,t=14,b=40,pw=W-l-r,ph=H-t-b,{top:tm,step}=niceMax(max);
+    const svg=S("svg",{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:"img","aria-label":"Wait time for 1, 2, 4 and 8 calls at once"},el);
+    const y=v=>t+ph-v/tm*ph,bw=Math.min(54,pw/Ns.length*.5),cx=i=>l+pw*(i+.5)/Ns.length;
+    for(let v=0;v<=tm;v+=step){S("line",{x1:l,x2:W-r,y1:y(v),y2:y(v),class:"gl"},svg);T(svg,l-8,y(v),v>=1000?(v/1000)+"s":v,"ax",{"text-anchor":"end","dominant-baseline":"central"})}
+    S("line",{x1:l,x2:W-r,y1:y(0),y2:y(0),class:"bl"},svg);
+    Ns.forEach((n,i)=>{const v=c[n],x=cx(i)-bw/2;
+      const bar=S("rect",{x,y:y(v),width:bw,height:Math.max(1,y(0)-y(v)),rx:4,class:"bar",tabindex:0},svg);
+      bindTip(bar,`<b>${n} call${n>1?"s":""} at once</b><br>Measured: ${fmt(v)} ms<br>One by one (estimate): ${fmt(est[i])} ms`);
+      T(svg,cx(i),y(v)-6,fmt(v),"vl",{"text-anchor":"middle"});
+      T(svg,cx(i),H-b+18,n+(n>1?" calls":" call"),"ax",{"text-anchor":"middle"})});
+    S("path",{d:Ns.map((n,i)=>(i?"L":"M")+cx(i)+","+y(est[i])).join(""),class:"refline"},svg);
+    Ns.forEach((n,i)=>{const d=S("circle",{cx:cx(i),cy:y(est[i]),r:4.5,class:"refdot"},svg);bindTip(d,`<b>${n} one by one</b><br>Estimate: ${fmt(est[i])} ms`)});
+    T(svg,cx(3)-8,y(est[3])-10,"one by one","ax",{"text-anchor":"end"});
+  });
+  numbers(el,["Calls","At once (ms)","One by one, estimate (ms)"],Ns.map((n,i)=>[n,fmt(c[n]),fmt(est[i])]));
+}
+
+/* ---------- charts ---------- */
+const count=(s,f=()=>true)=>{const p={};TOOLS.filter(t=>t.s===s&&f(t)).forEach(t=>p[t.g]=(p[t.g]||0)+1);return p};
+function drill(server,f){go(SRV[server].view+"-tools");EXP[server]&&EXP[server].set(f)}
+function charts(){
+  $$("[data-legend=groups]").forEach(l=>l.innerHTML=GO.map(g=>`<span><i class="sw d-${g}"></i>${G[g].label}</span>`).join(""));
+  const defs=GO.map(g=>`<div class="card"><span class="pill">${dot(g)}${G[g].label}</span><p>${G[g].hint}</p><p class="note">${G[g].risk}</p></div>`).join("");
+  $("#group-defs").innerHTML=defs; $$("[data-groupdefs]").forEach(e=>e.innerHTML=defs);
+  stackChart($("[data-chart=mini-gh]"),[{label:"GitHub",p:count("gh")}],{noLabels:true,max:46,rh:20,table:false});
+  stackChart($("[data-chart=mini-c7]"),[{label:"Context7",p:count("c7")}],{noLabels:true,max:46,rh:20,table:false});
+  stackChart($("[data-chart=groups-both]"),[{label:"GitHub MCP",p:count("gh"),s:"gh"},{label:"Context7 MCP",p:count("c7"),s:"c7"}],
+    {axis:true,label:"Number of tools per group for each server",onPick:(r,g)=>drill(r.s,{g,a:"",q:"",tested:false})});
+  const areas=[...new Set(TOOLS.filter(t=>t.s==="gh").map(t=>t.a))];
+  stackChart($("[data-chart=gh-areas]"),areas.map(a=>({label:a,p:count("gh",t=>t.a===a),a})),
+    {axis:true,label:"GitHub tools per area, split by group",onPick:(r,g)=>drill("gh",{g,a:r.a,q:"",tested:false})});
+  stackChart($("[data-chart=c7-areas]"),[{label:"Documentation",p:count("c7"),a:"Documentation"}],
+    {axis:true,max:2,label:"Context7 tools by group",onPick:(r,g)=>drill("c7",{g,a:"",q:"",tested:false})});
+  const lat=[{head:"GitHub MCP"},{label:"Connect",v:M.gh.connect},{label:"Get the menu",v:M.gh.list},
+    ...M.gh.calls.map(([n,a,b])=>({label:n,v:med(a),tip:`<b>${n}</b><br>Tries: ${a.map(fmt).join(" / ")} ms<br>Answer: ${fmt(b)} bytes`,full:"GitHub · "+n,onPick:()=>openTool(n)})),
+    {head:"Context7 MCP"},{label:"Connect ",v:M.c7.connect,full:"Context7 · connect"},{label:"Get the menu ",v:M.c7.list,full:"Context7 · get the menu"},
+    ...M.c7.calls.map(([n,a,b])=>({label:n,v:med(a),tip:`<b>${n}</b><br>Tries: ${a.map(fmt).join(" / ")} ms<br>Answer: ${fmt(b)} bytes`,full:"Context7 · "+n,onPick:()=>openTool(n)}))];
+  lat.forEach(r=>{if(!r.head&&!r.text)r.text=fmt(r.v)+" ms"});
+  hbar($("[data-chart=latency]"),lat,{label:"Milliseconds per step",head:["Step","Middle value"],tick:v=>v>=1000?v/1000+"s":v});
+  hbar($("[data-chart=dual]"),[{label:"One by one",v:M.dual.seq,text:(M.dual.seq/1000).toFixed(1)+" s"},{label:"Both at once",v:M.dual.par,text:(M.dual.par/1000).toFixed(1)+" s"}],
+    {label:"Seconds to ask both servers",head:["Approach","Total time"],tick:v=>v/1000+"s",rh:26,labW:130});
+  hbar($("[data-chart=menu]"),[{label:"GitHub MCP",v:M.gh.catalog/4,text:"≈ "+fmt(M.gh.catalog/4)},{label:"Context7 MCP",v:M.c7.catalog/4,text:"≈ "+fmt(M.c7.catalog/4)}],
+    {label:"Estimated AI tokens to describe the tools",head:["Server","Tokens (estimate)"],rh:26,labW:130,valW:80,tick:v=>v>=1000?v/1000+"k":v});
+  concChart($("[data-chart=conc-gh]"),M.gh.conc); concChart($("[data-chart=conc-c7]"),M.c7.conc);
+  const top=TOOLS.filter(t=>t.s==="gh").sort((a,b)=>b.sb-a.sb).slice(0,10);
+  hbar($("[data-chart=schema-gh]"),top.map(t=>({label:t.n,v:t.sb,text:fmt(t.sb)+" B",tip:`<b>${t.n}</b><br>${fmt(t.sb)} bytes · ${t.req.length+t.opt.length} inputs<br><i>Click for details</i>`,onPick:()=>openTool(t.n)})),
+    {label:"Input description size per tool",head:["Tool","Bytes"],tick:v=>v>=1000?v/1000+"k":v,valW:72});
+  const nx=[["/vercel/next.js",5143,90.67],["/websites/nextjs",6180,86.26],["/workos/authkit-nextjs",430,87.03],["/auth0/nextjs-auth0",1030,85.81],["/ixartz/next-js-boilerplate",448,58.97]];
+  hbar($("[data-chart=nextjs]"),nx.map(([id,sn,sc],i)=>({label:id,v:sc,text:`${sc} · ${fmt(sn)} snippets`,alt:i>0,tip:`<b>${id}</b><br>Score ${sc} / 100<br>${fmt(sn)} code snippets<br>Reputation: High`})),
+    {max:100,label:"Benchmark score per matching library",head:["Library ID","Score · snippets"],valW:150,labW:210});
+}
+
+/* ---------- explorer ---------- */
+const EXP={};
+function explorer(root,s){
+  const list=TOOLS.filter(t=>t.s===s),areas=[...new Set(list.map(t=>t.a))],st={q:"",g:"",a:"",tested:false};
+  root.innerHTML=`<div class="ex-controls">
+    <label class="sr" for="${s}-q">Search tools</label><input id="${s}-q" type="search" placeholder="Search, e.g. issue, file, merge">
+    ${areas.length>1?`<label class="sr" for="${s}-area">Area</label><select id="${s}-area"><option value="">All areas</option>${areas.map(a=>`<option>${esc(a)}</option>`).join("")}</select>`:""}
+    <label class="chk"><input type="checkbox" id="${s}-tested"> Tested here only</label></div>
+    <div class="chips" role="group" aria-label="Filter by group">${["",...GO].map(g=>{const n=g?list.filter(t=>t.g===g).length:list.length;return `<button type="button" class="chip" data-g="${g}" aria-pressed="false"${n?"":" disabled"}>${g?dot(g)+G[g].label:"All"} <span class="n">${n}</span></button>`}).join("")}</div>
+    <p class="ex-count" aria-live="polite"></p>
+    <div class="tablewrap"><table class="ex"><thead><tr><th>Tool</th><th>What it does</th><th>Group</th>${areas.length>1?"<th>Area</th>":""}<th>Required inputs</th><th>Tested</th></tr></thead><tbody></tbody></table></div>`;
+  const q=$(`#${s}-q`,root),ar=$(`#${s}-area`,root),te=$(`#${s}-tested`,root),tb=$("tbody",root);
+  function render(){
+    q.value=st.q; if(ar)ar.value=st.a; te.checked=st.tested;
+    $$(".chip",root).forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.g===st.g)));
+    const k=st.q.trim().toLowerCase();
+    const rows=list.filter(t=>(!st.g||t.g===st.g)&&(!st.a||t.a===st.a)&&(!st.tested||t.t)&&(!k||(t.n+" "+PLAIN[t.n]+" "+t.a+" "+t.d).toLowerCase().includes(k)));
+    tb.innerHTML=rows.map(t=>`<tr tabindex="0" data-n="${t.n}"><td><code>${t.n}</code></td><td class="what">${esc(PLAIN[t.n])}</td><td>${gpill(t.g)}</td>${areas.length>1?`<td>${esc(t.a)}</td>`:""}<td>${t.req.length?t.req.map(r=>`<span class="tag">${r}</span>`).join(" "):'<span class="note">none</span>'}</td><td>${t.t?'<b style="color:var(--good-ink)">✓ Yes</b>':'<span class="note">No</span>'}</td></tr>`).join("")||`<tr><td colspan="6">No tools match. Clear the search or pick "All".</td></tr>`;
+    $(".ex-count",root).textContent=`Showing ${rows.length} of ${list.length} tools`+(st.g?` · group: ${G[st.g].label}`:"")+(st.a?` · area: ${st.a}`:"");
+  }
+  q.addEventListener("input",()=>{st.q=q.value;render()});
+  ar&&ar.addEventListener("change",()=>{st.a=ar.value;render()});
+  te.addEventListener("change",()=>{st.tested=te.checked;render()});
+  $$(".chip",root).forEach(c=>c.addEventListener("click",()=>{st.g=c.dataset.g;render()}));
+  tb.addEventListener("click",e=>{const tr=e.target.closest("tr[data-n]");if(tr)openTool(tr.dataset.n,rowsNow())});
+  tb.addEventListener("keydown",e=>{if(e.key==="Enter"){const tr=e.target.closest("tr[data-n]");if(tr)openTool(tr.dataset.n,rowsNow())}});
+  const rowsNow=()=>$$("tr[data-n]",tb).map(r=>r.dataset.n);
+  render(); EXP[s]={set(f){Object.assign(st,f);render()}};
+}
+
+/* ---------- drawer ---------- */
+const drawer=$("#drawer"),scrim=$("#scrim");let lastFocus=null,curTool=null,seq=[];
+function example(t){
+  const ph=k=>({owner:'"aashwini1010"',repo:'"my-repo"',path:'"hello.py"',branch:'"main"',libraryName:'"Next.js"',libraryId:'"/vercel/next.js"',query:t.s==="c7"?'"middleware JWT cookie validation"':'"hello repo:aashwini1010/my-repo"',method:t.m?`"${t.m[0]}"`:'"…"'}[k]||(/number|Number|_id|Id$/.test(k)?"1":'"…"'));
+  const args=t.req.length?"{\n"+t.req.map(k=>`        "${k}": ${ph(k)},`).join("\n")+"\n    }":"";
+  const v=SRV[t.s].var;
+  return `<span class="c-kw">async with</span> ${SRV[t.s].cls}() <span class="c-kw">as</span> ${v}:\n    <span class="c-kw">await</span> ${v}.list_tools()\n    result = <span class="c-kw">await</span> ${v}.call_tool(<span class="c-str">"${t.n}"</span>${args?", "+esc(args).replace(/&quot;([^&]*)&quot;/g,'<span class="c-str">"$1"</span>'):""})\n    print(result.content[0].text)`;
+}
+function openTool(n,list){
+  const t=BY[n];if(!t)return; curTool=n; if(list)seq=list; else if(!seq.includes(n))seq=TOOLS.filter(x=>x.s===t.s).map(x=>x.n);
+  const i=seq.indexOf(n),prev=seq[i-1],next=seq[i+1];
+  if(drawer.hidden)lastFocus=document.activeElement;
+  drawer.innerHTML=`<div class="dh"><div><span class="eyebrow">${SRV[t.s].name} · ${esc(t.a)}</span><h2 id="dr-title">${t.n}</h2></div><button class="btn" id="dr-close" type="button">Close</button></div>
+    <p class="lede" style="font-size:1rem">${esc(PLAIN[t.n])}</p>
+    <div class="chips">${gpill(t.g)}<span class="pill">Server says read-only: ${t.ro?"Yes":"No"}</span>${t.x?'<span class="impact i-high"><i></i>Destructive</span>':""}${t.t?'<span class="pill" style="color:var(--good-ink)">✓ Tested here</span>':""}</div>
+    ${t.t?`<div class="dsec"><h3>What happened when we tested it</h3><p>${esc(t.t)}</p></div>`:""}
+    <div class="dsec"><h3>Required inputs</h3><div class="chips">${t.req.length?t.req.map(r=>`<span class="tag">${r}</span>`).join(""):'<span class="note">None</span>'}</div></div>
+    ${t.opt.length?`<div class="dsec"><h3>Optional inputs</h3><div class="chips">${t.opt.map(r=>`<span class="tag">${r}</span>`).join("")}</div></div>`:""}
+    ${t.m?`<div class="dsec"><h3>Actions (<code>method</code>)</h3><div class="chips">${t.m.map(r=>`<span class="tag">${r}</span>`).join("")}</div></div>`:""}
+    <div class="dsec"><h3>Example call</h3><div class="code"><pre><code>${example(t)}</code></pre></div>${t.g!=="read"&&!t.ro?'<p class="note">This tool makes real changes. Confirm before you run it.</p>':""}</div>
+    <div class="dsec"><h3>The server's own description</h3><p class="official">${esc(t.d)}</p></div>
+    <div class="dnav">${prev?`<button class="btn" data-open="${prev}" type="button">← ${prev}</button>`:"<span></span>"}${next?`<button class="btn" data-open="${next}" type="button">${next} →</button>`:""}</div>`;
+  drawer.hidden=false;scrim.hidden=false;$("#dr-close").focus();addCopy(drawer);crumbs();
+}
+function closeTool(){if(drawer.hidden)return;drawer.hidden=true;scrim.hidden=true;curTool=null;crumbs();lastFocus&&lastFocus.focus&&lastFocus.focus()}
+drawer.addEventListener("click",e=>{if(e.target.id==="dr-close")closeTool();const o=e.target.closest("[data-open]");if(o)openTool(o.dataset.open)});
+scrim.addEventListener("click",closeTool);
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeTool()});
+document.addEventListener("click",e=>{const b=e.target.closest("[data-tool]");if(b){e.preventDefault();openTool(b.dataset.tool)}});
+
+/* ---------- copy buttons ---------- */
+function addCopy(scope){$$(".code",scope).forEach(c=>{if($(".copy",c))return;const b=document.createElement("button");b.className="btn copy";b.type="button";b.textContent="Copy";
+  b.addEventListener("click",()=>{const txt=$("pre",c).innerText;const done=()=>{b.textContent="Copied";setTimeout(()=>b.textContent="Copy",1500)};
+    try{navigator.clipboard.writeText(txt).then(done,()=>sel(c))}catch(_){sel(c)}});c.appendChild(b)})}
+function sel(c){const r=document.createRange();r.selectNodeContents($("pre",c));const s=getSelection();s.removeAllRanges();s.addRange(r)}
+
+/* ---------- diagrams ---------- */
+function node(svg,id,x,y,w,h,t1,t2,click){const g=S("g",{class:"nd"+(click?" click":""),"data-id":id},svg);S("rect",{x,y,width:w,height:h,rx:10},g);
+  T(g,x+w/2,y+(t2?h/2-8:h/2),t1,"t1",{"text-anchor":"middle","dominant-baseline":"central"});if(t2)T(g,x+w/2,y+h/2+11,t2,"t2",{"text-anchor":"middle","dominant-baseline":"central"});
+  if(click){g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label",t1);g.addEventListener("click",()=>click(id));g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();click(id)}})}return g}
+function edge(svg,id,d,cls="",label,lx,ly){const p=S("path",{d,class:"ed "+cls,"data-id":id,"marker-end":"url(#ah)"},svg);if(label)T(svg,lx,ly,label,"el",{"text-anchor":"middle"});return p}
+function defs(svg){const d=S("defs",{},svg),m=S("marker",{id:"ah",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},d);S("path",{d:"M0,0 L10,5 L0,10 z",class:"arrowhead"},m)}
+const ARCH={
+  nb:["Jupyter notebook (host)","Where the work happens. It loads settings, creates the clients and runs them with await. Each 'async with' block opens and closes one client."],
+  env:[".env file","Holds the two server addresses and two secret keys. The code reads them at start-up, so no secret is written in the code."],
+  ghc:["GitHubMCPClient","A tiny class that names the GitHub settings. All real work comes from BaseMCPClient. It sends only the GitHub token, only to GitHub."],
+  c7c:["Context7MCPClient","Same idea for Context7. It sends only the Context7 key, only to Context7."],
+  base:["BaseMCPClient (shared code)","Opens the secure connection, says hello (initialize), fetches the menu (list_tools), runs tools (call_tool) and closes everything safely."],
+  ghs:["GitHub MCP server","Run by GitHub at api.githubcopilot.com/mcp/. Checks your token and turns each tool call into normal GitHub actions done as you. 46 tools."],
+  c7s:["Context7 MCP server","Run by Upstash at mcp.context7.com/mcp. Finds a library ID, then returns matching doc snippets. 2 tools, both read-only."],
+  gh:["Your GitHub","Your real repositories, issues, pull requests and releases. Write tools change these for real."],
+  docs:["Context7 docs index","Library documentation collected and indexed by Context7. How it's built isn't public."]};
+const PATHS={gh:[["nb",[],"1. You ask","The notebook asks GitHubMCPClient to run a tool, for example create_repository."],
+  ["env",["e-env"],"2. Read settings","The client reads GITHUB_MCP_URL and GITHUB_TOKEN from .env."],
+  ["ghc",["e-nb-g"],"3. Connect","BaseMCPClient opens a secure connection, says hello and fetches the menu."],
+  ["ghs",["e-g-s"],"4. Send the request","An HTTPS POST carries the tool name, the inputs and your token."],
+  ["gh",["e-s-gh"],"5. Work happens","GitHub's server does the action on your account, as you."],
+  ["nb",["e-s-gh","e-g-s","e-nb-g"],"6. Answer returns","The result travels back the same way, as text containing JSON."]],
+ c7:[["nb",[],"1. You ask","The notebook asks Context7MCPClient: \"How do I check a JWT cookie in Next.js?\""],
+  ["env",["e-env"],"2. Read settings","The client reads CONTEXT_MCP_URL and CONTEXT_TOKEN from .env."],
+  ["c7c",["e-nb-c"],"3. Connect","BaseMCPClient opens a secure connection, says hello and fetches the menu."],
+  ["c7s",["e-c-s"],"4. Step 1: find the library","resolve-library-id turns \"Next.js\" into /vercel/next.js."],
+  ["docs",["e-s-docs"],"5. Step 2: search the docs","query-docs searches that library's docs for your question."],
+  ["nb",["e-s-docs","e-c-s","e-nb-c"],"6. Answer returns","Doc snippets and code examples come back as readable text."]]};
+function archDiagram(el){
+  const svg=S("svg",{viewBox:"0 0 980 360",role:"img","aria-label":"Architecture: notebook and two clients on your computer connect over HTTPS to GitHub MCP and Context7 MCP servers"},el);defs(svg);
+  S("rect",{x:10,y:8,width:470,height:344,rx:14,class:"zone"},svg);T(svg,24,28,"Your computer","zone-l");
+  T(svg,510,28,"The internet","zone-l");
+  const info=$("#arch-info"),show=id=>{$$(".nd",svg).forEach(n=>n.classList.toggle("on",n.dataset.id===id));info.innerHTML=`<h3>${esc(ARCH[id][0])}</h3><p>${esc(ARCH[id][1])}</p>`};
+  const bg=S("g",{class:"nd click","data-id":"base",tabindex:"0",role:"button","aria-label":"BaseMCPClient"},svg);S("rect",{x:255,y:98,width:210,height:236,rx:12},bg);
+  T(bg,360,306,"BaseMCPClient","t1",{"text-anchor":"middle","dominant-baseline":"central"});T(bg,360,322,"shared code inside both clients","t2",{"text-anchor":"middle","dominant-baseline":"central"});
+  bg.addEventListener("click",()=>show("base"));bg.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();show("base")}});
+  edge(svg,"e-nb-g","M200,190 C232,190 232,135 268,135");edge(svg,"e-nb-c","M200,220 C232,220 232,240 268,240");
+  edge(svg,"e-env","M360,82 L360,96","dash");
+  edge(svg,"e-g-s","M450,135 L552,135","","HTTPS + token",501,124);edge(svg,"e-c-s","M450,240 L552,240","","HTTPS + key",501,229);
+  edge(svg,"e-s-gh","M752,135 L800,135");edge(svg,"e-s-docs","M752,240 L800,240");
+  node(svg,"nb",30,165,170,80,"Jupyter notebook","host",show);node(svg,"env",272,32,176,50,".env file","addresses + keys",show);
+  node(svg,"ghc",270,110,180,50,"GitHubMCPClient","client",show);node(svg,"c7c",270,215,180,50,"Context7MCPClient","client",show);
+  node(svg,"ghs",555,105,195,60,"GitHub MCP server","46 tools",show);node(svg,"c7s",555,210,195,60,"Context7 MCP server","2 tools",show);
+  node(svg,"gh",802,105,165,60,"Your GitHub","repos · issues · PRs",show);node(svg,"docs",802,210,165,60,"Docs index","library documentation",show);
+  let k=-1;const sel=$("#arch-path"),prev=$("#arch-prev"),next=$("#arch-next");
+  function step(){const p=PATHS[sel.value];$$(".ed",svg).forEach(e=>e.classList.remove("on"));$$(".nd",svg).forEach(n=>n.classList.remove("on"));
+    prev.disabled=k<=0;next.disabled=k>=p.length-1;if(k<0){info.innerHTML=`<h3>Press "Next step"</h3><p>Follow one ${sel.value==="gh"?"GitHub":"Context7"} request from start to finish.</p>`;return}
+    const [n,es,h,txt]=p[k];es.forEach(id=>{const e=$(`[data-id="${id}"]`,svg);e&&e.classList.add("on")});const nd=$(`.nd[data-id="${n}"]`,svg);nd&&nd.classList.add("on");
+    info.innerHTML=`<h3>${esc(h)} <span class="note">(${k+1} of ${p.length})</span></h3><p>${esc(txt)}</p>`}
+  next.addEventListener("click",()=>{k++;step()});prev.addEventListener("click",()=>{k--;step()});
+  $("#arch-reset").addEventListener("click",()=>{k=-1;step()});sel.addEventListener("change",()=>{k=-1;step()});prev.disabled=true;
+}
+function flowDiagram(el,s){
+  const N=s==="gh"?[["you","You / AI assistant","asks for something","The request starts here, e.g. \"create a repo called my-repo\"."],
+      ["cl","GitHubMCPClient","in the notebook","Reads GITHUB_MCP_URL and GITHUB_TOKEN from .env, connects, fetches the menu and checks that the tool name exists."],
+      ["sv","GitHub MCP server","api.githubcopilot.com","Checks your token and picks the tool. Runs as you, with your token's permissions only."],
+      ["tg","GitHub","your repos, issues, PRs","The real work happens here: a repo is created, a file is read, an issue is opened."]]
+    :[["you","You / AI assistant","asks a docs question","\"How do I check a JWT cookie in Next.js middleware?\""],
+      ["cl","Context7MCPClient","in the notebook","Reads CONTEXT_MCP_URL and CONTEXT_TOKEN from .env, connects and fetches the 2-tool menu."],
+      ["sv","Context7 MCP server","mcp.context7.com","Step 1, resolve-library-id: \"Next.js\" → /vercel/next.js. Step 2, query-docs: find the matching passages."],
+      ["tg","Docs index","library documentation","Documentation collected and indexed by Context7. The backend isn't public."]];
+  const L=s==="gh"?["request","HTTPS + token","GitHub API, as you"]:["question","HTTPS + key","search"];
+  const svg=S("svg",{viewBox:"0 0 980 150",role:"img","aria-label":"Request flow for "+SRV[s].name},el);defs(svg);
+  const info=$(`#flow-${s}-info`),w=180,gap=(980-20-4*w)/3;
+  N.forEach((n,i)=>{const x=10+i*(w+gap);if(i<3){edge(svg,"f"+i,`M${x+w+4},79 L${x+w+gap-6},79`,"",L[i],x+w+gap/2,30)}});
+  N.forEach((n,i)=>{const x=10+i*(w+gap);node(svg,n[0],x,44,w,70,n[1],n[2],id=>{$$(".nd",svg).forEach(g=>g.classList.toggle("on",g.dataset.id===id));const m=N.find(z=>z[0]===id);info.innerHTML=`<h3>${esc(m[1])}</h3><p>${esc(m[3])}</p>`})});
+}
+
+/* ---------- content blocks ---------- */
+const TESTED={gh:[["list tools","",'Notebook',"Returned the full menu: 46 tools with descriptions."],
+  ["create_repository","write","Notebook","Created private repo aashwini1010/my-repo. A real change on the account."],
+  ["create_or_update_file","write","Notebook","Added hello.py to the main branch and returned the new commit."],
+  ["get_file_contents","read","Notebook","Read hello.py back: print('Hello from GitHub MCP!')."],
+  ["search_users","read","Notebook","Found user aashwini1010 (1 result)."],
+  ["search_code","read","Notebook","\"hello.py\" matched 163,328 files across all of GitHub. Narrow searches with repo:."],
+  ["get_me","read","Benchmark, 5 Oct 2026","About 0.85 s, about 500-byte answer."],
+  ["search_repositories","read","Benchmark, 5 Oct 2026","About 1.2 s for 5 results, about 2.7 KB."]],
+ c7:[["list tools","","Notebook","Returned the 2 tools with full usage instructions."],
+  ["resolve-library-id","read","Notebook + benchmark","\"next.js\" + a JWT-middleware question gave 5 matches. Best: /vercel/next.js (5,143 snippets, High reputation, score 90.67). About 2.3 s."],
+  ["query-docs","read","Benchmark, 5 Oct 2026","/vercel/next.js + \"middleware JWT cookie\" gave doc snippets. About 2.6 s, about 7.1 KB."]]};
+function timelines(){$$("[data-timeline]").forEach(ol=>{ol.innerHTML=TESTED[ol.dataset.timeline].map(([n,g,w,r],i)=>`<li><span class="num">${i}</span><div class="body"><div class="hd">${BY[n]?`<button class="tag" data-tool="${n}" type="button">${n}</button>`:`<span class="tag">${n}</span>`}${g?gpill(g):""}<span class="where">${esc(w)}</span></div><p>${esc(r)}</p></div></li>`).join("")})}
+const tl=(...ns)=>ns.map(n=>n==="→"?'<span class="ar">→</span>':BY[n]?`<button class="tag" data-tool="${n}" type="button">${n}</button>`:`<span class="tag">${n}</span>`).join("");
+const USES={gh:[["Create a project with a starter file","create_repository,→,create_or_update_file","write",true],["Show me what's in this file on GitHub","get_file_contents","read",true],
+  ["Find example code that uses X","search_code","read",true],["Who is this GitHub user?","search_users","read",true],["List open bugs and summarise them","list_issues,→,issue_read","read"],
+  ["Report a bug","issue_write","write"],["Summarise this pull request's changes","pull_request_read","read"],["Review and approve a pull request","pull_request_review_write,→,add_comment_to_pending_review","write"],
+  ["What changed in the latest release?","get_latest_release,list_commits","read"],["Did I leak a password in this text?","run_secret_scanning","others"],["Copy an open-source project to experiment","fork_repository","both"]],
+ c7:[["How do I check a JWT cookie in Next.js middleware?","resolve-library-id,→,query-docs","read",true],["Show me the v14 way, not the newest","resolve-library-id,→,query-docs","read"],
+  ["Give an AI assistant real docs before it writes code","resolve-library-id,→,query-docs","read"],["Which library is most trusted for X?","resolve-library-id","read"],["Does this function I remember still exist?","query-docs","read"]]};
+function usecases(){$$("[data-usecases]").forEach(el=>{el.innerHTML=USES[el.dataset.usecases].map(([q,ch,g,t])=>`<div class="card"><h3>“${esc(q)}”</h3><div class="chain">${tl(...ch.split(","))}</div><div class="chips">${gpill(g)}${t?'<span class="pill" style="color:var(--good-ink)">✓ Tested</span>':""}</div></div>`).join("")})}
+const LIM={gh:[["high","Real changes, some permanent","Write and Both tools act on your real account. delete_file and merge_pull_request are hard to undo. Re-running the notebook's create_repository cell makes another real repo."],
+  ["high","Only as powerful as your token","It can't see what your token can't, and a token with too much power is a risk."],
+  ["med","Big menu","46 tools cost about 34,000 AI tokens before any work starts. Limit toolsets to what you need."],
+  ["med","Inputs are easy to get wrong","Mixed name styles, and misspelled names are ignored without a warning."],
+  ["med","GitHub's usage limits apply","Too many calls too quickly get slowed down or refused for a while."],
+  ["med","Lockdown mode is not a security wall","GitHub calls it best-effort, so don't rely on it to protect secrets."],
+  ["low","Text answers, not tidy data","You parse the JSON text yourself."],
+  ["low","Search covers all of GitHub","\"hello.py\" gave 163,328 hits. Narrow with repo:, user: or language:."],
+  ["low","Remote GitHub only","It doesn't touch files on your computer or your local git."],
+  ["low","Many features off by default","Actions, security alerts, discussions and more need extra toolsets."],
+  ["low","The menu can change","GitHub adds and renames tools. Discover them with list_tools() instead of hard-coding."]],
+ c7:[["high","No accuracy guarantee","Context7 says listed projects are community-contributed, with no guarantee of accuracy or security. Check important details."],
+  ["high","Questions leave your machine","Never put secrets in query."],
+  ["med","Only libraries in its index","If a library isn't covered, there's no answer. Company-private docs usually aren't there."],
+  ["med","Similar names compete","\"Next.js\" gave both /vercel/next.js and /websites/nextjs. Choose by reputation, snippets and score."],
+  ["med","Usage limits not published","An API key gives higher limits, but exact numbers aren't in the docs we reviewed."],
+  ["low","Always two steps","You need the library ID first, unless you already know it."],
+  ["low","Slower than simple lookups","About 2.3 to 2.6 s per call."],
+  ["low","Text, not structured data","Programs must pull the ID out of the text."],
+  ["low","Call budget","Its own instructions say: at most 3 calls of each tool per question."],
+  ["low","Closed backend","How docs are collected and ranked isn't public."]]};
+const IMP={high:"High",med:"Medium",low:"Low"};
+function limits(){$$("[data-limits]").forEach(el=>{const s=el.dataset.limits,f=$(`[data-limitfilter=${s}]`),L=LIM[s];let cur="";
+  f.innerHTML=["",...Object.keys(IMP)].map(k=>`<button class="chip" type="button" data-k="${k}" aria-pressed="${k===""}">${k?`<span class="impact i-${k}" style="border:0;padding:0"><i></i></span>${IMP[k]} impact`:"All"} <span class="n">${k?L.filter(l=>l[0]===k).length:L.length}</span></button>`).join("");
+  const r=()=>{el.innerHTML=L.filter(l=>!cur||l[0]===cur).map(([k,h,p])=>`<div class="card"><div class="chips"><span class="impact i-${k}"><i></i>${IMP[k]} impact</span></div><h3>${esc(h)}</h3><p>${esc(p)}</p></div>`).join("");$$(".chip",f).forEach(c=>c.setAttribute("aria-pressed",String(c.dataset.k===cur)))};
+  $$(".chip",f).forEach(c=>c.addEventListener("click",()=>{cur=c.dataset.k;r()}));r()})}
+const CODE={gh:[["Who am I?",`<span class="c-kw">import</span> json
+<span class="c-kw">from</span> mcp_clients <span class="c-kw">import</span> GitHubMCPClient
+
+<span class="c-kw">async with</span> GitHubMCPClient() <span class="c-kw">as</span> gh:
+    <span class="c-kw">await</span> gh.list_tools()
+    result = <span class="c-kw">await</span> gh.call_tool(<span class="c-str">"get_me"</span>)
+    me = json.loads(result.content[0].text)
+    print(me[<span class="c-str">"login"</span>])`],
+ ["Read a file",`<span class="c-kw">async with</span> GitHubMCPClient() <span class="c-kw">as</span> gh:
+    <span class="c-kw">await</span> gh.list_tools()
+    result = <span class="c-kw">await</span> gh.call_tool(<span class="c-str">"get_file_contents"</span>, {
+        <span class="c-str">"owner"</span>: <span class="c-str">"aashwini1010"</span>, <span class="c-str">"repo"</span>: <span class="c-str">"my-repo"</span>, <span class="c-str">"path"</span>: <span class="c-str">"hello.py"</span>,
+    })
+    print(result.content[0].text)           <span class="c-com"># "successfully downloaded text file (SHA: …)"</span>
+    print(result.content[1].resource.text)  <span class="c-com"># the file itself</span>`],
+ ["Focused search",`<span class="c-kw">async with</span> GitHubMCPClient() <span class="c-kw">as</span> gh:
+    <span class="c-kw">await</span> gh.list_tools()
+    result = <span class="c-kw">await</span> gh.call_tool(<span class="c-str">"search_code"</span>, {
+        <span class="c-str">"query"</span>: <span class="c-str">"ClientSession repo:modelcontextprotocol/python-sdk"</span>, <span class="c-str">"perPage"</span>: 5,
+    })
+    hits = json.loads(result.content[0].text)
+    <span class="c-kw">for</span> item <span class="c-kw">in</span> hits[<span class="c-str">"items"</span>]:
+        print(item[<span class="c-str">"repository"</span>], item[<span class="c-str">"path"</span>])`],
+ ["Create repo + file",`<span class="c-com"># Makes REAL changes on your account. Confirm first.</span>
+<span class="c-kw">async with</span> GitHubMCPClient() <span class="c-kw">as</span> gh:
+    <span class="c-kw">await</span> gh.list_tools()
+    repo = <span class="c-kw">await</span> gh.call_tool(<span class="c-str">"create_repository"</span>, {
+        <span class="c-str">"name"</span>: <span class="c-str">"my-repo"</span>, <span class="c-str">"description"</span>: <span class="c-str">"Created via MCP"</span>,
+        <span class="c-str">"private"</span>: True, <span class="c-str">"autoInit"</span>: True,   <span class="c-com"># autoInit, not "auto-init"</span>
+    })
+    <span class="c-kw">if</span> repo.is_error:
+        <span class="c-kw">raise</span> RuntimeError(repo.content[0].text)
+    <span class="c-kw">await</span> gh.call_tool(<span class="c-str">"create_or_update_file"</span>, {
+        <span class="c-str">"owner"</span>: <span class="c-str">"aashwini1010"</span>, <span class="c-str">"repo"</span>: <span class="c-str">"my-repo"</span>, <span class="c-str">"branch"</span>: <span class="c-str">"main"</span>,
+        <span class="c-str">"path"</span>: <span class="c-str">"hello.py"</span>, <span class="c-str">"message"</span>: <span class="c-str">"Add hello.py"</span>,
+        <span class="c-str">"content"</span>: <span class="c-str">"print('Hello from GitHub MCP!')"</span>,
+    })`],
+ ["Check inputs first",`<span class="c-kw">async with</span> GitHubMCPClient() <span class="c-kw">as</span> gh:
+    <span class="c-kw">await</span> gh.list_tools()
+    schema = gh.tools[<span class="c-str">"create_repository"</span>].input_schema
+    print(schema[<span class="c-str">"required"</span>], list(schema[<span class="c-str">"properties"</span>]))
+    print(gh.tools[<span class="c-str">"delete_file"</span>].annotations)   <span class="c-com"># read_only_hint, destructive_hint</span>`],
+ ["Read-only safety",`<span class="c-kw">async with</span> GitHubMCPClient() <span class="c-kw">as</span> gh:
+    <span class="c-kw">await</span> gh.list_tools()
+    safe = {name <span class="c-kw">for</span> name, t <span class="c-kw">in</span> gh.tools.items()
+            <span class="c-kw">if</span> t.annotations <span class="c-kw">and</span> t.annotations.read_only_hint}
+    <span class="c-com"># 28 tools on 2026-10-06: the 26 Read tools + run_secret_scanning + ui_get</span>`]],
+ c7:[["Step 1: find the ID",`<span class="c-kw">from</span> mcp_clients <span class="c-kw">import</span> Context7MCPClient
+
+<span class="c-kw">async with</span> Context7MCPClient() <span class="c-kw">as</span> c7:
+    <span class="c-kw">await</span> c7.list_tools()
+    result = <span class="c-kw">await</span> c7.call_tool(<span class="c-str">"resolve-library-id"</span>, {
+        <span class="c-str">"libraryName"</span>: <span class="c-str">"Next.js"</span>,
+        <span class="c-str">"query"</span>: <span class="c-str">"How do I set up middleware to check for a valid JWT cookie?"</span>,
+    })
+    print(result.content[0].text)    <span class="c-com"># ranked list of matching libraries</span>`],
+ ["Step 2: ask the docs",`<span class="c-kw">async with</span> Context7MCPClient() <span class="c-kw">as</span> c7:
+    <span class="c-kw">await</span> c7.list_tools()
+    docs = <span class="c-kw">await</span> c7.call_tool(<span class="c-str">"query-docs"</span>, {
+        <span class="c-str">"libraryId"</span>: <span class="c-str">"/vercel/next.js"</span>,
+        <span class="c-str">"query"</span>: <span class="c-str">"middleware JWT cookie validation"</span>,
+    })
+    print(docs.content[0].text)`],
+ ["Reusable helper",`<span class="c-kw">import</span> re
+<span class="c-kw">from</span> typing <span class="c-kw">import</span> Optional
+<span class="c-kw">from</span> mcp_clients <span class="c-kw">import</span> Context7MCPClient
+
+ID_PATTERN = re.compile(<span class="c-str">r"Context7-compatible library ID:\\s*(\\S+)"</span>)
+
+<span class="c-kw">async def</span> ask_docs(library: str, question: str,
+                   library_id: Optional[str] = None) -> str:
+    <span class="c-str">"""Return documentation text for one library and one question."""</span>
+    <span class="c-kw">async with</span> Context7MCPClient() <span class="c-kw">as</span> c7:
+        <span class="c-kw">await</span> c7.list_tools()
+        <span class="c-kw">if</span> library_id <span class="c-kw">is</span> None:
+            found = <span class="c-kw">await</span> c7.call_tool(<span class="c-str">"resolve-library-id"</span>,
+                                       {<span class="c-str">"libraryName"</span>: library, <span class="c-str">"query"</span>: question})
+            match = ID_PATTERN.search(found.content[0].text)
+            <span class="c-kw">if</span> match <span class="c-kw">is</span> None:
+                <span class="c-kw">raise</span> LookupError(f<span class="c-str">"No Context7 library found for {library!r}"</span>)
+            library_id = match.group(1)   <span class="c-com"># first listed match</span>
+        docs = <span class="c-kw">await</span> c7.call_tool(<span class="c-str">"query-docs"</span>,
+                                  {<span class="c-str">"libraryId"</span>: library_id, <span class="c-str">"query"</span>: question})
+        <span class="c-kw">return</span> docs.content[0].text`],
+ ["Both servers at once",`<span class="c-kw">import</span> asyncio
+<span class="c-kw">from</span> mcp_clients <span class="c-kw">import</span> GitHubMCPClient, Context7MCPClient
+
+<span class="c-kw">async with</span> GitHubMCPClient() <span class="c-kw">as</span> gh, Context7MCPClient() <span class="c-kw">as</span> c7:
+    <span class="c-kw">await</span> asyncio.gather(gh.list_tools(), c7.list_tools())
+    me, libs = <span class="c-kw">await</span> asyncio.gather(
+        gh.call_tool(<span class="c-str">"get_me"</span>),
+        c7.call_tool(<span class="c-str">"resolve-library-id"</span>,
+                     {<span class="c-str">"libraryName"</span>: <span class="c-str">"Next.js"</span>, <span class="c-str">"query"</span>: <span class="c-str">"middleware JWT cookie"</span>}),
+    )   <span class="c-com"># about 1.9× faster than one after another</span>`]]};
+function codetabs(){$$("[data-codetabs]").forEach(el=>{const L=CODE[el.dataset.codetabs];let cur=0;
+  el.innerHTML=`<div class="codetabs" role="tablist">${L.map((c,i)=>`<button class="chip" role="tab" type="button" data-i="${i}" aria-selected="${!i}" aria-pressed="${!i}">${esc(c[0])}</button>`).join("")}</div><div class="code" style="margin-top:12px"><pre><code></code></pre></div>`;
+  const r=()=>{$("code",el).innerHTML=L[cur][1];$$(".chip",el).forEach(c=>{const on=+c.dataset.i===cur;c.setAttribute("aria-pressed",on);c.setAttribute("aria-selected",on)})};
+  $$(".chip",el).forEach(c=>c.addEventListener("click",()=>{cur=+c.dataset.i;r()}));r();addCopy(el)})}
+const DEC={gh:[["know your own account","get_me"],["find a repository","search_repositories"],["find code or a function","search_code"],["read a file on GitHub","get_file_contents"],
+  ["see project history","list_commits,→,get_commit"],["see open bugs","list_issues,search_issues"],["understand a pull request","pull_request_read"],["start a new project","create_repository"],
+  ["add or change one file","create_or_update_file"],["add many files at once","push_files"],["report or update a bug","issue_write"],["propose changes","create_branch,→,push_files,→,create_pull_request"],
+  ["accept changes","merge_pull_request"],["check for leaked secrets","run_secret_scanning"]],
+ c7:[["get docs, ID unknown","resolve-library-id,→,query-docs"],["get docs, ID known","query-docs"],["docs for an older version","Resolve, pick /org/project/vX, then query"],
+  ["compare candidate libraries","resolve-library-id only, then compare scores"],["ask about several topics","One query-docs call per topic"],["get nothing useful after 3 tries","Stop, rephrase, or check the library's own website"]]};
+function decide(){
+  $$("table[data-decide]").forEach(tb=>{const s=tb.dataset.decide;$("tbody",tb).innerHTML=DEC[s].map(([w,u])=>{const ns=u.split(",");const isT=ns.every(n=>n==="→"||BY[n]);
+    const groups=[...new Set(ns.filter(n=>BY[n]).map(n=>BY[n].g))];return `<tr><td>${esc(w)}</td><td><div class="chain">${isT?tl(...ns):esc(u)}</div></td>${s==="gh"?`<td><div class="chips">${groups.map(gpill).join("")}</div></td>`:""}</tr>`}).join("")});
+  const TASKS=[["see my GitHub profile","gh","get_me"],["read a file stored on GitHub","gh","get_file_contents"],["find example code on GitHub","gh","search_code"],["find a project or repository","gh","search_repositories"],
+    ["list or understand bugs","gh","list_issues,issue_read,search_issues"],["understand a pull request","gh","pull_request_read"],["create a repository","gh","create_repository"],["add or edit a file","gh","create_or_update_file,push_files"],
+    ["report a bug","gh","issue_write"],["propose a change","gh","create_branch,→,push_files,→,create_pull_request"],["accept a change","gh","merge_pull_request"],["check text for leaked secrets","gh","run_secret_scanning"],
+    ["learn how to do X with library Y","c7","resolve-library-id,→,query-docs"],["use docs for an older library version","c7","query-docs"],["choose between similar libraries","c7","resolve-library-id"]];
+  const tb=$("#task-table tbody"),q=$("#task-q");
+  const r=()=>{const k=q.value.trim().toLowerCase();const rows=TASKS.filter(([w,s,u])=>!k||(w+" "+u+" "+SRV[s].name).toLowerCase().includes(k));
+    tb.innerHTML=rows.map(([w,s,u])=>{const ns=u.split(",");const gs=[...new Set(ns.filter(n=>BY[n]).map(n=>BY[n].g))];return `<tr><td>${esc(w)}</td><td><a href="#${SRV[s].view}" data-go="${SRV[s].view}">${SRV[s].name}</a></td><td><div class="chain">${tl(...ns)}</div></td><td><div class="chips">${gs.map(gpill).join("")}</div></td></tr>`}).join("")||`<tr><td colspan="4">Nothing matches. Try a shorter word, like "file" or "docs".</td></tr>`};
+  q.addEventListener("input",r);r();
+  const COMBO=[["Context7","resolve-library-id","\"Next.js\" → /vercel/next.js","read"],["Context7","query-docs","\"middleware JWT\" → current docs and examples","read"],["You or an AI","write the code","using those docs",""],
+    ["GitHub","create_branch","\"add-jwt-middleware\"","both"],["GitHub","create_or_update_file","middleware.ts","write"],["GitHub","create_pull_request","\"Add JWT middleware\", ready for review","write"]];
+  $("#combo").innerHTML=COMBO.map(([s,n,d,g],i)=>`<li><span class="num">${i+1}</span><div class="body"><div class="hd"><span class="where">${s}</span>${BY[n]?`<button class="tag" data-tool="${n}" type="button">${n}</button>`:`<b>${n}</b>`}${g?gpill(g):""}</div><p>${esc(d)}</p></div></li>`).join("");
+  const SAFE=[["read","Read (both servers)","Nothing special. For Context7: no secrets in the question."],["write","Write (GitHub)","Right account and repo? Exact input names checked? Someone has agreed?"],
+    ["both","Both (GitHub)","Same as Write. For merge_pull_request, assume it can't be undone."],["others","Others (GitHub)","Read the tool's description. Behaviour differs per tool."]];
+  $("#safety").innerHTML=SAFE.map(([g,h,p])=>`<div class="card"><span class="pill">${dot(g)}${h}</span><p>${esc(p)}</p></div>`).join("")+`<div class="card soft"><h3>Just exploring?</h3><p>Point <code>GITHUB_MCP_URL</code> at <code>https://api.githubcopilot.com/mcp/readonly</code> so only read tools are offered (from GitHub's docs, not tested here).</p></div>`;
+}
+
+/* ---------- wizard ---------- */
+const WQ={start:{q:"What do you need?",o:[["Something on GitHub","A repo, file, issue, pull request, release or user","gh"],["How a programming library works","Current docs, examples, a specific version","r:c7"],["Both","Learn the right way, then save code to GitHub","r:combo"],["Something else","Files on my computer, company docs, general questions","r:none"]]},
+  gh:{q:"Do you want to look, or change something?",o:[["Just look","Read files, lists and search results","r:read"],["Create or change","A new repo, file, issue or comment","r:write"],["Copy or merge","Fork, branch, merge a pull request","r:both"],["Security check or AI review","Secret scan, Copilot review","r:others"]]}};
+const WR={read:{s:"gh",g:"read",t:"GitHub MCP, Read tools",p:"26 tools that only look. Nothing on GitHub changes, so they're safe to try.",tools:["get_me","get_file_contents","search_code","list_issues","pull_request_read"]},
+  write:{s:"gh",g:"write",t:"GitHub MCP, Write tools",p:"13 tools that create, change or delete. They act on your real account, so confirm before running.",tools:["create_repository","create_or_update_file","push_files","issue_write","delete_file"]},
+  both:{s:"gh",g:"both",t:"GitHub MCP, Both tools",p:"4 tools that copy or combine existing content. merge_pull_request is hard to undo.",tools:["fork_repository","create_branch","update_pull_request_branch","merge_pull_request"]},
+  others:{s:"gh",g:"others",t:"GitHub MCP, Others",p:"Special helpers: scan text for leaked secrets, ask Copilot to review, or get pick-list data for apps.",tools:["run_secret_scanning","request_copilot_review","ui_get"]},
+  c7:{s:"c7",g:"read",t:"Context7 MCP",p:"Two safe steps: find the library's ID, then ask its docs. Use the official library name and one topic per question.",tools:["resolve-library-id","query-docs"]},
+  combo:{t:"Both, Context7 first",p:"Look up the current docs with Context7, write the code, then save it with GitHub MCP. The GitHub steps make real changes.",tools:["resolve-library-id","query-docs","create_branch","create_or_update_file","create_pull_request"],link:"decide-both"},
+  none:{t:"Neither server",p:"For files on your computer, use local tools or git. For company docs, use your internal wiki. For general questions, use a web search.",tools:[],link:"decide-neither"}};
+function wizard(){const el=$("#wiz");let path=[];
+  function r(){const last=path[path.length-1]||"start",trail=`<div class="wiz-path">${path.length?`<button class="btn" type="button" data-w="back">← Back</button><button class="btn" type="button" data-w="reset">Start over</button>`:'<span>Answer one or two questions</span>'}</div>`;
+    if(last.startsWith("r:")){const R=WR[last.slice(2)];
+      el.innerHTML=trail+`<div class="result"><div class="rhead"><span class="eyebrow">Recommendation</span>${R.g?gpill(R.g):""}</div><h2>${esc(R.t)}</h2><p class="lede" style="font-size:1rem">${esc(R.p)}</p>${R.tools.length?`<div class="chain">${tl(...R.tools)}</div>`:""}
+        <div class="stepper">${R.s?`<a class="btn primary" href="#${SRV[R.s].view}-tools" data-drill="${R.s}" data-g="${R.g}">See all ${R.g?G[R.g].label.toLowerCase()+" ":""}tools in ${SRV[R.s].name} →</a><a class="btn" href="#${SRV[R.s].view}" data-go="${SRV[R.s].view}">Open ${SRV[R.s].name}</a>`:`<a class="btn primary" href="#${R.link}" data-go="${R.link}">See details below →</a>`}</div></div>`;return}
+    const Q=WQ[last];el.innerHTML=trail+`<h2>${Q.q}</h2><div class="wiz-opts">${Q.o.map(([h,p,n])=>`<button class="wiz-opt" type="button" data-n="${n}"><b>${h}</b><span>${p}</span></button>`).join("")}</div>`}
+  el.addEventListener("click",e=>{const o=e.target.closest("[data-n]"),w=e.target.closest("[data-w]");
+    if(o){path.push(o.dataset.n);r()}else if(w){w.dataset.w==="back"?path.pop():path=[];r()}});r()}
+document.addEventListener("click",e=>{const d=e.target.closest("[data-drill]");if(d){e.preventDefault();drill(d.dataset.drill,{g:d.dataset.g,a:"",q:"",tested:false})}});
+
+/* ---------- glossary ---------- */
+const GL=[["MCP","Model Context Protocol. Shared rules that let an app or AI use outside services through one standard plug."],["MCP server","The service you connect to. It offers a menu of tools."],["MCP client","Code on your side that connects to a server. Here: the Python classes in mcp-learning/src/mcp_clients/."],["Host","The app the client runs inside. Here: a Jupyter notebook."],["Tool","One action a server offers, like \"search code\". It has a name, inputs and an output."],["Transport","How messages travel. Here: normal secure web requests (HTTPS)."],["Token / API key","A secret, password-like string that proves who you are. Kept in .env."],["Repository (repo)","A project folder on GitHub that keeps every version of its files."],["Issue","A to-do, bug report or question attached to a repository."],["Pull request (PR)","A proposed set of changes that others review before it's merged."],["Library","Ready-made code programmers reuse, like Next.js or pandas."],["Library ID","Context7's name for one library, written like a path: /vercel/next.js."],["Latency","How long you wait for an answer."],["AI tokens","The small pieces of text an AI reads. About 4 characters each."]];
+function glossary(){$("#glossary").innerHTML=GL.map(([w,d])=>`<div class="card"><h3>${esc(w)}</h3><p>${esc(d)}</p></div>`).join("")}
+
+/* ---------- router, rail, breadcrumb ---------- */
+const VIEWS=["overview","github","context7","decide"];let curView=null,curSec=null;
+function viewOf(h){return VIEWS.find(v=>h===v||h.startsWith(v+"-"))||"overview"}
+function rails(){VIEWS.forEach(v=>{const view=$("#view-"+v);$(".rail ol",view).innerHTML=$$("section[data-title]",view).map(s=>`<li><a href="#${s.id}" data-go="${s.id}">${esc(s.dataset.title)}</a></li>`).join("")})}
+function crumbs(){const v=curView,view=$("#view-"+v),parts=[`<a href="#overview" data-go="overview">Report</a>`];
+  if(v!=="overview")parts.push(`<a href="#${v}" data-go="${v}"${!curSec&&!curTool?' aria-current="page"':""}>${esc(view.dataset.name)}</a>`); else if(!curSec)parts[0]=`<span aria-current="page">Report overview</span>`;
+  if(curSec){const s=document.getElementById(curSec);if(s)parts.push(curTool?`<a href="#${curSec}" data-go="${curSec}">${esc(s.dataset.title)}</a>`:`<span aria-current="page">${esc(s.dataset.title)}</span>`)}
+  if(curTool)parts.push(`<span aria-current="page"><code>${esc(curTool)}</code></span>`);
+  $("#crumbs").innerHTML=parts.join('<span class="sep" aria-hidden="true">›</span>')}
+let spy;function watch(v){spy&&spy.disconnect();const view=$("#view-"+v),links=$$(".rail a",view);
+  spy=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){curSec=e.target.id;links.forEach(a=>a.setAttribute("aria-current",String(a.dataset.go===curSec)));
+    const act=links.find(a=>a.dataset.go===curSec);act&&matchMedia("(max-width:900px)").matches&&act.scrollIntoView({block:"nearest",inline:"center"});crumbs()}})},{rootMargin:"-30% 0px -60% 0px"});
+  $$("section[data-title]",view).forEach(s=>spy.observe(s))}
+function go(h,push=true){if(!h)h="overview";const v=viewOf(h);
+  if(push){try{history.pushState(null,"","#"+h)}catch(_){}}
+  if(v!==curView){$$(".view").forEach(x=>x.hidden=x.id!=="view-"+v);$$(".tabs a").forEach(a=>a.toggleAttribute("aria-current",a.dataset.view===v)&&a.setAttribute("aria-current","page"));curView=v;curSec=null;watch(v)}
+  closeTool();
+  const target=h!==v?document.getElementById(h):null;
+  requestAnimationFrame(()=>{if(target){target.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"});curSec=h}else{scrollTo({top:0,behavior:"auto"});curSec=null}crumbs()});
+}
+document.addEventListener("click",e=>{const a=e.target.closest("a[href^='#']");if(!a||e.defaultPrevented)return;e.preventDefault();go(a.getAttribute("href").slice(1))});
+addEventListener("popstate",()=>go(location.hash.slice(1),false));
+addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(viewOf(h)!==curView||h!==curSec)go(h,false)});
+const head=$("#top");new ResizeObserver(()=>document.documentElement.style.setProperty("--head-h",head.offsetHeight+"px")).observe(head);
+
+/* ---------- boot ---------- */
+rails();explorer($("[data-explorer=gh]"),"gh");explorer($("[data-explorer=c7]"),"c7");
+charts();archDiagram($("[data-diagram=arch]"));flowDiagram($("[data-diagram=flow-gh]"),"gh");flowDiagram($("[data-diagram=flow-c7]"),"c7");
+timelines();usecases();limits();codetabs();decide();wizard();glossary();addCopy(document);
+go(location.hash.slice(1)||"overview",false);
+})();
+</script>
+
+</body>
+</html>

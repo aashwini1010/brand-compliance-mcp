@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>MCP Learning Architecture</title>
+<style>
+:root{--bg:#f4f6f9;--card:#fff;--fg:#0f1722;--mut:#4a5568;--bd:#1f2937;--base:#5b21b6;--gh:#1d4ed8;--c7:#c2410c;--ext:#047857;--nb:#a16207;--test:#be185d}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0b0f15;--card:#151b24;--fg:#f1f5f9;--mut:#a8b3c4;--bd:#cbd5e1;--base:#a78bfa;--gh:#60a5fa;--c7:#fb923c;--ext:#34d399;--nb:#facc15;--test:#f472b6}}
+:root[data-theme="dark"]{--bg:#0b0f15;--card:#151b24;--fg:#f1f5f9;--mut:#a8b3c4;--bd:#cbd5e1;--base:#a78bfa;--gh:#60a5fa;--c7:#fb923c;--ext:#34d399;--nb:#facc15;--test:#f472b6}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}
+main{max-width:1080px;margin:0 auto;padding:28px 16px 48px}
+h1{font-size:26px;margin:0 0 4px}h2{font-size:17px;margin:0 0 14px;display:flex;gap:8px;align-items:center}
+.sub{color:var(--mut);margin:0 0 24px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:760px){.grid{grid-template-columns:1fr}}
+.box{background:var(--card);border:2px solid var(--bd);border-radius:10px;padding:18px;margin-bottom:18px;min-width:0}
+.ico{width:20px;height:20px;flex:none}
+/* flow */
+svg.flow{width:100%;height:auto;display:block}
+svg text{fill:var(--fg);font:600 13px system-ui}
+svg .small{font:12px ui-monospace,monospace;fill:var(--mut)}
+.legend{display:flex;flex-wrap:wrap;gap:12px;margin-top:10px;font-size:13px;color:var(--mut)}
+.legend i{display:inline-block;width:12px;height:12px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+/* runner */
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:14px}
+.ctrl button,.ctrl select{font:600 13px system-ui;color:var(--fg);background:var(--card);border:2px solid var(--bd);border-radius:6px;padding:5px 12px;cursor:pointer}
+.ctrl button.pri{background:var(--fg);color:var(--bg)}
+.ctrl button:disabled{opacity:.4;cursor:default}
+.ctrl .cnt{margin-left:auto;font-size:13px;color:var(--mut)}
+.lanes{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-bottom:12px}
+.actor{border:2px solid var(--c);border-radius:8px;padding:8px 4px;text-align:center;font:600 12.5px system-ui;transition:background .25s,color .25s;overflow-wrap:anywhere}
+.actor small{display:block;font:11px ui-monospace,monospace;color:var(--mut)}
+.actor.on{background:var(--c);color:var(--card)}.actor.on small{color:var(--card)}
+.track{position:relative;height:26px;margin:0 0 12px;border-bottom:2px dashed var(--mut)}
+.pkt{position:absolute;top:2px;left:10%;transform:translateX(-50%);padding:2px 9px;border-radius:999px;background:var(--c,var(--base));color:var(--card);font:600 11.5px ui-monospace,monospace;white-space:nowrap;transition:left .6s ease}
+.now{border:2px solid var(--bd);border-radius:8px;padding:10px 12px;margin-bottom:12px;min-height:62px}
+.now b{display:block}
+.log{background:var(--bg);border:2px solid var(--bd);border-radius:8px;padding:10px;height:170px;overflow:auto;font:12.5px/1.6 ui-monospace,monospace;margin:0}
+.log .d{color:var(--mut)}
+.note{font-size:12.5px;color:var(--mut);margin:8px 0 0}
+@media(max-width:600px){.actor{font-size:11px}.actor small{display:none}}
+code{font-family:ui-monospace,monospace;font-size:13px}
+</style></head>
+<body><main>
+<h1>MCP Learning: Architecture</h1>
+<p class="sub">Async Python clients for the GitHub and Context7 MCP servers over streamable HTTP.</p>
+
+<section class="box">
+  <h2><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="6"/><rect x="14" y="15" width="7" height="6"/><path d="M6.5 9v4h11v2"/></svg>Client interaction flow</h2>
+  <svg class="flow" viewBox="0 0 960 400" role="img" aria-label="Client flowchart">
+    <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0 0L10 5L0 10z" style="fill:var(--mut)"/></marker></defs>
+    <g fill="none" stroke-width="2.5">
+      <rect x="20" y="160" width="170" height="70" rx="8" style="stroke:var(--nb)"/>
+      <rect x="260" y="40" width="190" height="70" rx="8" style="stroke:var(--gh)"/>
+      <rect x="260" y="280" width="190" height="70" rx="8" style="stroke:var(--c7)"/>
+      <rect x="520" y="150" width="190" height="90" rx="8" style="stroke:var(--base)"/>
+      <rect x="780" y="40" width="160" height="70" rx="8" style="stroke:var(--gh)"/>
+      <rect x="780" y="280" width="160" height="70" rx="8" style="stroke:var(--c7)"/>
+      <rect x="520" y="300" width="190" height="60" rx="8" style="stroke:var(--ext)" stroke-dasharray="6 4"/>
+    </g>
+    <g style="stroke:var(--mut)" stroke-width="2" fill="none" marker-end="url(#ar)">
+      <path d="M190 185 L258 85"/><path d="M190 205 L258 305"/>
+      <path d="M450 85 L518 175" stroke-dasharray="5 4"/><path d="M450 305 L518 220" stroke-dasharray="5 4"/>
+      <path d="M710 175 L778 85"/><path d="M710 220 L778 305"/>
+      <path d="M615 298 L615 242"/>
+    </g>
+    <text x="105" y="192" text-anchor="middle">Notebook</text><text class="small" x="105" y="212" text-anchor="middle">async with …</text>
+    <text x="355" y="72" text-anchor="middle">GitHubMCPClient</text><text class="small" x="355" y="92" text-anchor="middle">GITHUB_* env</text>
+    <text x="355" y="312" text-anchor="middle">Context7MCPClient</text><text class="small" x="355" y="332" text-anchor="middle">CONTEXT_* env</text>
+    <text x="615" y="180" text-anchor="middle">BaseMCPClient</text>
+    <text class="small" x="615" y="200" text-anchor="middle">connect → list_tools</text>
+    <text class="small" x="615" y="218" text-anchor="middle">→ call_tool → close</text>
+    <text x="860" y="72" text-anchor="middle">GitHub MCP</text><text class="small" x="860" y="92" text-anchor="middle">Bearer · HTTP</text>
+    <text x="860" y="312" text-anchor="middle">Context7 MCP</text><text class="small" x="860" y="332" text-anchor="middle">Bearer · HTTP</text>
+    <text x="615" y="327" text-anchor="middle">.env (dotenv)</text><text class="small" x="615" y="345" text-anchor="middle">URL + token</text>
+    <text class="small" x="470" y="125">inherits</text>
+    <text class="small" x="722" y="135">httpx2 + ClientSession</text>
+  </svg>
+  <div class="legend">
+    <span><i style="background:var(--nb)"></i>Driver</span><span><i style="background:var(--gh)"></i>GitHub</span>
+    <span><i style="background:var(--c7)"></i>Context7</span><span><i style="background:var(--base)"></i>Shared base</span>
+    <span><i style="background:var(--ext)"></i>Config</span><span>– – inheritance</span>
+  </div>
+</section>
+
+<section class="box" id="runner">
+  <h2><svg class="ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M7 4l12 8-12 8z"/></svg>Flow runner</h2>
+  <div class="ctrl">
+    <select id="srv" aria-label="Server"><option value="gh">GitHub MCP</option><option value="c7">Context7 MCP</option></select>
+    <button class="pri" id="run">▶ Run</button><button id="step">Step ›</button><button id="reset">↺ Reset</button>
+    <span class="cnt" id="cnt"></span>
+  </div>
+  <div class="lanes" id="lanes"></div>
+  <div class="track"><span class="pkt" id="pkt">idle</span></div>
+  <div class="now" id="now"></div>
+  <pre class="log" id="log"></pre>
+  <p class="note">Simulated walkthrough of the real call order in <code>BaseMCPClient</code>. No network requests are made.</p>
+</section>
+</main>
+
+<script>
+const A=[["nb","Notebook","async with"],["cl","Client",""],["base","BaseMCPClient","base_client.py"],["ext","httpx2 + Session","HTTP · MCP"],["srv","Server",""]];
+const COL={nb:"--nb",base:"--base",ext:"--ext"};
+const F={
+ gh:{name:"GitHub",cls:"GitHubMCPClient",env:"GITHUB_MCP_URL / GITHUB_TOKEN",host:"api.githubcopilot.com/mcp/",calls:[["get_me","{}","{ login: \"…\" }"]]},
+ c7:{name:"Context7",cls:"Context7MCPClient",env:"CONTEXT_MCP_URL / CONTEXT_TOKEN",host:"Context7 MCP URL",calls:[["resolve-library-id","{ libraryName, query }","library ID"],["query-docs","{ libraryId, query }","doc snippets"]]}};
+const $=id=>document.getElementById(id);
+let steps=[],i=0,timer=null;
+function build(k){const f=F[k];
+ steps=[
+  ["nb","cl",`${f.cls}()`,"Create the client",`Reads ${f.env} from .env via load_dotenv(). Raises ValueError if either is missing.`],
+  ["cl","base","connect()","Open the connection","__aenter__ calls connect() on the shared base class."],
+  ["base","ext","AsyncClient","Build the HTTP stack","AsyncExitStack enters httpx2.AsyncClient (Bearer token, 30s / 300s read) and streamable_http_client."],
+  ["ext","srv","initialize","MCP handshake",`ClientSession.initialize() with ${f.host}.`],
+  ["srv","nb","ready","Session ready","connect() returns the client to the notebook."],
+  ["nb","srv","list_tools","Discover tools","list_tools() caches tools by name in self.tools. call_tool() rejects unknown names."],
+  ...f.calls.map(([t,a,r])=>["nb","srv",t,`call_tool("${t}")`,`Arguments ${a} → server returns ${r}.`]),
+  ["nb","base","close()","Clean up","__aexit__ → close(): clears session and tools, AsyncExitStack closes everything in reverse order."]];
+ $("lanes").innerHTML=A.map(([id,n,s])=>`<div class="actor" data-id="${id}" style="--c:var(${COL[id]||(k=="gh"?"--gh":"--c7")})">${id=="cl"?f.cls:id=="srv"?f.name+" MCP":n}<small>${id=="cl"?"subclass":id=="srv"?"remote":s}</small></div>`).join("");
+ reset();}
+function x(id){return (A.findIndex(a=>a[0]==id)+.5)*20+"%"}
+function show(n){const [a,b,lbl,t,d]=steps[n],p=$("pkt");
+ document.querySelectorAll(".actor").forEach(e=>e.classList.toggle("on",e.dataset.id==a||e.dataset.id==b));
+ p.style.left=x(a);p.textContent=lbl;p.style.setProperty("--c",getComputedStyle(document.querySelector(`[data-id="${b}"]`)).getPropertyValue("--c"));
+ requestAnimationFrame(()=>requestAnimationFrame(()=>p.style.left=x(b)));
+ $("now").innerHTML=`<b>${n+1}. ${t}</b>${d}`;
+ $("log").innerHTML+=`${String(n+1).padStart(2,"0")}  ${a} → ${b}  ${lbl}\n<span class="d">    ${d}</span>\n`;$("log").scrollTop=1e9;
+ $("cnt").textContent=`Step ${n+1} / ${steps.length}`;}
+function step(){if(i>=steps.length)return stop();show(i++);if(i>=steps.length){stop();$("step").disabled=true}}
+function stop(){clearInterval(timer);timer=null;$("run").textContent="▶ Run"}
+function reset(){stop();i=0;$("log").innerHTML="";$("step").disabled=false;$("pkt").style.left="10%";$("pkt").textContent="idle";
+ $("now").innerHTML="<b>Ready</b>Press Run to play the whole flow, or Step to go one call at a time.";$("cnt").textContent=`0 / ${steps.length}`;
+ document.querySelectorAll(".actor").forEach(e=>e.classList.remove("on"));}
+$("run").onclick=()=>{if(timer)return stop();if(i>=steps.length)reset();$("run").textContent="❚❚ Pause";step();timer=setInterval(step,1400)};
+$("step").onclick=()=>{stop();step()};$("reset").onclick=reset;$("srv").onchange=e=>build(e.target.value);
+build("gh");
+</script>
+</body></html>

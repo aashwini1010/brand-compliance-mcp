@@ -1,0 +1,529 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MCP Learning Project</title>
+<meta name="description" content="Visual overview of the MCP Learning project: what was built, why, how it works and what it is used for.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&family=JetBrains+Mono:wght@400;600&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<style>
+/* Layout: one scrolling story, each chapter a full-width band (picture first, few words). Sticky chapter nav on top. Same tokens as the team briefing so the set reads as one. */
+:root{
+  --bg:#f5f7fa; --surface:#ffffff; --surface-2:#edf1f6; --ink:#111720; --ink-2:#465061; --muted:#6f7888;
+  --line:#dbe1e9; --accent:#2446a8; --accent-ink:#ffffff; --accent-soft:#e5ebfa;
+  --s-read:#2a78d6; --s-write:#eb6834; --s-both:#1baf7a; --s-others:#eda100;
+  --bar:#2a78d6; --ref:#8a93a3; --grid:#e3e7ee; --axis:#c3cad5;
+  --good:#0ca30c; --good-ink:#006300; --warn:#fab219; --serious:#ec835a; --crit:#d03b3b;
+  --mess:#c2557a; --shadow:0 1px 2px rgba(17,23,32,.06),0 6px 20px rgba(17,23,32,.07);
+  --f-display:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1117; --surface:#161a21; --surface-2:#1d222b; --ink:#f1f4f8; --ink-2:#b8c0cc; --muted:#8b94a2;
+  --line:#2a313c; --accent:#8fa7f2; --accent-ink:#0e1117; --accent-soft:#1d2844;
+  --s-read:#3987e5; --s-write:#d95926; --s-both:#199e70; --s-others:#c98500;
+  --bar:#3987e5; --ref:#8b94a2; --grid:#262c36; --axis:#3a424f; --good-ink:#0ca30c;
+  --mess:#d9789b; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.3); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e1117; --surface:#161a21; --surface-2:#1d222b; --ink:#f1f4f8; --ink-2:#b8c0cc; --muted:#8b94a2;
+  --line:#2a313c; --accent:#8fa7f2; --accent-ink:#0e1117; --accent-soft:#1d2844;
+  --s-read:#3987e5; --s-write:#d95926; --s-both:#199e70; --s-others:#c98500;
+  --bar:#3987e5; --ref:#8b94a2; --grid:#262c36; --axis:#3a424f; --good-ink:#0ca30c;
+  --mess:#d9789b; --shadow:0 1px 2px rgba(0,0,0,.3),0 6px 20px rgba(0,0,0,.3); color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.12;text-wrap:balance;margin:0}
+h1{font-size:clamp(2rem,5vw,3.2rem);font-weight:800;letter-spacing:-.025em}
+h2{font-size:clamp(1.4rem,3vw,2rem);font-weight:800;letter-spacing:-.015em}
+h3{font-size:1rem;font-weight:700}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.85em}
+.ic{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.lg{width:34px;height:34px}
+.ic.xl{width:44px;height:44px;stroke-width:1.6}
+
+/* nav */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1180px;margin:0 auto;padding-inline:16px;padding-block:10px;display:flex;align-items:center;gap:10px 20px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:800;display:flex;gap:8px;align-items:center;color:var(--ink);text-decoration:none}
+.chap{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none;margin-left:auto;max-width:100%}
+.chap a{white-space:nowrap;text-decoration:none;color:var(--ink-2);font-weight:700;font-size:.86rem;padding:6px 10px;border-radius:7px}
+.chap a:hover{background:var(--surface-2)}
+.chap a[aria-current="true"]{background:var(--accent);color:var(--accent-ink)}
+@media (max-width:760px){.chap{margin-left:0;width:100%}}
+
+/* chapters */
+.wrap{max-width:1180px;margin:0 auto;padding-inline:16px}
+.band{padding-block:56px;border-bottom:1px solid var(--line);scroll-margin-top:64px}
+.band.alt{background:var(--surface)}
+.band .wrap{display:grid;gap:26px}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-size:.78rem;letter-spacing:.1em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.kicker b{font-family:var(--f-display);font-size:.95rem;letter-spacing:0;background:var(--accent);color:var(--accent-ink);border-radius:6px;padding:1px 7px}
+.head{display:grid;gap:8px;max-width:760px}
+.head p{color:var(--ink-2);font-size:1.08rem}
+.cap{font-size:.82rem;color:var(--muted)}
+
+.grid{display:grid;gap:14px;min-width:0}
+.g2{grid-template-columns:repeat(auto-fit,minmax(min(100%,420px),1fr))}
+.g3{grid-template-columns:repeat(auto-fit,minmax(min(100%,250px),1fr))}
+.g4{grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))}
+.box{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;min-width:0;display:grid;gap:12px;align-content:start}
+.band.alt .box{background:var(--bg)}
+.svgbox{overflow-x:auto}
+.svgbox svg{display:block;width:100%;height:auto}
+
+/* hero */
+.hero{padding-block:44px 52px}
+.hero .wrap{display:grid;gap:28px;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);align-items:center}
+@media (max-width:900px){.hero .wrap{grid-template-columns:minmax(0,1fr)}}
+.hero .lede{font-size:1.15rem;color:var(--ink-2);max-width:34ch}
+.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+@media (max-width:520px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;display:grid;gap:0}
+.stat .v{font-family:var(--f-display);font-weight:800;font-size:1.7rem;line-height:1.15}
+.stat .k{font-size:.78rem;color:var(--ink-2)}
+
+/* svg text + marks */
+.n rect{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.n.hl rect{fill:var(--accent-soft);stroke:var(--accent);stroke-width:2}
+.n.dim rect{fill:var(--surface-2);stroke:var(--line)}
+.t1{font-family:var(--f-display);font-weight:700;font-size:15px;fill:var(--ink)}
+.t2{font-family:var(--f-body);font-size:12px;fill:var(--muted)}
+.tl{font-family:var(--f-body);font-size:12px;fill:var(--ink-2)}
+.lnk{stroke:var(--accent);stroke-width:2.5;fill:none}
+.lnk.flow{stroke-dasharray:6 6;animation:flow 1.4s linear infinite}
+@keyframes flow{to{stroke-dashoffset:-24}}
+.mess{fill:none;stroke-width:2.5}
+.m1{stroke:var(--mess)}.m2{stroke:var(--s-others);stroke-dasharray:3 4}.m3{stroke:var(--ref);stroke-dasharray:9 5}
+.ah{fill:var(--accent)}
+.zone{fill:var(--surface-2)}
+.zl{font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:.08em;fill:var(--muted);text-transform:uppercase}
+.icn{stroke:var(--accent);fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+
+/* what-is cards */
+.term{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center}
+.term .ico{width:60px;height:60px;border-radius:14px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.term b{font-family:var(--f-display);font-size:1.1rem;display:block}
+.term span{font-size:.9rem;color:var(--ink-2)}
+
+/* before/after */
+.ba-h{display:flex;align-items:center;gap:8px;font-family:var(--f-display);font-weight:800;font-size:1.05rem}
+.badge{font-size:.72rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:2px 8px;border-radius:6px}
+.b-bad{background:var(--surface-2);color:var(--mess)}
+.b-good{background:var(--accent-soft);color:var(--accent)}
+.pts{display:grid;gap:6px;margin:0;padding:0;list-style:none}
+.pts li{display:grid;grid-template-columns:20px 1fr;gap:6px;font-size:.9rem;color:var(--ink-2)}
+.pts .ic{width:18px;height:18px}
+.bad .ic{color:var(--mess)} .good .ic{color:var(--good-ink)}
+
+/* layer stack */
+.stack{display:grid;gap:8px}
+.layer{display:grid;grid-template-columns:52px minmax(0,1fr) auto;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 16px;cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%}
+.layer:hover,.layer[aria-expanded="true"]{border-color:var(--accent)}
+.layer .ico{width:52px;height:52px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.layer b{font-family:var(--f-display);font-size:1.02rem;display:block}
+.layer span{font-size:.86rem;color:var(--ink-2)}
+.layer .tag{font-family:var(--f-mono);font-size:.74rem;color:var(--muted);white-space:nowrap}
+.layer .more{grid-column:2 / -1;font-size:.86rem;color:var(--ink-2);display:none}
+.layer[aria-expanded="true"] .more{display:block}
+.arrowdown{justify-self:center;color:var(--muted);font-size:1.1rem;line-height:1}
+.deliv{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr))}
+.dv{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px;display:grid;gap:4px;justify-items:start}
+.band.alt .dv{background:var(--bg)}
+.dv .ic{color:var(--accent)}
+.dv .v{font-family:var(--f-display);font-weight:800;font-size:1.5rem;line-height:1.1}
+.dv .k{font-size:.8rem;color:var(--ink-2)}
+
+/* how stepper */
+.steps{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px;position:relative}
+@media (max-width:760px){.steps{grid-template-columns:minmax(0,1fr)}}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 12px;display:grid;gap:6px;justify-items:center;text-align:center;cursor:pointer;font:inherit;color:inherit;transition:border-color .2s,background .2s}
+.step .num{font-family:var(--f-display);font-weight:800;font-size:.75rem;color:var(--muted)}
+.step .ic{color:var(--ink-2)}
+.step b{font-size:.92rem}
+.step.on{border-color:var(--accent);background:var(--accent-soft)}
+.step.on .ic{color:var(--accent)}
+.step.done .num{color:var(--good-ink)}
+.msg{display:grid;grid-template-columns:auto minmax(0,1fr);gap:14px;align-items:center;background:var(--ink);color:var(--surface);border-radius:14px;padding:16px 18px;min-height:76px}
+.msg .ic{color:var(--surface)}
+.msg code{font-size:.85rem;background:rgba(255,255,255,.12);padding:2px 7px;border-radius:5px;overflow-wrap:anywhere}
+.msg .who{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;opacity:.7;display:block}
+.ctrl{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:inherit;font-weight:700;font-size:.88rem;border-radius:8px;padding:7px 14px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;display:inline-flex;gap:6px;align-items:center}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn[aria-pressed="true"]{background:var(--ink);color:var(--surface);border-color:var(--ink)}
+
+/* server cards */
+.srv{display:grid;grid-template-columns:150px minmax(0,1fr);gap:18px;align-items:center}
+@media (max-width:480px){.srv{grid-template-columns:minmax(0,1fr)}}
+.srv h3{font-size:1.25rem;display:flex;gap:8px;align-items:center}
+.srv .one{color:var(--ink-2);font-size:.95rem}
+.meter{display:grid;gap:4px}
+.meter .lab{display:flex;justify-content:space-between;font-size:.75rem;color:var(--muted)}
+.meter .bar{position:relative;height:10px;border-radius:999px;background:linear-gradient(90deg,var(--good) 0 33%,var(--warn) 33% 66%,var(--crit) 66%)}
+.meter .pin{position:absolute;top:-5px;width:20px;height:20px;border-radius:50%;background:var(--surface);border:3px solid var(--ink);transform:translateX(-50%)}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:4px 12px;font-size:.85rem;margin:0}
+.kv dt{color:var(--muted)} .kv dd{margin:0;font-weight:700}
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.d-read{background:var(--s-read)}.d-write{background:var(--s-write)}.d-both{background:var(--s-both)}.d-others{background:var(--s-others)}
+.g-read{fill:var(--s-read)}.g-write{fill:var(--s-write)}.g-both{fill:var(--s-both)}.g-others{fill:var(--s-others)}
+.big{font-family:var(--f-display);font-size:30px;font-weight:800;fill:var(--ink)}
+.ax{font-family:var(--f-body);font-size:12px;fill:var(--muted)}
+.arc:hover,.arc:focus{opacity:.85;outline:none}
+
+/* uses */
+.use{display:grid;gap:10px;justify-items:start;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px}
+.band.alt .use{background:var(--bg)}
+.use .ico{width:48px;height:48px;border-radius:12px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.use b{font-family:var(--f-display);font-size:1.02rem}
+.who{font-size:.74rem;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--surface-2);color:var(--ink-2)}
+
+/* results */
+.chainrow{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.call{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:5px 12px 5px 6px;font-family:var(--f-mono);font-size:.78rem;cursor:default}
+.band.alt .call{background:var(--bg)}
+.call .ok{width:20px;height:20px;border-radius:50%;background:var(--good);display:grid;place-items:center}
+.call .ok .ic{width:13px;height:13px;stroke:#ffffff;stroke-width:3}
+.call:hover,.call:focus{border-color:var(--accent);outline:none}
+.grp{font-size:.78rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-right:4px}
+.hb{display:grid;gap:10px}
+.hb-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;align-items:center;font-size:.86rem}
+.hb-row > span:first-child{font-family:var(--f-mono);font-size:.78rem;color:var(--ink);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.hb-track{display:flex;align-items:center;gap:8px;min-width:0;border-left:1px solid var(--axis);padding-block:2px}
+.hb-fill{height:18px;border-radius:0 4px 4px 0;background:var(--bar);min-width:3px}
+.hb-fill.alt{background:var(--ref)}
+.hb-val{font-variant-numeric:tabular-nums;font-weight:700;white-space:nowrap}
+.hb-grp{font-size:.74rem;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.ring{display:grid;grid-template-columns:auto minmax(0,1fr);gap:16px;align-items:center}
+.ring svg{width:130px;height:130px}
+.ring .trk{stroke:var(--surface-2);fill:none;stroke-width:14}
+.ring .val{stroke:var(--good);fill:none;stroke-width:14;stroke-linecap:round}
+.pass{display:grid;grid-template-columns:repeat(7,18px);gap:5px}
+.pass i{width:18px;height:18px;border-radius:5px;background:var(--good);display:block}
+
+/* when tree */
+.tq{justify-self:center;background:var(--ink);color:var(--surface);font-family:var(--f-display);font-weight:800;border-radius:999px;padding:9px 20px;font-size:1.05rem}
+.tb{background:var(--surface);border:1px solid var(--line);border-top:5px solid var(--accent);border-radius:14px;padding:16px;display:grid;gap:8px;justify-items:start}
+.band.alt .tb{background:var(--bg)}
+.tb.none{border-top-color:var(--ref)}
+.tb .if{font-size:.76rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}
+.tb .then{font-family:var(--f-display);font-weight:800;font-size:1.2rem;display:flex;gap:8px;align-items:center}
+.tb .then .ic{color:var(--accent)}
+.tb p{font-size:.86rem;color:var(--ink-2)}
+
+/* journey */
+.jr{list-style:none;margin:0;padding:0;display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:0;position:relative}
+.jr::before{content:"";position:absolute;left:12.5%;right:12.5%;top:21px;height:3px;background:var(--line)}
+.jr li{display:grid;justify-items:center;text-align:center;gap:6px;padding-inline:6px;position:relative}
+.jr .dt{width:44px;height:44px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;position:relative;z-index:1}
+.jr .dt .ic{color:var(--accent-ink)}
+.jr .d{font-family:var(--f-display);font-weight:800}
+.jr span{font-size:.84rem;color:var(--ink-2)}
+@media (max-width:640px){.jr{grid-template-columns:minmax(0,1fr);gap:14px}.jr::before{left:21px;right:auto;top:0;bottom:0;width:3px;height:auto}.jr li{grid-template-columns:44px minmax(0,1fr);justify-items:start;text-align:left;align-items:center;column-gap:12px}.jr li > :not(.dt){grid-column:2}.jr .dt{grid-row:span 2}}
+
+.refs{display:flex;flex-wrap:wrap;gap:8px}
+.refs a{font-size:.86rem;font-weight:700;text-decoration:none;border:1px solid var(--line);border-radius:999px;padding:6px 12px;background:var(--surface)}
+.refs a:hover{border-color:var(--accent)}
+footer{padding-block:28px 40px}
+
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--surface);font-size:.8rem;line-height:1.45;padding:7px 10px;border-radius:8px;max-width:260px;box-shadow:var(--shadow)}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0V8zM12 17v5"/></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.5-8A6 6 0 0 1 18 9a4 4 0 0 1 0 9H7z"/></symbol>
+  <symbol id="i-tool" viewBox="0 0 24 24"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.5-.5-.5-2.5 2.5-2.5z"/></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></symbol>
+  <symbol id="i-hand" viewBox="0 0 24 24"><path d="M7 11V6a2 2 0 0 1 4 0v4M11 10V4a2 2 0 0 1 4 0v6M15 10V6a2 2 0 0 1 4 0v7a7 7 0 0 1-7 7h-1a6 6 0 0 1-5-3l-3-5a2 2 0 0 1 3.4-2L7 11"/></symbol>
+  <symbol id="i-list" viewBox="0 0 24 24"><path d="M9 6h11M9 12h11M9 18h11M4 6h.01M4 12h.01M4 18h.01"/></symbol>
+  <symbol id="i-play" viewBox="0 0 24 24"><path d="M7 4l13 8-13 8V4z"/></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"/></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"/><path d="M4 19a2 2 0 0 1 2-2h13"/></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="8" r="2"/><path d="M6 7v10M18 10c0 4-6 3-12 7"/></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"/></symbol>
+  <symbol id="i-note" viewBox="0 0 24 24"><rect x="4" y="3" width="16" height="18" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol>
+  <symbol id="i-chart" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></symbol>
+  <symbol id="i-flask" viewBox="0 0 24 24"><path d="M9 3h6M10 3v6L4 20h16L14 9V3"/><path d="M7 15h10"/></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3z"/><path d="M14 3v4h4"/></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+  <symbol id="i-robot" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"/><path d="M12 3v4M9 12v1M15 12v1M9 16h6"/></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"/><path d="M3 13l9 5 9-5"/></symbol>
+  <symbol id="i-key" viewBox="0 0 24 24"><circle cx="8" cy="15" r="4"/><path d="M11 12l9-9M17 6l3 3M14 9l2 2"/></symbol>
+  <symbol id="i-wave" viewBox="0 0 24 24"><path d="M3 12h3l3-7 4 14 3-7h5"/></symbol>
+  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4M5 4h11l-2 4 2 4H5"/></symbol>
+  <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M4.9 19.1L7 17M17 7l2.1-2.1"/></symbol>
+  <symbol id="i-merge" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"/><circle cx="6" cy="19" r="2"/><circle cx="18" cy="12" r="2"/><path d="M6 7v10M6 7c0 4 6 5 10 5"/></symbol>
+</svg>
+
+<header class="top"><div class="top-in">
+  <a class="brand" href="#start"><svg class="ic"><use href="#i-plug"/></svg>MCP Learning Project</a>
+  <nav class="chap" aria-label="Chapters">
+    <a href="#what">What</a><a href="#why">Why</a><a href="#built">What we built</a><a href="#how">How</a><a href="#servers">The 2 servers</a><a href="#use">Uses</a><a href="#proof">Results</a><a href="#when">When</a><a href="#journey">Journey</a>
+  </nav>
+</div></header>
+
+<!-- HERO -->
+<section class="hero" id="start"><div class="wrap">
+  <div style="display:grid;gap:18px">
+    <span class="kicker">Project overview · Oct 2026</span>
+    <h1>One plug. Two smart services.</h1>
+    <p class="lede">We connected our Python code to <b>GitHub</b> and to <b>live programming docs</b> through one standard plug called MCP.</p>
+    <div class="stats">
+      <div class="stat"><span class="v">2</span><span class="k">services connected</span></div>
+      <div class="stat"><span class="v">48</span><span class="k">actions available</span></div>
+      <div class="stat"><span class="v">9</span><span class="k">actions tried live</span></div>
+      <div class="stat"><span class="v">14/14</span><span class="k">automatic checks pass</span></div>
+    </div>
+  </div>
+  <div class="box svgbox"><svg viewBox="0 0 600 300" role="img" aria-label="Our code in the middle connects through one plug to GitHub MCP and Context7 MCP" id="hero-svg">
+    <defs><marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs>
+    <rect class="zone" x="6" y="40" width="270" height="220" rx="16"/><text class="zl" x="22" y="64">Our project</text>
+    <g class="n"><rect x="24" y="118" width="100" height="64" rx="12"/><text class="t1" x="74" y="146" text-anchor="middle">You</text><text class="t2" x="74" y="164" text-anchor="middle">or an AI</text></g>
+    <g class="n hl"><rect x="150" y="104" width="112" height="92" rx="14"/>
+      <g transform="translate(194,116)"><path class="icn" d="M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0V8zM12 17v5"/></g>
+      <text class="t1" x="206" y="160" text-anchor="middle">Our code</text><text class="t2" x="206" y="178" text-anchor="middle">one MCP plug</text></g>
+    <path class="lnk" d="M124,150 L148,150" marker-end="url(#ah)"/>
+    <path class="lnk flow" d="M262,136 C320,136 330,84 382,84" marker-end="url(#ah)"/>
+    <path class="lnk flow" d="M262,164 C320,164 330,216 382,216" marker-end="url(#ah)"/>
+    <text class="tl" x="318" y="98" text-anchor="middle">secure web</text><text class="tl" x="318" y="236" text-anchor="middle">secure web</text>
+    <g class="n"><rect x="386" y="52" width="200" height="64" rx="12"/><text class="t1" x="486" y="80" text-anchor="middle">GitHub MCP</text><text class="t2" x="486" y="98" text-anchor="middle">works on your GitHub</text></g>
+    <g class="n"><rect x="386" y="184" width="200" height="64" rx="12"/><text class="t1" x="486" y="212" text-anchor="middle">Context7 MCP</text><text class="t2" x="486" y="230" text-anchor="middle">finds current docs</text></g>
+  </svg></div>
+</div></section>
+
+<!-- WHAT -->
+<section class="band alt" id="what"><div class="wrap">
+  <div class="head"><span class="kicker"><b>1</b> What is it?</span><h2>Three words explain it all</h2></div>
+  <div class="grid g3">
+    <div class="box term"><span class="ico"><svg class="ic xl"><use href="#i-plug"/></svg></span><div><b>MCP</b><span>A universal plug, like USB-C, for connecting software to services.</span></div></div>
+    <div class="box term"><span class="ico"><svg class="ic xl"><use href="#i-cloud"/></svg></span><div><b>Server</b><span>An online service that plugs in and offers a menu.</span></div></div>
+    <div class="box term"><span class="ico"><svg class="ic xl"><use href="#i-tool"/></svg></span><div><b>Tool</b><span>One item on the menu, like "create a project" or "find docs".</span></div></div>
+  </div>
+</div></section>
+
+<!-- WHY -->
+<section class="band" id="why"><div class="wrap">
+  <div class="head"><span class="kicker"><b>2</b> Why we needed it</span><h2>From tangled wires to one plug</h2></div>
+  <div class="grid g2">
+    <div class="box"><div class="ba-h"><span class="badge b-bad">Before</span>Every service, its own wiring</div>
+      <div class="svgbox"><svg viewBox="0 0 420 200" role="img" aria-label="Before: one app with three different custom connections to three services">
+        <g class="n"><rect x="14" y="70" width="96" height="60" rx="12"/><text class="t1" x="62" y="104" text-anchor="middle">Our app</text></g>
+        <path class="mess m1" d="M110,86 C170,20 200,120 250,40 S300,30 300,36"/>
+        <path class="mess m2" d="M110,100 C150,160 200,40 250,110 S290,100 300,100"/>
+        <path class="mess m3" d="M110,114 C180,190 210,120 240,170 S290,166 300,164"/>
+        <g class="n dim"><rect x="302" y="14" width="104" height="44" rx="10"/><text class="t1" x="354" y="41" text-anchor="middle">GitHub</text></g>
+        <g class="n dim"><rect x="302" y="78" width="104" height="44" rx="10"/><text class="t1" x="354" y="105" text-anchor="middle">Docs</text></g>
+        <g class="n dim"><rect x="302" y="142" width="104" height="44" rx="10"/><text class="t1" x="354" y="169" text-anchor="middle">Next one…</text></g>
+      </svg></div>
+      <ul class="pts bad"><li><svg class="ic"><use href="#i-x"/></svg>Custom code for each service</li><li><svg class="ic"><use href="#i-x"/></svg>AI guesses from old knowledge</li></ul></div>
+    <div class="box"><div class="ba-h"><span class="badge b-good">After</span>One plug for everything</div>
+      <div class="svgbox"><svg viewBox="0 0 420 200" role="img" aria-label="After: one app connects through one MCP plug to every service">
+        <defs><marker id="ah2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto"><path d="M0,0 L10,5 L0,10 z" class="ah"/></marker></defs>
+        <g class="n"><rect x="14" y="70" width="96" height="60" rx="12"/><text class="t1" x="62" y="104" text-anchor="middle">Our app</text></g>
+        <path class="lnk" d="M110,100 L150,100" marker-end="url(#ah2)"/>
+        <g class="n hl"><rect x="152" y="72" width="92" height="56" rx="12"/><text class="t1" x="198" y="98" text-anchor="middle">MCP</text><text class="t2" x="198" y="115" text-anchor="middle">one plug</text></g>
+        <path class="lnk" d="M244,92 C270,92 270,36 298,36" marker-end="url(#ah2)"/><path class="lnk" d="M244,100 L298,100" marker-end="url(#ah2)"/><path class="lnk" d="M244,108 C270,108 270,164 298,164" marker-end="url(#ah2)"/>
+        <g class="n"><rect x="302" y="14" width="104" height="44" rx="10"/><text class="t1" x="354" y="41" text-anchor="middle">GitHub</text></g>
+        <g class="n"><rect x="302" y="78" width="104" height="44" rx="10"/><text class="t1" x="354" y="105" text-anchor="middle">Docs</text></g>
+        <g class="n"><rect x="302" y="142" width="104" height="44" rx="10"/><text class="t1" x="354" y="169" text-anchor="middle">Next one…</text></g>
+      </svg></div>
+      <ul class="pts good"><li><svg class="ic"><use href="#i-check"/></svg>Same code works for every service</li><li><svg class="ic"><use href="#i-check"/></svg>AI reads live GitHub and today's docs</li></ul></div>
+  </div>
+</div></section>
+
+<!-- BUILT -->
+<section class="band alt" id="built"><div class="wrap">
+  <div class="head"><span class="kicker"><b>3</b> What we built</span><h2>Four layers, from secret keys to reports</h2><p class="cap">Click a layer to open it.</p></div>
+  <div class="grid g2">
+    <div class="stack" id="stack">
+      <button class="layer" type="button" aria-expanded="false"><span class="ico"><svg class="ic lg"><use href="#i-chart"/></svg></span><span><b>Research &amp; reports</b><span>What we learned, as documents and visual reports</span></span><span class="tag">research/</span><span class="more">5 easy-language documents, a catalog of all 48 tools, and 6 HTML reports (architecture, benchmark, detailed, two team briefings, this page).</span></button>
+      <span class="arrowdown" aria-hidden="true">▲</span>
+      <button class="layer" type="button" aria-expanded="false"><span class="ico"><svg class="ic lg"><use href="#i-note"/></svg></span><span><b>Notebook</b><span>Where we try things live</span></span><span class="tag">.ipynb</span><span class="more">Connects to both services, lists their tools and runs real actions: created a repo, added a file, searched code, found docs.</span></button>
+      <span class="arrowdown" aria-hidden="true">▲</span>
+      <button class="layer" type="button" aria-expanded="false"><span class="ico"><svg class="ic lg"><use href="#i-plug"/></svg></span><span><b>One reusable plug</b><span>Shared code + 2 tiny adapters</span></span><span class="tag">src/</span><span class="more">All connection work lives in one shared piece. Each service adds only 3 settings, so a third service takes 3 lines.</span></button>
+      <span class="arrowdown" aria-hidden="true">▲</span>
+      <button class="layer" type="button" aria-expanded="false"><span class="ico"><svg class="ic lg"><use href="#i-key"/></svg></span><span><b>Secret keys</b><span>Addresses and passwords, kept outside the code</span></span><span class="tag">.env</span><span class="more">4 settings: two addresses and two secret keys. Tests never touch them.</span></button>
+    </div>
+    <div style="display:grid;gap:12px;align-content:start">
+      <div class="deliv">
+        <div class="dv"><svg class="ic lg"><use href="#i-code"/></svg><span class="v">3</span><span class="k">Python building blocks</span></div>
+        <div class="dv"><svg class="ic lg"><use href="#i-flask"/></svg><span class="v">14</span><span class="k">automatic checks</span></div>
+        <div class="dv"><svg class="ic lg"><use href="#i-shield"/></svg><span class="v">95%</span><span class="k">of code checked</span></div>
+        <div class="dv"><svg class="ic lg"><use href="#i-note"/></svg><span class="v">1</span><span class="k">live notebook</span></div>
+        <div class="dv"><svg class="ic lg"><use href="#i-file"/></svg><span class="v">5</span><span class="k">research documents</span></div>
+        <div class="dv"><svg class="ic lg"><use href="#i-chart"/></svg><span class="v">6</span><span class="k">visual reports</span></div>
+      </div>
+      <p class="cap">Built to a written rulebook: clean layout, no secrets in code, 80%+ checked.</p>
+    </div>
+  </div>
+</div></section>
+
+<!-- HOW -->
+<section class="band" id="how"><div class="wrap">
+  <div class="head"><span class="kicker"><b>4</b> How it works</span><h2>Five steps, every time</h2></div>
+  <div class="ctrl">
+    <button class="btn" type="button" data-ex="gh" aria-pressed="true">GitHub example</button>
+    <button class="btn" type="button" data-ex="c7" aria-pressed="false">Context7 example</button>
+    <button class="btn primary" type="button" id="play"><svg class="ic" style="width:16px;height:16px"><use href="#i-play"/></svg>Play</button>
+  </div>
+  <div class="steps" id="steps">
+    <button class="step" type="button" data-i="0"><span class="num">STEP 1</span><svg class="ic lg"><use href="#i-key"/></svg><b>Load the key</b></button>
+    <button class="step" type="button" data-i="1"><span class="num">STEP 2</span><svg class="ic lg"><use href="#i-hand"/></svg><b>Say hello</b></button>
+    <button class="step" type="button" data-i="2"><span class="num">STEP 3</span><svg class="ic lg"><use href="#i-list"/></svg><b>Get the menu</b></button>
+    <button class="step" type="button" data-i="3"><span class="num">STEP 4</span><svg class="ic lg"><use href="#i-tool"/></svg><b>Run a tool</b></button>
+    <button class="step" type="button" data-i="4"><span class="num">STEP 5</span><svg class="ic lg"><use href="#i-check"/></svg><b>Get the answer</b></button>
+  </div>
+  <div class="msg" id="msg" aria-live="polite"></div>
+</div></section>
+
+<!-- SERVERS -->
+<section class="band alt" id="servers"><div class="wrap">
+  <div class="head"><span class="kicker"><b>5</b> The two services</span><h2>One works on GitHub, one reads the manuals</h2></div>
+  <div class="legend"><span><i class="sw d-read"></i>Only looks</span><span><i class="sw d-write"></i>Changes things</span><span><i class="sw d-both"></i>Copies or merges</span><span><i class="sw d-others"></i>Special helpers</span></div>
+  <div class="grid g2">
+    <div class="box srv"><div id="donut-gh"></div><div style="display:grid;gap:10px">
+      <h3><svg class="ic" style="color:var(--accent)"><use href="#i-branch"/></svg>GitHub MCP</h3><p class="one">Reads and changes your GitHub projects for you.</p>
+      <div class="meter"><div class="lab"><span>Low risk</span><span>High risk</span></div><div class="bar"><span class="pin" style="left:88%"></span></div></div>
+      <dl class="kv"><dt>Actions</dt><dd>46</dd><dt>Typical wait</dt><dd>about 1 second</dd><dt>Run by</dt><dd>GitHub</dd></dl></div></div>
+    <div class="box srv"><div id="donut-c7"></div><div style="display:grid;gap:10px">
+      <h3><svg class="ic" style="color:var(--accent)"><use href="#i-book"/></svg>Context7 MCP</h3><p class="one">Finds today's instructions for programming tools.</p>
+      <div class="meter"><div class="lab"><span>Low risk</span><span>High risk</span></div><div class="bar"><span class="pin" style="left:10%"></span></div></div>
+      <dl class="kv"><dt>Actions</dt><dd>2</dd><dt>Typical wait</dt><dd>about 2.5 seconds</dd><dt>Run by</dt><dd>Upstash</dd></dl></div></div>
+  </div>
+</div></section>
+
+<!-- USES -->
+<section class="band" id="use"><div class="wrap">
+  <div class="head"><span class="kicker"><b>6</b> What it's used for</span><h2>Everyday jobs it can do</h2></div>
+  <div class="grid g3">
+    <div class="use"><span class="ico"><svg class="ic lg"><use href="#i-flag"/></svg></span><b>Start a new project</b><span class="who">GitHub</span></div>
+    <div class="use"><span class="ico"><svg class="ic lg"><use href="#i-file"/></svg></span><b>Read or add a file</b><span class="who">GitHub</span></div>
+    <div class="use"><span class="ico"><svg class="ic lg"><use href="#i-search"/></svg></span><b>Find example code</b><span class="who">GitHub</span></div>
+    <div class="use"><span class="ico"><svg class="ic lg"><use href="#i-book"/></svg></span><b>Get current instructions</b><span class="who">Context7</span></div>
+    <div class="use"><span class="ico"><svg class="ic lg"><use href="#i-robot"/></svg></span><b>Give an AI real facts</b><span class="who">Both</span></div>
+    <div class="use"><span class="ico"><svg class="ic lg"><use href="#i-merge"/></svg></span><b>Learn it, then save it</b><span class="who">Context7 → GitHub</span></div>
+  </div>
+</div></section>
+
+<!-- PROOF -->
+<section class="band alt" id="proof"><div class="wrap">
+  <div class="head"><span class="kicker"><b>7</b> Results</span><h2>It works, and here is the proof</h2><p class="cap">Measured on 5–6 Oct 2026. Hover for details.</p></div>
+  <div class="box"><h3>9 real actions tried, all succeeded</h3><div class="chainrow" id="calls"></div></div>
+  <div class="grid g3">
+    <div class="box"><h3>How long one action takes</h3><div class="hb" id="speed"></div><p class="cap">Seconds. Context7 searches a big library, so it's slower.</p></div>
+    <div class="box"><h3>Ask both at once: twice as fast</h3><div class="hb" id="together"></div><p class="cap">Seconds to connect and ask both services.</p></div>
+    <div class="box"><h3>Quality checks</h3><div class="ring"><svg viewBox="0 0 130 130" role="img" aria-label="95 percent of the code is covered by automatic checks"><circle class="trk" cx="65" cy="65" r="52"/><circle class="val" cx="65" cy="65" r="52" stroke-dasharray="310.4 326.7" transform="rotate(-90 65 65)"/><text class="big" x="65" y="62" text-anchor="middle" dominant-baseline="central">95%</text><text class="ax" x="65" y="88" text-anchor="middle">code checked</text></svg>
+      <div style="display:grid;gap:8px"><div class="pass" id="pass" aria-label="14 of 14 checks pass"></div><span class="cap"><b style="color:var(--ink)">14 of 14</b> automatic checks pass. They never use real keys or the internet.</span></div></div></div>
+  </div>
+</div></section>
+
+<!-- WHEN -->
+<section class="band" id="when"><div class="wrap">
+  <div class="head"><span class="kicker"><b>8</b> When to use which</span><h2>One question decides it</h2></div>
+  <div class="tq">What do you need?</div>
+  <div class="grid g4">
+    <div class="tb"><span class="if">Work on GitHub</span><span class="then"><svg class="ic"><use href="#i-branch"/></svg>GitHub MCP</span><p>Projects, files, bugs, reviews. Check before changing things.</p></div>
+    <div class="tb"><span class="if">Know how a tool works</span><span class="then"><svg class="ic"><use href="#i-book"/></svg>Context7 MCP</span><p>Current instructions. Always safe.</p></div>
+    <div class="tb"><span class="if">Both</span><span class="then"><svg class="ic"><use href="#i-merge"/></svg>Context7, then GitHub</span><p>Learn the right way, then save the work.</p></div>
+    <div class="tb none"><span class="if">Something else</span><span class="then"><svg class="ic"><use href="#i-x"/></svg>Neither</span><p>Local files, private notes, general questions.</p></div>
+  </div>
+</div></section>
+
+<!-- JOURNEY -->
+<section class="band alt" id="journey"><div class="wrap">
+  <div class="head"><span class="kicker"><b>9</b> Our journey</span><h2>From setup to sharing in one week</h2><p class="cap">Dates from the project files.</p></div>
+  <ol class="jr">
+    <li><span class="dt"><svg class="ic"><use href="#i-gear"/></svg></span><span class="d">1 Oct</span><span>Set up Python and secret keys</span></li>
+    <li><span class="dt"><svg class="ic"><use href="#i-code"/></svg></span><span class="d">5 Oct</span><span>Built the plug, checks and first reports</span></li>
+    <li><span class="dt"><svg class="ic"><use href="#i-flask"/></svg></span><span class="d">6 Oct</span><span>Tested live, wrote research, team briefings</span></li>
+    <li><span class="dt"><svg class="ic"><use href="#i-flag"/></svg></span><span class="d">7 Oct</span><span>This overview</span></li>
+  </ol>
+</div></section>
+
+<footer><div class="wrap" style="display:grid;gap:10px">
+  <span class="kicker">Learn more</span>
+  <div class="refs">
+    <a href="https://modelcontextprotocol.io" target="_blank" rel="noopener noreferrer">What is MCP ↗</a>
+    <a href="https://github.com/github/github-mcp-server" target="_blank" rel="noopener noreferrer">GitHub MCP ↗</a>
+    <a href="https://github.com/upstash/context7" target="_blank" rel="noopener noreferrer">Context7 MCP ↗</a>
+    <a href="https://context7.com" target="_blank" rel="noopener noreferrer">context7.com ↗</a>
+  </div>
+</div></footer>
+
+<div id="tip" role="tooltip" hidden></div>
+<script>
+(()=>{
+"use strict";
+const $=(s,r=document)=>r.querySelector(s),$$=(s,r=document)=>[...r.querySelectorAll(s)];
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const tip=$("#tip");
+function move(e){const p=14,r=tip.getBoundingClientRect();let x=e.clientX+p,y=e.clientY+p;if(x+r.width>innerWidth-8)x=e.clientX-r.width-p;if(y+r.height>innerHeight-8)y=e.clientY-r.height-p;tip.style.left=Math.max(8,x)+"px";tip.style.top=Math.max(8,y)+"px"}
+function tipOn(el,html){el.addEventListener("pointerenter",e=>{tip.innerHTML=html;tip.hidden=false;move(e)});el.addEventListener("pointermove",move);el.addEventListener("pointerleave",()=>tip.hidden=true);
+  el.addEventListener("focus",()=>{const r=el.getBoundingClientRect();tip.innerHTML=html;tip.hidden=false;move({clientX:r.left+r.width/2,clientY:r.bottom})});el.addEventListener("blur",()=>tip.hidden=true)}
+
+/* layers */
+$$("#stack .layer").forEach(b=>b.addEventListener("click",()=>b.setAttribute("aria-expanded",String(b.getAttribute("aria-expanded")!=="true"))));
+
+/* how it works */
+const EX={gh:[["key","Our code","Picks up the <b>GitHub key</b> from the safe settings file"],["hand","Our code → GitHub MCP","\"Hello!\" A secure connection opens"],["list","GitHub MCP","Here is my menu: <b>46 tools</b>"],["tool","Our code","Run <code>create_repository</code> with name <code>my-repo</code>, private"],["check","GitHub MCP","Done: <code>github.com/aashwini1010/my-repo</code>"]],
+  c7:[["key","Our code","Picks up the <b>Context7 key</b> from the safe settings file"],["hand","Our code → Context7 MCP","\"Hello!\" A secure connection opens"],["list","Context7 MCP","Here is my menu: <b>2 tools</b>"],["tool","Our code","Find <code>Next.js</code>, then ask: <i>how do I check a login cookie?</i>"],["check","Context7 MCP","Here are today's Next.js docs and code examples"]]};
+let ex="gh",k=0,timer=null;
+function render(){const s=EX[ex][k];$$("#steps .step").forEach((b,i)=>{b.classList.toggle("on",i===k);b.classList.toggle("done",i<k)});
+  $("#msg").innerHTML=`<svg class="ic lg"><use href="#i-${s[0]}"/></svg><div><span class="who">Step ${k+1} · ${s[1]}</span>${s[2]}</div>`}
+function stop(){clearInterval(timer);timer=null;$("#play").innerHTML='<svg class="ic" style="width:16px;height:16px"><use href="#i-play"/></svg>Play'}
+$("#play").addEventListener("click",()=>{if(timer){stop();return}if(k>=4)k=0;render();$("#play").textContent="Pause";
+  timer=setInterval(()=>{if(k>=4){stop();return}k++;render()},reduce?2600:1700)});
+$$("#steps .step").forEach(b=>b.addEventListener("click",()=>{stop();k=+b.dataset.i;render()}));
+$$("[data-ex]").forEach(b=>b.addEventListener("click",()=>{ex=b.dataset.ex;$$("[data-ex]").forEach(x=>x.setAttribute("aria-pressed",String(x===b)));render()}));
+render();
+
+/* donuts */
+const NS="http://www.w3.org/2000/svg",S=(t,a,p)=>{const e=document.createElementNS(NS,t);for(const x in a)e.setAttribute(x,a[x]);p&&p.appendChild(e);return e};
+const LAB={read:"Only looks",write:"Changes things",both:"Copies or merges",others:"Special helpers"};
+function donut(el,parts){const tot=parts.reduce((a,p)=>a+p[1],0),size=150,r=71,ri=44,c=75;
+  const svg=S("svg",{viewBox:`0 0 ${size} ${size}`,width:size,height:size,role:"img","aria-label":`${tot} actions: `+parts.map(p=>`${p[1]} ${LAB[p[0]].toLowerCase()}`).join(", ")},el);
+  let a0=-Math.PI/2;const gap=parts.length>1?.035:0,P=(rr,a)=>`${c+rr*Math.cos(a)},${c+rr*Math.sin(a)}`;
+  parts.forEach(([g,v])=>{const a1=a0+v/tot*Math.PI*2,s0=a0+gap/2,s1=a1-gap/2,L=s1-s0>Math.PI?1:0;
+    const d=parts.length===1?`M${c},${c-r}A${r},${r} 0 1 1 ${c-.01},${c-r}L${c-.01},${c-ri}A${ri},${ri} 0 1 0 ${c},${c-ri}Z`:`M${P(r,s0)}A${r},${r} 0 ${L} 1 ${P(r,s1)}L${P(ri,s1)}A${ri},${ri} 0 ${L} 0 ${P(ri,s0)}Z`;
+    const p=S("path",{d,class:"arc g-"+g,tabindex:0},svg);tipOn(p,`<b>${LAB[g]}</b>: ${v} action${v>1?"s":""}`);a0=a1});
+  const t=S("text",{x:c,y:c-4,class:"big","text-anchor":"middle","dominant-baseline":"central"},svg);t.textContent=tot;
+  const u=S("text",{x:c,y:c+20,class:"ax","text-anchor":"middle"},svg);u.textContent="actions"}
+donut($("#donut-gh"),[["read",26],["write",13],["both",4],["others",3]]);donut($("#donut-c7"),[["read",2]]);
+
+/* results */
+const CALLS=[["GitHub","create_repository","Made a private project called my-repo"],["GitHub","create_or_update_file","Added hello.py to it"],["GitHub","get_file_contents","Read hello.py back"],["GitHub","search_users","Found our user"],["GitHub","search_code","Found 163,328 matching files"],["GitHub","get_me","Showed our profile in 0.85 s"],["GitHub","search_repositories","Found 5 projects in 1.2 s"],["Context7","resolve-library-id","Found Next.js among 5 matches"],["Context7","query-docs","Returned current Next.js docs"]];
+let last="";$("#calls").innerHTML=CALLS.map(([s,n],i)=>`${s!==last?(last=s,`<span class="grp">${s}</span>`):""}<span class="call" tabindex="0" data-i="${i}"><span class="ok"><svg class="ic"><use href="#i-check"/></svg></span>${n}</span>`).join("");
+$$("#calls .call").forEach(c=>{const x=CALLS[+c.dataset.i];tipOn(c,`<b>${x[1]}</b><br>${x[2]}`)});
+function bars(el,rows,max,unit){el.innerHTML=rows.map(r=>r.h?`<span class="hb-grp">${r.h}</span>`:`<div class="hb-row"><span>${r.l}</span><span class="hb-track"><span class="hb-fill${r.alt?" alt":""}" style="width:${r.v/max*72}%"></span><span class="hb-val">${r.v} ${unit}</span></span></div>`).join("");
+  $$(".hb-row",el).forEach((row,i)=>{const r=rows.filter(x=>!x.h)[i];tipOn(row,`<b>${r.l}</b><br>${r.tip||r.v+" "+unit}`)})}
+bars($("#speed"),[{h:"GitHub"},{l:"get_me",v:0.85,tip:"Tries: 0.84 / 0.85 / 0.86 s"},{l:"search_repositories",v:1.2,tip:"Tries: 1.27 / 1.18 / 1.20 s"},{h:"Context7"},{l:"resolve-library-id",v:2.3,tip:"Tries: 2.33 / 2.38 / 2.23 s"},{l:"query-docs",v:2.6,tip:"One try: 2.59 s"}],2.6,"s");
+bars($("#together"),[{l:"One after another",v:9.4,alt:true,tip:"9.36 s in total"},{l:"Both at once",v:4.9,tip:"4.94 s in total, 1.9× faster"}],9.4,"s");
+$("#pass").innerHTML=Array.from({length:14},()=>"<i></i>").join("");
+
+/* chapter nav */
+const links=$$(".chap a"),secs=links.map(a=>$(a.getAttribute("href")));
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){links.forEach(a=>a.setAttribute("aria-current",String(a.getAttribute("href")==="#"+e.target.id)));
+  const on=links.find(a=>a.getAttribute("href")==="#"+e.target.id),bar=$(".chap");if(on&&bar.scrollWidth>bar.clientWidth)bar.scrollTo({left:on.offsetLeft-bar.clientWidth/2+on.offsetWidth/2,behavior:"auto"})}}),{rootMargin:"-40% 0px -55% 0px"});
+secs.forEach(s=>s&&io.observe(s));
+document.addEventListener("click",e=>{const a=e.target.closest("a[href^='#']");if(!a)return;const t=$(a.getAttribute("href"));if(!t)return;e.preventDefault();t.scrollIntoView({behavior:reduce?"auto":"smooth",block:"start"})});
+})();
+</script>
+
+</body>
+</html>
