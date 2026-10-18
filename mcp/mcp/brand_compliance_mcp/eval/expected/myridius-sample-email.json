@@ -1,0 +1,332 @@
+{
+  "id": "myridius-sample-email",
+  "description": "The Myridius guide applied to a synthetic marketing email (tables, inline styles, Outlook conditional comments). Email clients cannot use clamp(), so those sizes must be skipped and explained; rem becomes px.",
+  "synthetic": true,
+  "guide": "myridius-brand-guide.md",
+  "artifact": "eval/artifacts/sample-marketing-email.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "email",
+    "rules": [
+      {
+        "selector": {
+          "guide_line": 68,
+          "category": "min_contrast"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 80,
+          "category": "font_family"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 81,
+          "category": "font_source"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 89,
+          "role": "heading.h1",
+          "property": "font-size"
+        },
+        "status": "understood_not_applicable",
+        "why": "clamp() is not supported by email clients"
+      },
+      {
+        "selector": {
+          "guide_line": 89,
+          "role": "heading.h1",
+          "property": "font-weight"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 105,
+          "role": "text.body",
+          "scope": "light",
+          "property": "color"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 105,
+          "role": "text.body",
+          "scope": "dark",
+          "property": "color"
+        },
+        "status": "applied",
+        "why": "the header sits on a dark surface"
+      },
+      {
+        "selector": {
+          "guide_line": 223,
+          "role": "button",
+          "property": "border-radius"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 218,
+          "role": "button.primary",
+          "property": "background"
+        },
+        "status": "understood_not_applicable",
+        "why": "the email has no primary button"
+      },
+      {
+        "selector": {
+          "guide_line": 104,
+          "role": "text.eyebrow",
+          "scope": "light",
+          "property": "color"
+        },
+        "status": "understood_not_applicable",
+        "why": "the email has no eyebrow label"
+      },
+      {
+        "selector": {
+          "guide_line": 393
+        },
+        "status": "understood_not_applicable",
+        "why": "logo rule; no logo asset"
+      },
+      {
+        "selector": {
+          "guide_line": 377
+        },
+        "status": "could_not_interpret",
+        "why": "subjective voice guidance"
+      },
+      {
+        "selector": {
+          "guide_line": 394,
+          "category": "forbid_effect",
+          "value": "gradient"
+        },
+        "status": "conflict_unresolved",
+        "why": ""
+      }
+    ],
+    "changes": [
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-weight",
+        "after": "700",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "line-height",
+        "after": "1.1",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "letter-spacing",
+        "after": "-0.015em",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "font-weight",
+        "after": "700",
+        "why": "unset in the email, so it is added"
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "line-height",
+        "after": "1.15",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "letter-spacing",
+        "after": "-0.01em",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-size",
+        "after": "16px",
+        "why": "1rem converted to px"
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-weight",
+        "after": "400",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "line-height",
+        "after": "1.6",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body",
+          "scope": "light"
+        },
+        "property": "color",
+        "after": "#194247",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body",
+          "scope": "dark"
+        },
+        "property": "color",
+        "after": "#f6f3f0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button"
+        },
+        "property": "border-radius",
+        "after": "999px",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "font-size",
+        "after": "15px",
+        "why": "0.9375rem converted to px"
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "font-weight",
+        "after": "600",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "letter-spacing",
+        "after": "0.02em",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "line-height",
+        "after": "1",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "font-family",
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "document"
+        },
+        "property": "font-family",
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "page.surface"
+        },
+        "property": "background-color",
+        "after": "#f6f3f0",
+        "why": "written as background-color for email"
+      },
+      {
+        "rule": {
+          "category": "font_source",
+          "guide_line": 81
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      }
+    ],
+    "conflicts": [
+      {
+        "kind": "forbidden_effect",
+        "resolved": false,
+        "guide_lines": [
+          202,
+          394
+        ]
+      },
+      {
+        "kind": "font_restriction",
+        "resolved": true,
+        "guide_lines": [
+          107,
+          194
+        ]
+      },
+      {
+        "kind": "value_clash",
+        "resolved": false,
+        "guide_lines": [
+          228,
+          460
+        ]
+      }
+    ],
+    "exact_conflict_count": 3,
+    "notes_contain": [
+      "clamp() is not supported by most email clients",
+      "Outlook conditional comment(s) were left untouched",
+      "Montserrat loads only in email clients that support web fonts",
+      "rem converted to px"
+    ]
+  }
+}

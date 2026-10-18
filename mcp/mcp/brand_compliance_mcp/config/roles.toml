@@ -1,0 +1,53 @@
+# Which HTML elements get which role. First match wins, so list specific roles first.
+# An unmarked button is plain "button": it is only "button.primary" when its
+# markup says so (class names below). The tool never guesses a variant.
+
+[[roles]]
+role = "button.primary"
+selector = "button.primary, a.primary, button.btn-primary, a.btn-primary, button.cta, a.cta"
+
+[[roles]]
+role = "button"
+selector = "button, a.btn, a.button, .btn, a[role=button], input[type=submit], input[type=button]"
+
+[[roles]]
+role = "text.eyebrow"
+selector = ".eyebrow, .kicker, .overline"
+
+[[roles]]
+role = "heading.h1"
+selector = "h1"
+
+[[roles]]
+role = "heading.h2"
+selector = "h2"
+
+[[roles]]
+role = "heading.h3"
+selector = "h3"
+
+[[roles]]
+role = "heading.h4"
+selector = "h4"
+
+[[roles]]
+role = "link"
+selector = "a[href]"
+
+[[roles]]
+role = "text.body"
+selector = "p, li"
+
+[[roles]]
+role = "page.surface"
+selector = "body"
+
+# A rule written for one role can apply to elements of another role.
+# "document" rules (e.g. the font family) reach every element that has a role.
+[[aliases]]
+rule_role = "button.label"
+element_role = "button"
+
+[[aliases]]
+rule_role = "document"
+element_role = "page.surface"

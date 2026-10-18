@@ -1,0 +1,203 @@
+# Vocabulary: turns the wording used in guides into standard roles.
+# Edit this file to teach the system a client's wording; no code changes needed.
+# Anything not listed here is reported as "could not interpret", never guessed.
+
+# Words in a section title that decide a rule's scope.
+[scope_words]
+"dark mode" = "dark"
+"light mode" = "light"
+
+# Type-scale token name -> role it styles.
+[type_token_roles]
+"--fs-display" = "heading.display"
+"--fs-h1" = "heading.h1"
+"--fs-h2" = "heading.h2"
+"--fs-h3" = "heading.h3"
+"--fs-h4" = "heading.h4"
+"--fs-body-lg" = "text.lead"
+"--fs-body" = "text.body"
+"--fs-body-sm" = "text.secondary"
+"--fs-caption" = "text.caption"
+"--fs-overline" = "text.eyebrow"
+"--fs-button" = "button.label"
+"--fs-italic" = "text.quote"
+
+# Component table "Variant" cell (lower case) -> role.
+[variant_roles]
+"primary (cta)" = "button.primary"
+"secondary" = "button.secondary"
+"tertiary / ghost" = "button.tertiary"
+"icon button" = "button.icon"
+
+# CSS selector -> role.
+[selector_roles]
+".gradient-card" = "card.gradient"
+
+# CSS custom property -> special meaning (others become plain variables).
+[css_variable_roles]
+"--font-sans" = "font_family"
+
+# Phrase used in a sentence -> role.
+[role_phrases]
+"body text" = "text.body"
+"body copy" = "text.body"
+
+# Phrase naming a kind of surface -> scope.
+[surface_phrases]
+"light surfaces" = "light"
+"dark surfaces" = "dark"
+
+# Effect name -> words that mention it.
+[effect_words]
+gradient = ["gradient", "gradients"]
+glow = ["glow", "glows"]
+glassmorphism = ["glassmorphism"]
+
+# Words that mark a sentence as a directive worth interpreting.
+[directives]
+keywords = ["never", "always", "must", "minimum", "don't", "do not", "no other"]
+
+# CSS values that need no resolving.
+[css_keywords]
+values = ["transparent", "none", "currentcolor"]
+
+# Sections that cannot be applied or interpreted, with the reason shown in reports.
+# Applies only to text that would otherwise be "could not interpret".
+[[section_status]]
+match = "5. Logo Usage"
+status = "understood_not_applicable"
+reason = "Logo is applied only when a logo asset is supplied; this tool never invents a logo."
+
+[[section_status]]
+match = "6.1 Organic Wave Graphic"
+status = "understood_not_applicable"
+reason = "Needs a design asset (wave artwork); none supplied."
+
+[[section_status]]
+match = "7.7 Charts"
+status = "understood_not_applicable"
+reason = "Chart styling is not supported in V1."
+
+[[section_status]]
+match = "7.8 Photo Treatment"
+status = "understood_not_applicable"
+reason = "Photo grading needs image processing; V1 does not alter images."
+
+[[section_status]]
+match = "8. Layout Patterns"
+status = "understood_not_applicable"
+reason = "Restructuring page layout is out of scope for V1; artifact structure is preserved."
+
+[[section_status]]
+match = "9. Voice & Copy"
+status = "could_not_interpret"
+reason = "Subjective guidance about tone cannot be checked mechanically; content is never rewritten."
+
+[[section_status]]
+match = "11. Master AI Builder Prompt"
+status = "understood_not_applicable"
+reason = "Prompt for generating new sites; only the directives it states are read, the rest is not applied."
+
+# Bulleted "Label: value" specs. A bullet is read only if listed here.
+# role "button" applies to every button.* variant unless a more specific role sets the property.
+[[bullet_specs]]
+section = "7.1 Buttons"
+label = "shape"
+role = "button"
+kind = "radius_variable"
+
+[[bullet_specs]]
+section = "7.1 Buttons"
+label = "padding"
+role = "button"
+kind = "size_padding"
+
+[[bullet_specs]]
+section = "7.1 Buttons"
+label = "font"
+role = "button.label"
+kind = "font_spec"
+
+[[bullet_specs]]
+section = "7.1 Buttons"
+label = "destructive variant"
+role = "button.destructive"
+kind = "box_pairs"
+
+[[bullet_specs]]
+section = "7.1 Buttons"
+label = "disabled"
+role = "button.disabled"
+kind = "declarations"
+
+[[bullet_specs]]
+section = "7.3 Forms"
+label = "background"
+role = "input"
+kind = "box_pairs"
+
+[[bullet_specs]]
+section = "7.3 Forms"
+label = "border radius"
+role = "input"
+kind = "variants_unresolved"
+
+[[bullet_specs]]
+section = "7.3 Forms"
+label = "padding"
+role = "input"
+kind = "padding_axes"
+
+[[bullet_specs]]
+section = "7.3 Forms"
+label = "focus state"
+role = "input.focus"
+kind = "box_pairs"
+
+[[bullet_specs]]
+section = "7.3 Forms"
+label = "label"
+role = "form.label"
+kind = "font_spec"
+
+[[bullet_specs]]
+section = "7.3 Forms"
+label = "helper text"
+role = "form.helper"
+kind = "font_spec"
+
+[[bullet_specs]]
+section = "3.3 Style Rules"
+label = "headlines"
+role = "heading"
+kind = "text_style"
+
+[[bullet_specs]]
+section = "3.3 Style Rules"
+label = "eyebrow labels"
+role = "text.eyebrow"
+kind = "text_style"
+
+[[bullet_specs]]
+section = "3.3 Style Rules"
+label = "body copy"
+role = "text.body"
+kind = "text_style"
+
+# Text that could not be turned into a rule but clearly concerns something this tool
+# cannot do (a missing asset, an unsupported feature) is "understood but not applied",
+# not "could not interpret". Checked after the section list above, anywhere in the guide.
+[[phrase_status]]
+patterns = ["\\blogo\\b", "\\bwordmark\\b"]
+status = "understood_not_applicable"
+reason = "Logo is applied only when a logo asset is supplied; this tool never invents a logo."
+
+[[phrase_status]]
+patterns = ["\\bwave ornament\\b", "\\bwave graphic\\b"]
+status = "understood_not_applicable"
+reason = "Needs a design asset (wave artwork); none supplied."
+
+[[phrase_status]]
+patterns = ["\\bicons?\\b"]
+status = "understood_not_applicable"
+reason = "Icon styling is not supported in V1."

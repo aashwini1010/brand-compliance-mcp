@@ -1,0 +1,187 @@
+{
+  "schema_version": "1.0",
+  "run": {
+    "run_id": "run-20261011-050425-546eb8",
+    "guide_name": "mini-subjective.md",
+    "artifact_name": "mini-clean.html",
+    "artifact_type": "static",
+    "status": "completed",
+    "started_at": "2026-10-11T05:04:25+00:00",
+    "detection_signals": [
+      "static +2: 2 semantic landmark element(s)",
+      "static +1: no layout tables and no Outlook markup",
+      "no email markup found"
+    ],
+    "classification_ambiguous": false,
+    "source_sha256_before": "753c215e31759cfb890cbdeeca39c72f8d7a075837430cd55dbaf833b54c45a3",
+    "source_sha256_after": "753c215e31759cfb890cbdeeca39c72f8d7a075837430cd55dbaf833b54c45a3",
+    "rules": [
+      {
+        "id": "R001",
+        "category": "unmatched",
+        "target_role": null,
+        "property": null,
+        "value": "Our brand feels warm, calm and human.",
+        "scope": "all",
+        "severity": "soft",
+        "status": "could_not_interpret",
+        "reason": "No extractor understood this text.",
+        "source_span": {
+          "file": "mini-subjective.md",
+          "line_start": 3,
+          "line_end": 3,
+          "page": null,
+          "heading_path": [
+            "Acme Feelings Guide"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R002",
+        "category": "directive",
+        "target_role": null,
+        "property": null,
+        "value": "Write like a helpful neighbour. Keep sentences short and kind. Never use jargon.",
+        "scope": "all",
+        "severity": "soft",
+        "status": "could_not_interpret",
+        "reason": "Directive wording is not one of the supported patterns.",
+        "source_span": {
+          "file": "mini-subjective.md",
+          "line_start": 7,
+          "line_end": 8,
+          "page": null,
+          "heading_path": [
+            "Acme Feelings Guide",
+            "Voice"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R003",
+        "category": "unmatched",
+        "target_role": null,
+        "property": null,
+        "value": "Photography should feel authentic and unposed.",
+        "scope": "all",
+        "severity": "soft",
+        "status": "could_not_interpret",
+        "reason": "No extractor understood this text.",
+        "source_span": {
+          "file": "mini-subjective.md",
+          "line_start": 12,
+          "line_end": 12,
+          "page": null,
+          "heading_path": [
+            "Acme Feelings Guide",
+            "Imagery"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R004",
+        "category": "directive",
+        "target_role": null,
+        "property": null,
+        "value": "Colours should feel fresh and optimistic, never loud.",
+        "scope": "all",
+        "severity": "soft",
+        "status": "could_not_interpret",
+        "reason": "Directive wording is not one of the supported patterns.",
+        "source_span": {
+          "file": "mini-subjective.md",
+          "line_start": 16,
+          "line_end": 16,
+          "page": null,
+          "heading_path": [
+            "Acme Feelings Guide",
+            "Colour mood"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      }
+    ],
+    "conflicts": [],
+    "changes": [],
+    "skipped": [],
+    "rolled_back": {},
+    "checks": [
+      {
+        "name": "contrast",
+        "passed": true,
+        "details": [
+          "5 text element(s) checked against 4.5:1",
+          "0 could not be checked (background or colour unknown)",
+          "0 already failed before any change (not caused by this tool)",
+          "0 change(s) caused a failure"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "forbidden-color",
+        "passed": true,
+        "details": [
+          "0 colour ban(s) checked, 0 violation(s)"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "structure",
+        "passed": true,
+        "details": [
+          "13 nodes identical, in the same order"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "assets",
+        "passed": true,
+        "details": [
+          "1 asset reference(s) preserved, anchors intact"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "original-intact",
+        "passed": true,
+        "details": [
+          "source unchanged (sha256 753c215e3175...)"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "idempotence",
+        "passed": true,
+        "details": [
+          "a second run gives identical output"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      }
+    ],
+    "unmapped_elements": [],
+    "notes": [],
+    "outputs": [
+      "branded.html",
+      "guide_rules.json",
+      "report.json",
+      "report.md"
+    ]
+  }
+}

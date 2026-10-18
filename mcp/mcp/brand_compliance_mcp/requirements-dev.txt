@@ -1,0 +1,10 @@
+# Development and quality tools (pinned); installs runtime deps too
+-r requirements.txt
+pytest==9.1.1
+pytest-cov==7.1.0
+ruff==0.16.10
+mypy==2.4.0
+lxml-stubs==0.5.1
+pre-commit==4.6.2
+httpx2==2.13.1
+claude-agent-sdk==0.2.165

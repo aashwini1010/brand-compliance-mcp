@@ -1,0 +1,13 @@
+.venv/
+myenv/
+__pycache__/
+*.pyc
+.mypy_cache/
+.ruff_cache/
+.pytest_cache/
+.coverage
+htmlcov/
+output/
+.env
+# client files dropped in for branding (may be confidential)
+inputs/

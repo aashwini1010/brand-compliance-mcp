@@ -1,0 +1,81 @@
+{
+  "id": "mini-broken-html",
+  "description": "Malformed HTML (unclosed tags, misnested bold/italic, unclosed table cells, an unquoted attribute). The tool must not crash and must preserve every word and link.",
+  "synthetic": true,
+  "guide": "eval/guides/mini-brand.md",
+  "artifact": "eval/artifacts/mini-broken.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "static",
+    "rules": [
+      {
+        "selector": {
+          "role": "heading.h1",
+          "property": "font-size",
+          "value": "2.5rem"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "category": "min_contrast"
+        },
+        "status": "applied",
+        "why": "4.5:1 minimum"
+      },
+      {
+        "selector": {
+          "category": "font_only"
+        },
+        "status": "applied",
+        "why": "Lato everywhere"
+      }
+    ],
+    "changes": [
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-size",
+        "after": "2.5rem",
+        "why": ""
+      }
+    ],
+    "allowed_changes": [
+      {
+        "rule": {
+          "category": "typography"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "category": "color"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "category": "surface"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "category": "font_family"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      }
+    ],
+    "exact_conflict_count": 0
+  }
+}

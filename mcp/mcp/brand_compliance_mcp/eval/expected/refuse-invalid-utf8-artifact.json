@@ -1,0 +1,10 @@
+{
+  "id": "refuse-invalid-utf8-artifact",
+  "description": "An HTML file that is not valid UTF-8 text. The tool must refuse with a typed parse error, not crash or guess an encoding.",
+  "synthetic": true,
+  "guide": "eval/guides/mini-brand.md",
+  "artifact": "eval/artifacts/invalid-encoding.html",
+  "expect": {
+    "error_code": "PARSE_FAILED"
+  }
+}

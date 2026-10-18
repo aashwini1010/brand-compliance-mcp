@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>MCP Team Briefing</title>
+<meta name="description" content="Short visual briefing on the GitHub and Context7 MCP servers: what they are, their tools, speed, risks and when to use each.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Atkinson+Hyperlegible:wght@400;700&amp;family=JetBrains+Mono:wght@400;600&amp;family=Schibsted+Grotesk:wght@500;700;800&amp;display=swap">
+<style>
+/* Layout: presentation deck in a page. One "page" visible at a time (overview, 3 per server, decide), header page-nav + progress, sticky footer Back/Next. Phones: pages scroll. */
+:root{
+  --bg:#f5f7fa; --surface:#ffffff; --surface-2:#edf1f6; --ink:#111720; --ink-2:#465061; --muted:#6f7888;
+  --line:#dbe1e9; --accent:#2446a8; --accent-ink:#ffffff; --accent-soft:#e5ebfa;
+  --s-read:#2a78d6; --s-write:#eb6834; --s-both:#1baf7a; --s-others:#eda100;
+  --bar:#2a78d6; --ref:#8a93a3; --grid:#e3e7ee; --axis:#c3cad5;
+  --good:#0ca30c; --good-ink:#006300; --warn:#fab219; --serious:#ec835a; --crit:#d03b3b;
+  --code-bg:#f0f3f8; --shadow:0 1px 2px rgba(17,23,32,.06),0 4px 16px rgba(17,23,32,.06);
+  --f-display:"Schibsted Grotesk","Segoe UI",system-ui,sans-serif;
+  --f-body:"Atkinson Hyperlegible",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,Consolas,monospace;
+  --head-h:96px;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0e1117; --surface:#161a21; --surface-2:#1d222b; --ink:#f1f4f8; --ink-2:#b8c0cc; --muted:#8b94a2;
+  --line:#2a313c; --accent:#8fa7f2; --accent-ink:#0e1117; --accent-soft:#1d2844;
+  --s-read:#3987e5; --s-write:#d95926; --s-both:#199e70; --s-others:#c98500;
+  --bar:#3987e5; --ref:#8b94a2; --grid:#262c36; --axis:#3a424f; --good-ink:#0ca30c;
+  --code-bg:#1b2029; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25); color-scheme:dark }}
+:root[data-theme="dark"]{
+  --bg:#0e1117; --surface:#161a21; --surface-2:#1d222b; --ink:#f1f4f8; --ink-2:#b8c0cc; --muted:#8b94a2;
+  --line:#2a313c; --accent:#8fa7f2; --accent-ink:#0e1117; --accent-soft:#1d2844;
+  --s-read:#3987e5; --s-write:#d95926; --s-both:#199e70; --s-others:#c98500;
+  --bar:#3987e5; --ref:#8b94a2; --grid:#262c36; --axis:#3a424f; --good-ink:#0ca30c;
+  --code-bg:#1b2029; --shadow:0 1px 2px rgba(0,0,0,.3),0 4px 16px rgba(0,0,0,.25); color-scheme:dark }
+
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
+h1,h2,h3{font-family:var(--f-display);line-height:1.15;text-wrap:balance;margin:0}
+h1{font-size:clamp(1.7rem,3.6vw,2.5rem);font-weight:800;letter-spacing:-.02em}
+h2{font-size:1.15rem;font-weight:700}
+h3{font-size:1rem;font-weight:700}
+p{margin:0}
+code{font-family:var(--f-mono);font-size:.85em}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.ic{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.ic.lg{width:30px;height:30px}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:10px 0;display:grid;gap:8px}
+.brand-row{display:flex;align-items:center;gap:12px 20px;flex-wrap:wrap}
+.brand{font-family:var(--f-display);font-weight:800;font-size:1.02rem;display:flex;gap:8px;align-items:center;color:var(--ink);text-decoration:none}
+.pnav{display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;margin-left:auto}
+.pgroup{display:flex;align-items:center;gap:4px}
+.pgroup > span{font-size:.78rem;font-weight:700;color:var(--muted);letter-spacing:.04em;margin-right:2px}
+.pnav a{text-decoration:none;color:var(--ink-2);font-weight:700;font-size:.86rem;padding:5px 10px;border-radius:7px;border:1px solid transparent;white-space:nowrap}
+.pnav a.num{min-width:30px;text-align:center;padding:5px 0;border-color:var(--line)}
+.pnav a:hover{background:var(--surface-2)}
+.pnav a[aria-current="page"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.progress{height:3px;background:var(--surface-2);margin-inline:-16px}
+.progress i{display:block;height:100%;background:var(--accent);transition:width .25s ease}
+
+/* page */
+.deck{max-width:1240px;margin:0 auto;padding-inline:16px;padding-block:22px 96px}
+.page{display:grid;gap:18px;align-content:start}
+.ph{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:end;gap:10px 24px}
+.ph .eyebrow{display:block;margin-bottom:6px}
+.eyebrow{font-size:.74rem;letter-spacing:.09em;text-transform:uppercase;font-weight:700;color:var(--accent)}
+.tagline{font-size:1.05rem;color:var(--ink-2);max-width:60ch}
+.note{font-size:.82rem;color:var(--muted)}
+
+.row{display:grid;gap:16px;min-width:0}
+.c2{grid-template-columns:repeat(auto-fit,minmax(min(100%,380px),1fr))}
+.c3{grid-template-columns:repeat(auto-fit,minmax(min(100%,260px),1fr))}
+.c4{grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr))}
+.c-wide{grid-template-columns:minmax(0,1.35fr) minmax(0,1fr)}
+@media (max-width:900px){.c-wide{grid-template-columns:minmax(0,1fr)}}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px 18px;min-width:0;display:grid;gap:12px;align-content:start}
+.panel > h2{display:flex;align-items:center;gap:8px}
+.panel > h2 .ic{color:var(--accent)}
+
+/* tiles */
+.tiles{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,140px),1fr))}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 14px;display:grid;gap:2px}
+.tile .v{font-family:var(--f-display);font-size:1.75rem;font-weight:800;line-height:1.1;display:flex;align-items:baseline;gap:6px}
+.tile .v small{font-size:.9rem;font-weight:700;color:var(--ink-2)}
+.tile .k{font-size:.82rem;color:var(--ink-2)}
+.tile.flat{background:var(--surface-2);border-color:transparent}
+
+button.tile{font:inherit;color:inherit;text-align:left;cursor:pointer;transition:border-color .15s,background .15s}
+button.tile:hover{border-color:var(--accent)}
+button.tile[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+button.tile:disabled{opacity:.5;cursor:not-allowed}
+.tile .hint{font-size:.72rem;color:var(--accent);font-weight:700}
+.tlist h3{display:flex;align-items:center;gap:8px}
+
+/* icon facts */
+.facts{display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(min(100%,170px),1fr))}
+.fact{display:grid;grid-template-columns:auto 1fr;gap:10px;align-items:center;background:var(--surface-2);border-radius:12px;padding:10px 12px}
+.fact .ic{color:var(--accent)}
+.fact b{display:block;font-size:.93rem}
+.fact span{font-size:.8rem;color:var(--ink-2)}
+
+/* mcp steps */
+.flow3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;counter-reset:f}
+.flow3 div{position:relative;background:var(--surface-2);border-radius:12px;padding:12px;display:grid;gap:4px;justify-items:start}
+.flow3 div::before{counter-increment:f;content:counter(f);font-family:var(--f-display);font-weight:800;font-size:.8rem;width:24px;height:24px;border-radius:50%;display:grid;place-items:center;background:var(--accent);color:var(--accent-ink)}
+.flow3 b{font-size:.95rem}
+.flow3 span{font-size:.8rem;color:var(--ink-2)}
+@media (max-width:520px){.flow3{grid-template-columns:minmax(0,1fr)}}
+
+/* server cards */
+.scard{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px;display:grid;grid-template-columns:150px minmax(0,1fr);gap:16px;align-items:center;text-decoration:none;color:inherit;box-shadow:var(--shadow);transition:border-color .15s,transform .15s}
+.scard:hover{border-color:var(--accent);transform:translateY(-2px)}
+.scard .go{font-weight:700;color:var(--accent);font-size:.9rem}
+.scard ul{margin:0;padding:0;list-style:none;display:grid;gap:4px;font-size:.88rem;color:var(--ink-2)}
+@media (max-width:460px){.scard{grid-template-columns:minmax(0,1fr)}.scard .chart{max-width:160px}}
+
+/* pills */
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:700;padding:2px 9px;border-radius:999px;background:var(--surface-2);color:var(--ink);white-space:nowrap}
+.dot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:none}
+.d-read{background:var(--s-read)}.d-write{background:var(--s-write)}.d-both{background:var(--s-both)}.d-others{background:var(--s-others)}
+.impact{display:inline-flex;align-items:center;gap:6px;font-size:.75rem;font-weight:700;padding:2px 8px;border-radius:6px;border:1px solid var(--line);white-space:nowrap;background:var(--surface)}
+.impact i{width:8px;height:8px;border-radius:2px;display:inline-block}
+.i-high i{background:var(--crit)}.i-med i{background:var(--serious)}.i-low i{background:var(--good)}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-family:var(--f-mono);font-size:.76rem;background:var(--surface-2);border-radius:6px;padding:2px 7px;color:var(--ink);white-space:nowrap;display:inline-flex;align-items:center;gap:5px;border:1px solid transparent}
+button.tag{cursor:pointer;border-color:var(--line);background:var(--surface)}
+button.tag:hover{border-color:var(--accent)}
+button.tag.tested{border-color:var(--ink);font-weight:600}
+.chain{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.chain .ar{color:var(--muted)}
+
+/* legend & charts */
+.legend{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:.82rem;color:var(--ink-2)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+.sw-line{width:18px;height:0;border-top:2px dashed var(--ref);display:inline-block}
+.chart{width:100%;min-width:0}
+.chart svg{display:block;overflow:visible}
+.ax{font-family:var(--f-body);font-size:12px;fill:var(--muted)}
+.ax-l{font-family:var(--f-body);font-size:13px;fill:var(--ink)}
+.ax-h{font-family:var(--f-display);font-size:12px;font-weight:700;fill:var(--ink-2);letter-spacing:.06em;text-transform:uppercase}
+.vl{font-family:var(--f-body);font-size:12.5px;fill:var(--ink);font-variant-numeric:tabular-nums}
+.vl-in{font-family:var(--f-body);font-size:12px;font-weight:700;fill:#ffffff}
+.vl-in.dk{fill:#111720}
+.big{font-family:var(--f-display);font-size:30px;font-weight:800;fill:var(--ink)}
+.gl{stroke:var(--grid);stroke-width:1}
+.bl{stroke:var(--axis);stroke-width:1}
+.seg.pick{cursor:pointer}
+.seg:hover,.bar:hover,.seg:focus,.bar:focus,.arc:hover,.arc:focus{opacity:.85;outline:none}
+.g-read{fill:var(--s-read)}.g-write{fill:var(--s-write)}.g-both{fill:var(--s-both)}.g-others{fill:var(--s-others)}
+.bar{fill:var(--bar)}
+.bar.alt{fill:var(--ref)}
+.refline{stroke:var(--ref);stroke-width:2;stroke-dasharray:5 4;fill:none}
+.refdot{fill:var(--surface);stroke:var(--ref);stroke-width:2}
+details.nums summary{cursor:pointer;font-size:.8rem;color:var(--accent);font-weight:700}
+details.nums[open] summary{margin-bottom:8px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:10px;background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:.86rem}
+th,td{text-align:left;padding:7px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;font-variant-numeric:tabular-nums}
+#tip{position:fixed;z-index:60;pointer-events:none;background:var(--ink);color:var(--surface);font-size:.8rem;line-height:1.45;padding:7px 10px;border-radius:8px;max-width:260px;box-shadow:var(--shadow)}
+
+/* compare bars */
+.cmp{display:grid;gap:12px}
+.cmp-row{display:grid;grid-template-columns:120px minmax(0,1fr);gap:4px 12px;align-items:center}
+.cmp-row > b{font-size:.86rem;grid-row:span 2}
+.cmp-bar{display:grid;grid-template-columns:72px minmax(0,1fr);gap:8px;align-items:center;font-size:.8rem;color:var(--ink-2)}
+.cmp-bar .track{display:flex;align-items:center;gap:8px;min-width:0}
+.cmp-bar .fill{height:14px;border-radius:0 4px 4px 0;background:var(--bar);min-width:3px}
+.cmp-bar.alt .fill{background:var(--ref)}
+.cmp-bar .val{font-variant-numeric:tabular-nums;color:var(--ink);font-weight:700;white-space:nowrap}
+
+/* diagrams */
+.diagram{overflow-x:auto}
+.diagram svg{display:block;width:100%;min-width:620px;height:auto}
+.nd rect{fill:var(--surface);stroke:var(--line);stroke-width:1.5}
+.nd .t1{font-family:var(--f-display);font-weight:700;font-size:14px;fill:var(--ink)}
+.nd .t2{font-family:var(--f-body);font-size:12px;fill:var(--muted)}
+.nd.click{cursor:pointer}
+.nd.click:hover rect,.nd:focus rect{stroke:var(--accent)}
+.nd:focus{outline:none}
+.nd.on rect{stroke:var(--accent);stroke-width:2.5;fill:var(--accent-soft)}
+.zone{fill:var(--surface-2);stroke:none}
+.zone-l{font-family:var(--f-display);font-size:11px;font-weight:700;letter-spacing:.08em;fill:var(--muted);text-transform:uppercase}
+.ed{stroke:var(--axis);stroke-width:2;fill:none}
+.ed.dash{stroke-dasharray:4 4}
+.ed.on{stroke:var(--accent);stroke-width:3}
+.el{font-family:var(--f-body);font-size:11.5px;fill:var(--ink-2)}
+.arrowhead{fill:var(--axis)}
+.info{background:var(--surface-2);border-radius:10px;padding:10px 14px;display:grid;gap:2px;font-size:.88rem;min-height:62px}
+.info p{color:var(--ink-2)}
+.stepper{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.btn{font:inherit;font-weight:700;font-size:.86rem;border-radius:8px;padding:6px 12px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+.btn:hover{border-color:var(--accent)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.field{font:inherit;font-size:.86rem;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--ink)}
+
+/* tool map */
+.tmap{display:grid;gap:10px}
+.tmap-row{display:grid;grid-template-columns:150px minmax(0,1fr);gap:10px;align-items:start}
+.tmap-row > span{font-size:.82rem;font-weight:700;color:var(--ink-2);padding-top:3px}
+@media (max-width:560px){.tmap-row{grid-template-columns:minmax(0,1fr);gap:4px}}
+
+/* tested strip */
+.strip{display:grid;gap:8px;grid-template-columns:repeat(auto-fill,minmax(min(100%,210px),1fr))}
+.strip li{list-style:none;background:var(--surface-2);border-radius:10px;padding:10px 12px;display:grid;gap:4px}
+.strip ol,.strip{margin:0;padding:0}
+.strip .n{font-family:var(--f-display);font-weight:800;font-size:.75rem;color:var(--muted)}
+.strip p{font-size:.8rem;color:var(--ink-2)}
+
+/* request → answer */
+.io{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:10px;align-items:center}
+.io .arrow{font-family:var(--f-display);font-size:1.4rem;color:var(--muted)}
+pre{margin:0;background:var(--code-bg);border:1px solid var(--line);border-radius:10px;padding:10px 12px;overflow-x:auto;font-family:var(--f-mono);font-size:.76rem;line-height:1.55;color:var(--ink)}
+.io h3{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:4px}
+@media (max-width:640px){.io{grid-template-columns:minmax(0,1fr)}.io .arrow{transform:rotate(90deg);justify-self:center}}
+.c-com{color:var(--muted)}.c-str{color:var(--good-ink)}.c-kw{color:var(--accent);font-weight:600}
+.code{position:relative}
+.code .copy{position:absolute;top:6px;right:6px;font-size:.74rem;padding:3px 9px}
+details.more > summary{cursor:pointer;font-weight:700;color:var(--accent);font-size:.88rem;display:inline-flex;gap:6px;align-items:center}
+details.more[open] > summary{margin-bottom:10px}
+
+/* use cases */
+.uses{display:grid;gap:8px}
+.use{display:grid;grid-template-columns:30px minmax(0,1fr);gap:10px;align-items:center;padding:8px 10px;border-radius:10px;background:var(--surface-2)}
+.use .ic{color:var(--accent)}
+.use b{font-size:.9rem;display:block;margin-bottom:3px}
+
+/* limits */
+.lims{display:grid;gap:8px}
+.lim{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 10px;align-items:center;font-size:.88rem}
+.lim small{grid-column:2;color:var(--ink-2);font-size:.8rem}
+
+/* yes / no */
+.yn{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.yn ul{margin:0;padding:0;list-style:none;display:grid;gap:6px}
+.yn li{display:grid;grid-template-columns:20px 1fr;gap:6px;font-size:.88rem}
+.yn .yes .ic{color:var(--good-ink);width:18px;height:18px}
+.yn .no .ic{color:var(--crit);width:18px;height:18px}
+.yn h3{font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);margin-bottom:6px}
+
+/* decision table */
+.dt{display:grid;gap:6px}
+.dt div{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:10px;align-items:center;font-size:.86rem;padding:6px 0;border-bottom:1px solid var(--line)}
+.dt div:last-child{border-bottom:0}
+
+/* decision tree */
+.tree{display:grid;gap:14px}
+.tq{justify-self:center;background:var(--ink);color:var(--surface);font-family:var(--f-display);font-weight:800;border-radius:999px;padding:8px 18px;font-size:1rem}
+.tbr{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))}
+.tb{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;display:grid;gap:8px;align-content:start;border-top:4px solid var(--accent)}
+.tb.none{border-top-color:var(--ref)}
+.tb .if{font-size:.78rem;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.tb .then{font-family:var(--f-display);font-weight:800;font-size:1.15rem}
+.tb .subs{display:grid;gap:6px}
+.tb .subs div{display:flex;gap:8px;align-items:center;font-size:.84rem;flex-wrap:wrap}
+
+/* combo chain */
+.combo{display:flex;flex-wrap:wrap;gap:8px;align-items:stretch}
+.combo .st{background:var(--surface-2);border-radius:10px;padding:10px 12px;display:grid;gap:4px;flex:1 1 140px;min-width:0}
+.combo .st small{color:var(--muted);font-size:.74rem;font-weight:700;text-transform:uppercase;letter-spacing:.05em}
+.combo .st.risk{background:var(--surface);border:1px dashed var(--serious)}
+
+/* references */
+.refs{display:grid;gap:8px}
+.ref{display:grid;gap:2px;padding:10px 12px;border-radius:10px;background:var(--surface-2);text-decoration:none;color:var(--ink);border:1px solid transparent;min-width:0}
+.ref:hover{border-color:var(--accent)}
+.ref b{color:var(--accent);font-size:.93rem}
+.ref span{font-size:.82rem;color:var(--ink-2)}
+.ref code{font-size:.7rem;color:var(--muted);overflow-wrap:anywhere}
+
+/* footer pager */
+.pager{position:fixed;left:0;right:0;bottom:0;z-index:20;background:var(--surface);border-top:1px solid var(--line);padding:10px 16px calc(env(safe-area-inset-bottom,0px) + 10px)}
+.pager-in{max-width:1240px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px}
+.pager .where{font-size:.86rem;color:var(--ink-2);text-align:center;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.pager .where b{color:var(--ink)}
+
+/* drawer */
+#scrim{position:fixed;inset:0;background:rgba(10,14,20,.45);z-index:40}
+#drawer{position:fixed;top:0;right:0;bottom:0;width:min(440px,100%);z-index:50;background:var(--surface);border-left:1px solid var(--line);box-shadow:-8px 0 32px rgba(0,0,0,.18);overflow-y:auto;padding:calc(env(safe-area-inset-top,0px) + 16px) 18px calc(env(safe-area-inset-bottom,0px) + 24px);display:grid;gap:14px;align-content:start}
+#drawer .dh{display:flex;justify-content:space-between;align-items:start;gap:12px}
+#drawer h2{font-family:var(--f-mono);font-size:1.05rem;overflow-wrap:anywhere}
+#drawer .ds h3{font-size:.74rem;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:5px}
+#drawer .plain{font-size:1rem}
+
+@media (prefers-reduced-motion:reduce){*{transition:none!important;animation:none!important;scroll-behavior:auto!important}}
+</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400;1,600&amp;display=swap" data-brand-compliance="font"><style id="brand-compliance">
+/* Generated by brand-compliance-mcp. Edit the brand guide, not this block. */
+@media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="button"] {
+  border-radius: 999px;
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="button.primary"] {
+  border: none;
+  border-radius: 999px;
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="heading.h1"] {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(2.25rem, 4vw + 1rem, 4rem);
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="heading.h2"] {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  font-size: clamp(1.75rem, 2.5vw + 0.75rem, 2.75rem);
+  letter-spacing: -0.01em;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="link"] {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="page.surface"] {
+  background: #f6f3f0;
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="text.body"] {
+  font-size: 1rem;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="text.body"][data-brand-force~="font-size"] {
+  font-size: 1rem !important;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="text.body"][data-brand-surface="light"] {
+  color: #194247;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="text.eyebrow"] {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  line-height: 1.4;
+}
+html:not(#brand-compliance):not([data-theme="dark"]) [data-brand-role="unmapped"] {
+  font-family: "Montserrat", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+}
+}
+
+@media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
+html:not(#brand-compliance):not([data-theme="dark"]) {
+  --accent: #337077;
+  --accent-ink: #ffffff;
+  --accent-soft: #f6f3f0;
+  --bar: #52e081;
+  --bg: #f6f3f0;
+  --code-bg: #f6f3f0;
+  --ink: #194247;
+  --s-both: #09a78d;
+  --s-others: #194247;
+  --s-read: #52e081;
+  --s-write: #337077;
+  --surface: #ffffff;
+  --surface-2: #f6f3f0;
+}
+}
+@media (prefers-color-scheme: dark) {
+html:not(#brand-compliance):not([data-theme="light"]) {
+  --accent: #09a78d;
+  --accent-ink: #0c2226;
+  --accent-soft: #194247;
+  --bar: #52e081;
+  --bg: #0c2226;
+  --code-bg: #194247;
+  --ink: #f6f3f0;
+  --s-both: #09a78d;
+  --s-others: #e5fd84;
+  --s-read: #52e081;
+  --s-write: #337077;
+  --surface: #0c2226;
+  --surface-2: #194247;
+}
+}
+html[data-theme="dark"]:not(#brand-compliance) {
+  --accent: #09a78d;
+  --accent-ink: #0c2226;
+  --accent-soft: #194247;
+  --bar: #52e081;
+  --bg: #0c2226;
+  --code-bg: #194247;
+  --ink: #f6f3f0;
+  --s-both: #09a78d;
+  --s-others: #e5fd84;
+  --s-read: #52e081;
+  --s-write: #337077;
+  --surface: #0c2226;
+  --surface-2: #194247;
+}
+</style></head>
+<body data-brand-role="page.surface">
+
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-eye" viewBox="0 0 24 24"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"></path><circle cx="12" cy="12" r="3"></circle></symbol>
+  <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16v4z"></path><path d="M14 6l4 4"></path></symbol>
+  <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"></rect><path d="M16 8V5a1 1 0 0 0-1-1H5a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h3"></path></symbol>
+  <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5L18 18M6 18l2.5-2.5M15.5 8.5L18 6"></path></symbol>
+  <symbol id="i-lock" viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="10" rx="2"></rect><path d="M8 11V8a4 4 0 0 1 8 0v3"></path></symbol>
+  <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7l1-8z"></path></symbol>
+  <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2V5z"></path><path d="M4 19a2 2 0 0 1 2-2h13"></path></symbol>
+  <symbol id="i-branch" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"></circle><circle cx="6" cy="19" r="2"></circle><circle cx="18" cy="8" r="2"></circle><path d="M6 7v10M18 10c0 4-6 3-12 7"></path></symbol>
+  <symbol id="i-alert" viewBox="0 0 24 24"><path d="M12 3l10 18H2L12 3z"></path><path d="M12 10v5M12 18v.5"></path></symbol>
+  <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5L20 7"></path></symbol>
+  <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"></path></symbol>
+  <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"></circle><path d="M20 20l-4-4"></path></symbol>
+  <symbol id="i-plug" viewBox="0 0 24 24"><path d="M9 2v6M15 2v6M6 8h12v3a6 6 0 0 1-12 0V8zM12 17v5"></path></symbol>
+  <symbol id="i-robot" viewBox="0 0 24 24"><rect x="4" y="7" width="16" height="12" rx="3"></rect><path d="M12 3v4M9 12v1M15 12v1M9 16h6"></path></symbol>
+  <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 0 1-.5-8A6 6 0 0 1 18 9a4 4 0 0 1 0 9H7z"></path></symbol>
+  <symbol id="i-layers" viewBox="0 0 24 24"><path d="M12 3l9 5-9 5-9-5 9-5z"></path><path d="M3 13l9 5 9-5"></path></symbol>
+  <symbol id="i-code" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5M16 7l5 5-5 5"></path></symbol>
+  <symbol id="i-user" viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></symbol>
+  <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"></path></symbol>
+  <symbol id="i-file" viewBox="0 0 24 24"><path d="M6 3h8l4 4v14H6V3z"></path><path d="M14 3v4h4"></path></symbol>
+  <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></symbol>
+  <symbol id="i-tag" viewBox="0 0 24 24"><path d="M3 12V4h8l10 10-8 8L3 12z"></path><circle cx="7.5" cy="7.5" r="1.5"></circle></symbol>
+  <symbol id="i-merge" viewBox="0 0 24 24"><circle cx="6" cy="5" r="2"></circle><circle cx="6" cy="19" r="2"></circle><circle cx="18" cy="12" r="2"></circle><path d="M6 7v10M6 7c0 4 6 5 10 5"></path></symbol>
+  <symbol id="i-gauge" viewBox="0 0 24 24"><path d="M4 17a8 8 0 1 1 16 0"></path><path d="M12 17l4-5"></path></symbol>
+  <symbol id="i-bug" viewBox="0 0 24 24"><rect x="7" y="8" width="10" height="12" rx="5"></rect><path d="M12 8v12M3 13h4M17 13h4M5 7l3 2M19 7l-3 2M5 19l3-2M19 19l-3-2"></path></symbol>
+</svg>
+
+<header class="top" id="top">
+  <div class="top-in">
+    <div class="brand-row">
+      <a class="brand" href="#overview" data-brand-role="link"><svg class="ic" aria-hidden="true"><use href="#i-plug"></use></svg>MCP Team Briefing</a>
+      <nav class="pnav" aria-label="Pages">
+        <a href="#overview" data-p="overview">Overview</a>
+        <a href="#github-1" data-p="github-1">GitHub MCP</a>
+        <a href="#context7-1" data-p="context7-1">Context7 MCP</a>
+        <a href="#decide" data-p="decide">Which to use?</a>
+      </nav>
+    </div>
+    <div class="progress" aria-hidden="true"><i id="prog"></i></div>
+  </div>
+</header>
+
+<main class="deck">
+
+<!-- ======================= OVERVIEW ======================= -->
+<section class="page" id="overview" data-name="Overview" data-title="At a glance">
+  <div class="ph"><div><span class="eyebrow" data-brand-role="text.eyebrow">Overview · tested 5–6 Oct 2026</span><h1 data-brand-role="heading.h1">Two MCP servers, one plug</h1></div>
+    <p class="tagline" data-brand-role="text.body" data-brand-surface="light">MCP is a standard plug that lets code and AI assistants use online services.</p></div>
+  <div class="row c2">
+    <a class="scard" href="#github-1">
+      <div class="chart" data-chart="donut-gh"></div>
+      <div style="display:grid;gap:8px"><h2 data-brand-role="heading.h2">GitHub MCP</h2><ul><li data-brand-role="text.body" data-brand-surface="light">Works on GitHub <b>for you</b></li><li data-brand-role="text.body" data-brand-surface="light">46 tools · 7 tested</li></ul><span class="go">Open →</span></div>
+    </a>
+    <a class="scard" href="#context7-1">
+      <div class="chart" data-chart="donut-c7"></div>
+      <div style="display:grid;gap:8px"><h2 data-brand-role="heading.h2">Context7 MCP</h2><ul><li data-brand-role="text.body" data-brand-surface="light">Looks up <b>current</b> library docs</li><li data-brand-role="text.body" data-brand-surface="light">2 tools · both tested</li></ul><span class="go">Open →</span></div>
+    </a>
+  </div>
+  <div class="legend" data-legend="groups"></div>
+  <div class="row c-wide">
+    <div class="panel"><h2 data-brand-role="heading.h2"><svg class="ic"><use href="#i-layers"></use></svg>How it fits together</h2>
+      <div class="diagram" data-diagram="arch"></div>
+      <div class="stepper"><label class="sr" for="arch-path">Request to follow</label>
+        <select id="arch-path" class="field"><option value="gh">Follow a GitHub request</option><option value="c7">Follow a Context7 request</option></select>
+        <button class="btn" id="arch-prev" type="button" data-brand-role="button">Back</button><button class="btn primary" id="arch-next" type="button" data-brand-role="button.primary">Next step</button><button class="btn" id="arch-reset" type="button" data-brand-role="button">Reset</button></div>
+      <div class="info" id="arch-info" aria-live="polite"><b>Click a box, or press "Next step"</b><p data-brand-role="text.body" data-brand-surface="light">Grey area = Python code in this workspace. Right side = online servers.</p></div>
+    </div>
+    <div style="display:grid;gap:16px;align-content:start">
+      <div class="panel"><h2 data-brand-role="heading.h2"><svg class="ic"><use href="#i-gauge"></use></svg>Side by side</h2><div class="cmp" id="cmp"></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================= GITHUB 1 ======================= -->
+<section class="page" id="github-1" data-name="GitHub MCP" data-title="What it is &amp; how it works" hidden>
+  <div class="ph"><div><span class="eyebrow" data-brand-role="text.eyebrow">GitHub MCP</span><h1 data-brand-role="heading.h1">A remote assistant with your GitHub login</h1></div>
+    <p class="tagline" data-brand-role="text.body" data-brand-surface="light">It does on GitHub what you would click yourself, with <b>your</b> permissions.</p></div>
+  <div class="tiles" data-tiles="gh"><div class="tile flat"><span class="v" data-brand-role="unmapped">0.85<small>s</small></span><span class="k">typical read</span></div></div>
+  <div class="panel tlist" id="tlist-gh" aria-live="polite" hidden></div>
+  <div class="panel"><h2 data-brand-role="heading.h2"><svg class="ic"><use href="#i-layers"></use></svg>How a request travels</h2>
+    <div class="diagram" data-diagram="flow-gh"></div>
+    <div class="info" id="flow-gh-info" aria-live="polite"><b>Click a box</b><p data-brand-role="text.body" data-brand-surface="light">One stop on the way to GitHub and back.</p></div></div>
+  <div class="panel"><h2 data-brand-role="heading.h2"><svg class="ic"><use href="#i-check"></use></svg>What we tested, in order <span class="note" style="font-weight:400">· 7 of 46 tools, click one for details</span></h2><ol class="strip" data-strip="gh"></ol></div>
+</section>
+
+
+
+
+
+<!-- ======================= CONTEXT7 1 ======================= -->
+<section class="page" id="context7-1" data-name="Context7 MCP" data-title="What it is &amp; how it works" hidden>
+  <div class="ph"><div><span class="eyebrow" data-brand-role="text.eyebrow">Context7 MCP</span><h1 data-brand-role="heading.h1">A librarian for programming manuals</h1></div>
+    <p class="tagline" data-brand-role="text.body" data-brand-surface="light">Gives AI and code <b>today's</b> library docs, not out-of-date memory.</p></div>
+  <div class="tiles" data-tiles="c7"><div class="tile flat"><span class="v" data-brand-role="unmapped">2.3<small>s</small></span><span class="k">typical lookup</span></div></div>
+  <div class="panel tlist" id="tlist-c7" aria-live="polite" hidden></div>
+  <div class="panel"><h2 data-brand-role="heading.h2"><svg class="ic"><use href="#i-layers"></use></svg>How a question travels</h2>
+    <div class="diagram" data-diagram="flow-c7"></div>
+    <div class="info" id="flow-c7-info" aria-live="polite"><b>Click a box</b><p data-brand-role="text.body" data-brand-surface="light">One stop on the way to the docs and back.</p></div></div>
+  <div class="row c2" id="c7-tools"></div>
+  <div class="row c-wide">
+    <div class="panel"><h2 data-brand-role="heading.h2"><svg class="ic"><use href="#i-search"></use></svg>Real test: matches for "next.js"</h2>
+      <p class="note" data-brand-role="text.body" data-brand-surface="light">Quality score out of 100 · snippet count. All had "High" reputation.</p>
+      <div class="chart" data-chart="nextjs"></div>
+      <p class="note" data-brand-role="text.body" data-brand-surface="light">Two IDs share the name "Next.js". Pick the one with the higher score.</p></div>
+    <div class="panel"><h2 data-brand-role="heading.h2"><svg class="ic"><use href="#i-check"></use></svg>What we tested, in order</h2><ol class="strip" data-strip="c7"></ol></div>
+  </div>
+</section>
+
+
+
+
+
+<!-- ======================= DECIDE ======================= -->
+<section class="page" id="decide" data-name="Which to use?" data-title="Decision guide" hidden>
+  <div class="ph"><div><span class="eyebrow" data-brand-role="text.eyebrow">Decision guide</span><h1 data-brand-role="heading.h1">Which server should I use?</h1></div>
+    <p class="tagline" data-brand-role="text.body" data-brand-surface="light">One question decides it.</p></div>
+  <div class="tree">
+    <div class="tq" data-brand-role="unmapped">What do you need?</div>
+    <div class="tbr">
+      <div class="tb"><span class="if">Something on GitHub</span><span class="then" data-brand-role="unmapped">GitHub MCP</span><div class="subs">
+        <div>Just look → ${pill:read}</div><div>Create / change → ${pill:write}</div><div>Copy / merge → ${pill:both}</div><div>Scan / AI review → ${pill:others}</div></div>
+        <a class="btn" href="#github-1" data-brand-role="button">Open GitHub MCP →</a></div>
+      <div class="tb"><span class="if">How a library works</span><span class="then" data-brand-role="unmapped">Context7 MCP</span><div class="subs"><div>Find the library → <button class="tag" data-tool="resolve-library-id" type="button" data-brand-role="button">resolve-library-id</button></div><div>Ask its docs → <button class="tag" data-tool="query-docs" type="button" data-brand-role="button">query-docs</button></div><div>Always ${pill:read}</div></div>
+        <a class="btn" href="#context7-1" data-brand-role="button">Open Context7 MCP →</a></div>
+      <div class="tb"><span class="if">Both</span><span class="then" data-brand-role="unmapped">Context7 first, then GitHub</span><div class="subs"><div>Learn the right way, then save the code</div></div></div>
+    </div>
+  </div>
+  <p class="note" style="font-size:.88rem" data-brand-role="text.body" data-brand-surface="light" data-brand-force="font-size">Learn more: <a href="https://github.com/github/github-mcp-server" target="_blank" rel="noopener noreferrer">GitHub MCP official docs ↗</a> · <a href="https://github.com/upstash/context7" target="_blank" rel="noopener noreferrer">Context7 official docs ↗</a></p>
+</section>
+
+</main>
+
+<nav class="pager" aria-label="Page controls"><div class="pager-in">
+  <button class="btn" id="prev" type="button" data-brand-role="button">← Back</button>
+  <span class="where" id="where" aria-live="polite"></span>
+  <button class="btn primary" id="next" type="button" data-brand-role="button.primary">Next →</button>
+</div></nav>
+
+<div id="tip" role="tooltip" hidden></div>
+<div id="scrim" hidden></div>
+<aside id="drawer" role="dialog" aria-modal="true" aria-labelledby="dr-title" hidden></aside>
+
+<script type="application/json" id="tool-data">[{"n":"add_comment_to_pending_review","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["owner","repo","pullNumber","path","body","subjectType"],"opt":["line","side","startLine","startSide"],"m":null,"t":null,"tt":"Add review comment to the requester's latest pending pull request review","d":"Add review comment to the requester's latest pending pull request review. A pending review needs to already exist to call this (check with the user if not sure).","sb":1294},{"n":"add_issue_comment","s":"gh","a":"Issues","g":"write","ro":false,"x":false,"req":["owner","repo","issue_number"],"opt":["body","comment_id","reaction"],"m":null,"t":null,"tt":"Add comment to issue or pull request","d":"Add a comment and/or reaction to a specific issue or issue comment in a GitHub repository. Use this tool with pull requests as well (in this case pass pull request number as issue_number), but only if user is not asking specifically to add or react to review comments. At least one of body or reaction is required.","sb":869},{"n":"add_reply_to_pull_request_comment","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["owner","repo","commentId"],"opt":["body","pullNumber","reaction"],"m":null,"t":null,"tt":"Add reply to pull request comment","d":"Add a reply and/or reaction to an existing pull request comment. This can create a new comment linked as a reply to the specified comment, add an emoji reaction to the specified comment, or do both. At least one of body or reaction is required.","sb":828},{"n":"create_branch","s":"gh","a":"Branches, commits, tags & releases","g":"both","ro":false,"x":false,"req":["owner","repo","branch"],"opt":["from_branch"],"m":null,"t":null,"tt":"Create branch","d":"Create a new branch in a GitHub repository","sb":382},{"n":"create_or_update_file","s":"gh","a":"Repositories & files","g":"write","ro":false,"x":false,"req":["owner","repo","path","content","message","branch"],"opt":["allow_symlink_write","sha"],"m":null,"t":"Added hello.py to the main branch. Answer: file details and the new commit.","tt":"Create or update file","d":"Create or update a single file in a GitHub repository.  If updating, you should provide the SHA of the file you want to update. Use this tool to create or update a file in a GitHub repository remotely; do not use it for local file operations.","sb":1069},{"n":"create_pull_request","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["owner","repo","title","head","base"],"opt":["body","draft","maintainer_can_modify","reviewers"],"m":null,"t":null,"tt":"Open new pull request","d":"Create a new pull request in a GitHub repository.","sb":767},{"n":"create_repository","s":"gh","a":"Repositories & files","g":"write","ro":false,"x":false,"req":["name"],"opt":["autoInit","description","organization","private"],"m":null,"t":"Created private repo aashwini1010/my-repo. Answer: its id and web address.","tt":"Create repository","d":"Create a new GitHub repository in your account or specified organization","sb":524},{"n":"delete_file","s":"gh","a":"Repositories & files","g":"write","ro":false,"x":true,"req":["owner","repo","path","message","branch"],"opt":[],"m":null,"t":null,"tt":"Delete file","d":"Delete a file from a GitHub repository","sb":475},{"n":"fork_repository","s":"gh","a":"Repositories & files","g":"both","ro":false,"x":false,"req":["owner","repo"],"opt":["organization"],"m":null,"t":null,"tt":"Fork repository","d":"Fork a GitHub repository to your account or specified organization","sb":294},{"n":"get_commit","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo","sha"],"opt":["detail","page","perPage"],"m":null,"t":null,"tt":"Get commit details","d":"Get details for a commit from a GitHub repository","sb":942},{"n":"get_file_contents","s":"gh","a":"Repositories & files","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["fields","path","ref","sha"],"m":null,"t":"Read hello.py back. Answer: a note plus the file text print('Hello from GitHub MCP!').","tt":"Get file or directory contents","d":"Get the contents of a file or directory from a GitHub repository","sb":1011},{"n":"get_label","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["owner","repo","name"],"opt":[],"m":null,"t":null,"tt":"Get a specific label from a repository","d":"Get a specific label from a repository.","sb":313},{"n":"get_latest_release","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":[],"m":null,"t":null,"tt":"Get latest release","d":"Get the latest release in a GitHub repository","sb":221},{"n":"get_me","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":[],"opt":[],"m":null,"t":"Benchmark, 3 runs: about 0.85 s each, about 500-byte answer.","tt":"Get my user profile","d":"Get details of the authenticated GitHub user. Use this when a request is about the user's own profile for GitHub. Or when information is missing to build other tool calls.","sb":33},{"n":"get_release_by_tag","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo","tag"],"opt":[],"m":null,"t":null,"tt":"Get a release by tag name","d":"Get a specific release by its tag name in a GitHub repository","sb":293},{"n":"get_tag","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo","tag"],"opt":[],"m":null,"t":null,"tt":"Get tag details","d":"Get details about a specific git tag in a GitHub repository","sb":276},{"n":"get_team_members","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":["org","team_slug"],"opt":[],"m":null,"t":null,"tt":"Get team members","d":"Get member usernames of a specific team in an organization. Limited to organizations accessible with current credentials","sb":210},{"n":"get_teams","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":[],"opt":["user"],"m":null,"t":null,"tt":"Get teams","d":"Get details of the teams the user is a member of. Limited to organizations accessible with current credentials","sb":146},{"n":"issue_read","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["method","owner","repo","issue_number"],"opt":["page","perPage"],"m":["get","get_comments","get_sub_issues","get_parent","get_labels"],"t":null,"tt":"Get issue details","d":"Get information about a specific issue in a GitHub repository.","sb":1265},{"n":"issue_write","s":"gh","a":"Issues","g":"write","ro":false,"x":false,"req":["method","owner","repo"],"opt":["assignees","body","duplicate_of","issue_fields","issue_number","labels","milestone","parent_issue_number","parent_owner","parent_repo","state","state_reason","title","type"],"m":["create","update"],"t":null,"tt":"Create or update issue/pull request","d":"Create a new or update an existing issue in a GitHub repository.","sb":3518},{"n":"list_branches","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["page","perPage"],"m":null,"t":null,"tt":"List branches","d":"List branches in a GitHub repository","sb":428},{"n":"list_commits","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["author","fields","page","path","perPage","sha","since","until"],"m":null,"t":null,"tt":"List commits","d":"Get list of commits of a branch in a GitHub repository. Returns at least 30 results per page by default, but can return more if specified using the perPage parameter (up to 100).","sb":1427},{"n":"list_issue_fields","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["owner"],"opt":["repo"],"m":null,"t":null,"tt":"List issue fields","d":"List issue fields for a repository or organization. Returns field definitions including name, type (text, number, date, single_select), and for single_select fields the list of valid option names. When repo is omitted, returns org-level fields directly.","sb":437},{"n":"list_issue_types","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["owner"],"opt":["repo"],"m":null,"t":null,"tt":"List available issue types","d":"List supported issue types for a repository or its owner organization. When repo is omitted, returns org-level issue types directly.","sb":381},{"n":"list_issues","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["after","direction","field_filters","fields","labels","orderBy","perPage","since","state"],"m":null,"t":null,"tt":"List issues","d":"List issues in a GitHub repository. For pagination, use the 'endCursor' from the previous response's 'pageInfo' in the 'after' parameter.","sb":2149},{"n":"list_pull_requests","s":"gh","a":"Pull requests","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["base","direction","fields","head","page","perPage","sort","state"],"m":null,"t":null,"tt":"List pull requests","d":"List pull requests in a GitHub repository. If the user specifies an author, then DO NOT use this tool and use the search_pull_requests tool instead.","sb":1420},{"n":"list_releases","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["fields","page","perPage"],"m":null,"t":null,"tt":"List releases","d":"List releases in a GitHub repository","sb":808},{"n":"list_repository_collaborators","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["affiliation","page","perPage"],"m":null,"t":null,"tt":"List repository collaborators","d":"List collaborators of a GitHub repository. Results are paginated; the response includes `nextPage`, `prevPage`, `firstPage`, and `lastPage` fields. To get the next page, use the `nextPage` value as the `page` parameter.","sb":710},{"n":"list_tags","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["owner","repo"],"opt":["page","perPage"],"m":null,"t":null,"tt":"List tags","d":"List git tags in a GitHub repository","sb":428},{"n":"merge_pull_request","s":"gh","a":"Pull requests","g":"both","ro":false,"x":false,"req":["owner","repo","pullNumber"],"opt":["commit_message","commit_title","expectedHeadSha","merge_method"],"m":null,"t":null,"tt":"Merge pull request","d":"Merge a pull request in a GitHub repository.","sb":651},{"n":"pull_request_read","s":"gh","a":"Pull requests","g":"read","ro":true,"x":false,"req":["method","owner","repo","pullNumber"],"opt":["after","page","perPage"],"m":["get","get_diff","get_status","get_files","get_commits","get_review_comments","get_reviews","get_comments","get_check_runs"],"t":null,"tt":"Get details for a single pull request","d":"Get information on a specific pull request in GitHub repository.","sb":2438},{"n":"pull_request_review_write","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["method","owner","repo","pullNumber"],"opt":["body","commitID","event","threadId"],"m":["create","submit_pending","delete_pending","resolve_thread","unresolve_thread"],"t":null,"tt":"Write operations (create, submit, delete) on pull request reviews","d":"Create and/or submit, delete review of a pull request.","sb":970},{"n":"push_files","s":"gh","a":"Repositories & files","g":"write","ro":false,"x":false,"req":["owner","repo","branch","files","message"],"opt":[],"m":null,"t":null,"tt":"Push files to repository","d":"Push multiple files to a GitHub repository in a single commit","sb":707},{"n":"request_copilot_review","s":"gh","a":"Pull requests","g":"others","ro":false,"x":false,"req":["owner","repo","pullNumber"],"opt":[],"m":null,"t":null,"tt":"Request Copilot review","d":"Request a GitHub Copilot code review for a pull request. Use this for automated feedback on pull requests, usually before requesting a human reviewer.","sb":301},{"n":"run_secret_scanning","s":"gh","a":"Security","g":"others","ro":true,"x":false,"req":["files","owner","repo"],"opt":[],"m":null,"t":null,"tt":"Run Secret Scanning","d":"Scan files, content, or recent changes for secrets such as API keys, passwords, tokens, and credentials.","sb":533},{"n":"search_code","s":"gh","a":"Repositories & files","g":"read","ro":true,"x":false,"req":["query"],"opt":["fields","order","page","perPage","sort"],"m":null,"t":"Searched 'hello.py'. Answer: 163,328 matching files across all of GitHub.","tt":"Search code","d":"Fast and precise code search across ALL GitHub repositories using GitHub's native search engine. Best for finding exact symbols, functions, classes, or specific code patterns.","sb":1311},{"n":"search_commits","s":"gh","a":"Branches, commits, tags & releases","g":"read","ro":true,"x":false,"req":["query"],"opt":["order","page","perPage","sort"],"m":null,"t":null,"tt":"Search commits","d":"Search for commits across GitHub repositories using GitHub's commit search syntax. Useful for finding specific changes, authors, or messages across one or many repositories. Searches the default branch only.","sb":1209},{"n":"search_issues","s":"gh","a":"Issues","g":"read","ro":true,"x":false,"req":["query"],"opt":["fields","order","owner","page","perPage","repo","sort"],"m":null,"t":null,"tt":"Search issues","d":"Search issues using natural-language semantic matching. Best for conceptual or paraphrased queries (e.g. \"login fails after password reset\"). Already scoped to is:issue.","sb":1722},{"n":"search_pull_requests","s":"gh","a":"Pull requests","g":"read","ro":true,"x":false,"req":["query"],"opt":["fields","order","owner","page","perPage","repo","sort"],"m":null,"t":null,"tt":"Search pull requests","d":"Search for pull requests in GitHub repositories using issues search syntax already scoped to is:pr","sb":1631},{"n":"search_repositories","s":"gh","a":"Repositories & files","g":"read","ro":true,"x":false,"req":["query"],"opt":["minimal_output","order","page","perPage","sort"],"m":null,"t":"Benchmark, 3 runs: about 1.2 s each for 5 results, about 2.7 KB.","tt":"Search repositories","d":"Find GitHub repositories by name, description, readme, topics, or other metadata. Perfect for discovering projects, finding examples, or locating specific repositories across GitHub.","sb":881},{"n":"search_users","s":"gh","a":"Account & people","g":"read","ro":true,"x":false,"req":["query"],"opt":["order","page","perPage","sort"],"m":null,"t":"Searched 'aashwini1010'. Answer: 1 matching user.","tt":"Search users","d":"Find GitHub users by username, real name, or other profile information. Useful for locating developers, contributors, or team members.","sb":674},{"n":"sub_issue_write","s":"gh","a":"Issues","g":"write","ro":false,"x":false,"req":["method","owner","repo","issue_number","sub_issue_id"],"opt":["after_id","before_id","replace_parent"],"m":null,"t":null,"tt":"Change sub-issue","d":"Add a sub-issue to a parent issue in a GitHub repository.","sb":1431},{"n":"ui_get","s":"gh","a":"App helpers","g":"others","ro":true,"x":false,"req":["method","owner"],"opt":["repo"],"m":["labels","assignees","milestones","issue_types","branches","issue_fields","reviewers"],"t":null,"tt":"Get UI data","d":"Fetch UI data for MCP Apps (labels, assignees, milestones, issue types, branches, issue fields, reviewers).","sb":494},{"n":"update_issue_comment","s":"gh","a":"Issues","g":"write","ro":false,"x":false,"req":["owner","repo","comment_id","body"],"opt":[],"m":null,"t":null,"tt":"Update issue comment","d":"Update the body of an existing issue or pull request conversation comment. This tool cannot update pull request review comments.","sb":497},{"n":"update_pull_request","s":"gh","a":"Pull requests","g":"write","ro":false,"x":false,"req":["owner","repo","pullNumber"],"opt":["base","body","draft","maintainer_can_modify","reviewers","state","title"],"m":null,"t":null,"tt":"Edit pull request","d":"Update an existing pull request in a GitHub repository.","sb":890},{"n":"update_pull_request_branch","s":"gh","a":"Pull requests","g":"both","ro":false,"x":false,"req":["owner","repo","pullNumber"],"opt":["expectedHeadSha"],"m":null,"t":null,"tt":"Update pull request branch","d":"Update the branch of a pull request with the latest changes from the base branch.","sb":401},{"n":"resolve-library-id","s":"c7","a":"Documentation","g":"read","ro":true,"x":false,"req":["query","libraryName"],"opt":[],"m":null,"t":"'next.js' + a JWT-middleware question gave 5 matches; best /vercel/next.js. About 2.3 s.","tt":null,"d":"Resolves a package/product name to a Context7-compatible library ID and returns matching libraries.","sb":801},{"n":"query-docs","s":"c7","a":"Documentation","g":"read","ro":true,"x":false,"req":["libraryId","query"],"opt":[],"m":null,"t":"/vercel/next.js + 'middleware JWT cookie' gave doc snippets. About 2.6 s, about 7.1 KB.","tt":null,"d":"Retrieves and queries up-to-date documentation and code examples from Context7 for any programming library or framework.","sb":1207}]</script>
+<script type="application/json" id="plain-data">{"get_me":"Shows your own GitHub profile","get_teams":"Lists the teams you belong to","get_team_members":"Lists the people in one team","search_users":"Finds GitHub users by name or username","list_repository_collaborators":"Lists who has access to a repo","get_file_contents":"Reads a file, or lists a folder","search_repositories":"Finds repositories by name, topic and so on","search_code":"Searches code across **all** of GitHub","list_branches":"Lists a repo's branches","get_commit":"Details of one saved change (commit)","list_commits":"History of changes on a branch","search_commits":"Searches commit messages and authors","get_tag":"Details of one version tag","list_tags":"Lists version tags","get_latest_release":"The newest published release","get_release_by_tag":"One release, by its tag","list_releases":"All releases","issue_read":"One issue's details, comments, sub-issues, parent or labels","list_issues":"Lists issues in a repo, with filters","search_issues":"Finds issues by meaning (\"login fails after reset\")","get_label":"One label's details","list_issue_types":"Which issue types exist (bug, task…)","list_issue_fields":"Which custom issue fields exist","list_pull_requests":"Lists pull requests in a repo","pull_request_read":"One PR's details, changes, files, reviews, comments or checks","search_pull_requests":"Finds pull requests","create_repository":"Creates a new repository","create_or_update_file":"Adds one file, or changes it (changing needs the file's current `sha`)","push_files":"Saves several files in one change","delete_file":"Deletes a file. **The server marks this as destructive**","issue_write":"Creates or updates an issue (`method` = `create` / `update`)","add_issue_comment":"Comments or reacts on an issue or PR","update_issue_comment":"Edits an existing comment","sub_issue_write":"Adds, removes or reorders sub-issues","create_pull_request":"Opens a pull request","update_pull_request":"Edits a PR's title, text, state or reviewers","pull_request_review_write":"Starts, submits or deletes a review; resolves comment threads","add_comment_to_pending_review":"Adds a line comment to your unfinished review","add_reply_to_pull_request_comment":"Replies or reacts to a PR comment","fork_repository":"Copies someone's repository into your account","create_branch":"Makes a new branch, copied from an existing one","update_pull_request_branch":"Brings a PR up to date with the latest base branch","merge_pull_request":"Merges a PR's changes into the main code. **Hard to undo**","run_secret_scanning":"Checks text or files for leaked passwords, keys or tokens. Nothing is saved to the repo","request_copilot_review":"Asks GitHub's AI (Copilot) to review a pull request","ui_get":"Gets pick-list data (labels, assignees, branches…) for apps that draw screens","resolve-library-id":"Turns a library name into Context7's exact library ID, with a ranked list of matches","query-docs":"Returns documentation snippets and code examples for one library and one question"}</script>
+<script>
+(()=>{
+"use strict";
+const TOOLS=JSON.parse(document.getElementById("tool-data").textContent);
+const PLAIN=JSON.parse(document.getElementById("plain-data").textContent);
+const BY=Object.fromEntries(TOOLS.map(t=>[t.n,t]));
+const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+const esc=s=>String(s??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const fmt=n=>Math.round(n).toLocaleString("en-US");
+const reduce=matchMedia("(prefers-reduced-motion: reduce)").matches;
+const GO=["read","write","both","others"];
+const G={read:{label:"Read",hint:"Only looks",ic:"eye"},write:{label:"Write",hint:"Creates, changes, deletes",ic:"pen"},
+  both:{label:"Both",hint:"Copies or merges existing content",ic:"copy"},others:{label:"Others",hint:"Scan, AI review, app data",ic:"spark"}};
+const SRV={gh:{name:"GitHub MCP",page:"github-1",cls:"GitHubMCPClient",var:"gh"},c7:{name:"Context7 MCP",page:"context7-1",cls:"Context7MCPClient",var:"c7"}};
+const M={gh:{conc:{1:852,2:907,4:1053,8:2636},catalog:137194},c7:{conc:{1:2777,2:2317,4:3205,8:3438},catalog:5119}};
+const dot=g=>`<span class="dot d-${g}"></span>`;
+const gpill=g=>`<span class="pill">${dot(g)}${G[g].label}</span>`;
+const icon=(n,cls="ic")=>`<svg class="${cls}" aria-hidden="true"><use href="#i-${n}"/></svg>`;
+const tagBtn=n=>BY[n]?`<button class="tag${BY[n].t?" tested":""}" data-tool="${n}" type="button">${dot(BY[n].g)}${n}</button>`:`<span class="tag">${esc(n)}</span>`;
+const chain=(...ns)=>ns.map(n=>n==="→"?'<span class="ar">→</span>':tagBtn(n)).join("");
+
+const tip=$("#tip");
+function moveTip(e){const p=14,r=tip.getBoundingClientRect();let x=e.clientX+p,y=e.clientY+p;
+  if(x+r.width>innerWidth-8)x=e.clientX-r.width-p; if(y+r.height>innerHeight-8)y=e.clientY-r.height-p;
+  tip.style.left=Math.max(8,x)+"px";tip.style.top=Math.max(8,y)+"px"}
+function bindTip(n,html){n.addEventListener("pointerenter",e=>{tip.innerHTML=html;tip.hidden=false;moveTip(e)});
+  n.addEventListener("pointermove",moveTip);n.addEventListener("pointerleave",()=>tip.hidden=true);
+  n.addEventListener("focus",()=>{const r=n.getBoundingClientRect();tip.innerHTML=html;tip.hidden=false;moveTip({clientX:r.left+r.width/2,clientY:r.bottom})});
+  n.addEventListener("blur",()=>tip.hidden=true)}
+
+/* ---------- svg helpers ---------- */
+const NS="http://www.w3.org/2000/svg";
+function S(tag,a,p){const e=document.createElementNS(NS,tag);for(const k in a)e.setAttribute(k,a[k]);if(p)p.appendChild(e);return e}
+function T(p,x,y,txt,cls,extra={}){const e=S("text",{x,y,class:cls,...extra},p);e.textContent=txt;return e}
+const fit=(s,px)=>{s=String(s);const n=Math.max(4,Math.floor(px/7));return s.length>n?s.slice(0,n-1)+"…":s};
+function niceMax(max){const raw=max/4,mag=Math.pow(10,Math.floor(Math.log10(raw))),r=raw/mag,st=(r>5?10:r>2?5:r>1?2:1)*mag;return{top:Math.ceil(max/st)*st,step:st}}
+function onSize(el,draw){let w=0;new ResizeObserver(()=>{const nw=el.clientWidth;if(nw&&nw!==w){w=nw;draw(nw)}}).observe(el)}
+function numbers(el,head,rows){const d=document.createElement("details");d.className="nums";
+  d.innerHTML=`<summary>Show the numbers</summary><div class="tablewrap"><table><thead><tr>${head.map((h,i)=>`<th${i?' class="num"':""}>${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r=>`<tr>${r.map((c,i)=>`<td${i?' class="num"':""}>${c}</td>`).join("")}</tr>`).join("")}</tbody></table></div>`;
+  el.after(d)}
+function act(n,fn){n.classList.add("pick");n.setAttribute("tabindex","0");n.setAttribute("role","button");n.addEventListener("click",fn);n.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();fn()}})}
+
+/* single-series horizontal bars; rows may be {head:"..."} */
+function hbar(el,rows,opt={}){
+  const vals=rows.filter(r=>!r.head);const max=opt.max||Math.max(...vals.map(r=>r.v));
+  onSize(el,W=>{el.innerHTML="";const lab=Math.min(opt.labW||200,Math.max(110,W*.36)),rh=opt.rh||22,gap=10,valW=opt.valW||70,
+    pw=Math.max(60,W-lab-valW);let y=2;const items=[];
+    rows.forEach(r=>{if(r.head){items.push({r,y:y+12});y+=24}else{items.push({r,y});y+=rh+gap}});
+    const H=y+(opt.axis===false?0:18);const {top:tm,step}=niceMax(max);
+    const svg=S("svg",{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:"img","aria-label":opt.label||"bar chart"},el);
+    if(opt.axis!==false){for(let v=0;v<=tm;v+=step){const x=lab+v/tm*pw;S("line",{x1:x,x2:x,y1:0,y2:H-18,class:"gl"},svg);T(svg,x,H-3,opt.tick?opt.tick(v):fmt(v),"ax",{"text-anchor":"middle"})}}
+    S("line",{x1:lab,x2:lab,y1:0,y2:H-(opt.axis===false?0:18),class:"bl"},svg);
+    items.forEach(({r,y})=>{if(r.head){T(svg,0,y,r.head,"ax-h",{"dominant-baseline":"central"});return}
+      T(svg,lab-10,y+rh/2,fit(r.label,lab-12),"ax-l",{"text-anchor":"end","dominant-baseline":"central"});
+      const w=Math.max(2,r.v/tm*pw);
+      const b=S("rect",{x:lab,y,width:w,height:rh,rx:4,class:"bar"+(r.alt?" alt":""),tabindex:0},svg);
+      bindTip(b,r.tip||`<b>${esc(r.label)}</b><br>${esc(r.text||fmt(r.v))}`);
+      if(r.onPick)act(b,r.onPick);
+      T(svg,lab+w+6,y+rh/2,r.text||fmt(r.v),"vl",{"dominant-baseline":"central"})});
+  });
+  if(opt.table!==false)numbers(el,opt.head||["Item","Value"],vals.map(r=>[esc(r.full||r.label),esc(r.text||fmt(r.v))]));
+}
+
+/* concurrency: bars + dashed estimate line */
+function concChart(el,c){
+  const Ns=[1,2,4,8],one=c[1],est=Ns.map(n=>n*one),max=Math.max(...est,...Ns.map(n=>c[n]));
+  onSize(el,W=>{el.innerHTML="";const H=230,l=52,r=12,t=14,b=40,pw=W-l-r,ph=H-t-b,{top:tm,step}=niceMax(max);
+    const svg=S("svg",{viewBox:`0 0 ${W} ${H}`,width:W,height:H,role:"img","aria-label":"Wait time for 1, 2, 4 and 8 calls at once"},el);
+    const y=v=>t+ph-v/tm*ph,bw=Math.min(54,pw/Ns.length*.5),cx=i=>l+pw*(i+.5)/Ns.length;
+    for(let v=0;v<=tm;v+=step){S("line",{x1:l,x2:W-r,y1:y(v),y2:y(v),class:"gl"},svg);T(svg,l-8,y(v),v>=1000?(v/1000)+"s":v,"ax",{"text-anchor":"end","dominant-baseline":"central"})}
+    S("line",{x1:l,x2:W-r,y1:y(0),y2:y(0),class:"bl"},svg);
+    Ns.forEach((n,i)=>{const v=c[n],x=cx(i)-bw/2;
+      const bar=S("rect",{x,y:y(v),width:bw,height:Math.max(1,y(0)-y(v)),rx:4,class:"bar",tabindex:0},svg);
+      bindTip(bar,`<b>${n} call${n>1?"s":""} at once</b><br>Measured: ${fmt(v)} ms<br>One by one (estimate): ${fmt(est[i])} ms`);
+      T(svg,cx(i),y(v)-6,fmt(v),"vl",{"text-anchor":"middle"});
+      T(svg,cx(i),H-b+18,n+(n>1?" calls":" call"),"ax",{"text-anchor":"middle"})});
+    S("path",{d:Ns.map((n,i)=>(i?"L":"M")+cx(i)+","+y(est[i])).join(""),class:"refline"},svg);
+    Ns.forEach((n,i)=>{const d=S("circle",{cx:cx(i),cy:y(est[i]),r:4.5,class:"refdot"},svg);bindTip(d,`<b>${n} one by one</b><br>Estimate: ${fmt(est[i])} ms`)});
+    T(svg,cx(3)-8,y(est[3])-10,"one by one","ax",{"text-anchor":"end"});
+  });
+  numbers(el,["Calls","At once (ms)","One by one, estimate (ms)"],Ns.map((n,i)=>[n,fmt(c[n]),fmt(est[i])]));
+}
+
+function node(svg,id,x,y,w,h,t1,t2,click){const g=S("g",{class:"nd"+(click?" click":""),"data-id":id},svg);S("rect",{x,y,width:w,height:h,rx:10},g);
+  T(g,x+w/2,y+(t2?h/2-8:h/2),t1,"t1",{"text-anchor":"middle","dominant-baseline":"central"});if(t2)T(g,x+w/2,y+h/2+11,t2,"t2",{"text-anchor":"middle","dominant-baseline":"central"});
+  if(click){g.setAttribute("tabindex","0");g.setAttribute("role","button");g.setAttribute("aria-label",t1);g.addEventListener("click",()=>click(id));g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();click(id)}})}return g}
+function edge(svg,id,d,cls="",label,lx,ly){const p=S("path",{d,class:"ed "+cls,"data-id":id,"marker-end":"url(#ah)"},svg);if(label)T(svg,lx,ly,label,"el",{"text-anchor":"middle"});return p}
+function defs(svg){const d=S("defs",{},svg),m=S("marker",{id:"ah",viewBox:"0 0 10 10",refX:"9",refY:"5",markerWidth:"7",markerHeight:"7",orient:"auto-start-reverse"},d);S("path",{d:"M0,0 L10,5 L0,10 z",class:"arrowhead"},m)}
+const ARCH={
+  nb:["Your app (host)","Where the work happens: any app, script or notebook. It loads settings, creates the clients and runs them. Each 'async with' block opens and closes one client."],
+  env:[".env file","Holds the two server addresses and two secret keys. The code reads them at start-up, so no secret is written in the code."],
+  ghc:["GitHubMCPClient","A tiny class that names the GitHub settings. All real work comes from BaseMCPClient. It sends only the GitHub token, only to GitHub."],
+  c7c:["Context7MCPClient","Same idea for Context7. It sends only the Context7 key, only to Context7."],
+  base:["BaseMCPClient (shared code)","Opens the secure connection, says hello (initialize), fetches the menu (list_tools), runs tools (call_tool) and closes everything safely."],
+  ghs:["GitHub MCP server","Run by GitHub at api.githubcopilot.com/mcp/. Checks your token and turns each tool call into normal GitHub actions done as you. 46 tools."],
+  c7s:["Context7 MCP server","Run by Upstash at mcp.context7.com/mcp. Finds a library ID, then returns matching doc snippets. 2 tools, both read-only."],
+  gh:["Your GitHub","Your real repositories, issues, pull requests and releases. Write tools change these for real."],
+  docs:["Context7 docs index","Library documentation collected and indexed by Context7. How it's built isn't public."]};
+const PATHS={gh:[["nb",[],"1. You ask","Your app asks GitHubMCPClient to run a tool, for example create_repository."],
+  ["env",["e-env"],"2. Read settings","The client reads GITHUB_MCP_URL and GITHUB_TOKEN from .env."],
+  ["ghc",["e-nb-g"],"3. Connect","BaseMCPClient opens a secure connection, says hello and fetches the menu."],
+  ["ghs",["e-g-s"],"4. Send the request","An HTTPS POST carries the tool name, the inputs and your token."],
+  ["gh",["e-s-gh"],"5. Work happens","GitHub's server does the action on your account, as you."],
+  ["nb",["e-s-gh","e-g-s","e-nb-g"],"6. Answer returns","The result travels back the same way, as text containing JSON."]],
+ c7:[["nb",[],"1. You ask","Your app asks Context7MCPClient: \"How do I check a JWT cookie in Next.js?\""],
+  ["env",["e-env"],"2. Read settings","The client reads CONTEXT_MCP_URL and CONTEXT_TOKEN from .env."],
+  ["c7c",["e-nb-c"],"3. Connect","BaseMCPClient opens a secure connection, says hello and fetches the menu."],
+  ["c7s",["e-c-s"],"4. Step 1: find the library","resolve-library-id turns \"Next.js\" into /vercel/next.js."],
+  ["docs",["e-s-docs"],"5. Step 2: search the docs","query-docs searches that library's docs for your question."],
+  ["nb",["e-s-docs","e-c-s","e-nb-c"],"6. Answer returns","Doc snippets and code examples come back as readable text."]]};
+function archDiagram(el){
+  const svg=S("svg",{viewBox:"0 0 980 360",role:"img","aria-label":"Architecture: your app and two clients on your computer connect over HTTPS to GitHub MCP and Context7 MCP servers"},el);defs(svg);
+  S("rect",{x:10,y:8,width:470,height:344,rx:14,class:"zone"},svg);T(svg,24,28,"Your computer","zone-l");
+  T(svg,510,28,"The internet","zone-l");
+  const info=$("#arch-info"),show=id=>{$$(".nd",svg).forEach(n=>n.classList.toggle("on",n.dataset.id===id));info.innerHTML=`<h3>${esc(ARCH[id][0])}</h3><p>${esc(ARCH[id][1])}</p>`};
+  const bg=S("g",{class:"nd click","data-id":"base",tabindex:"0",role:"button","aria-label":"BaseMCPClient"},svg);S("rect",{x:255,y:98,width:210,height:236,rx:12},bg);
+  T(bg,360,306,"BaseMCPClient","t1",{"text-anchor":"middle","dominant-baseline":"central"});T(bg,360,322,"shared code inside both clients","t2",{"text-anchor":"middle","dominant-baseline":"central"});
+  bg.addEventListener("click",()=>show("base"));bg.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();show("base")}});
+  edge(svg,"e-nb-g","M200,190 C232,190 232,135 268,135");edge(svg,"e-nb-c","M200,220 C232,220 232,240 268,240");
+  edge(svg,"e-env","M360,82 L360,96","dash");
+  edge(svg,"e-g-s","M450,135 L552,135","","HTTPS + token",501,124);edge(svg,"e-c-s","M450,240 L552,240","","HTTPS + key",501,229);
+  edge(svg,"e-s-gh","M752,135 L800,135");edge(svg,"e-s-docs","M752,240 L800,240");
+  node(svg,"nb",30,165,170,80,"Your app","host",show);node(svg,"env",272,32,176,50,".env file","addresses + keys",show);
+  node(svg,"ghc",270,110,180,50,"GitHubMCPClient","client",show);node(svg,"c7c",270,215,180,50,"Context7MCPClient","client",show);
+  node(svg,"ghs",555,105,195,60,"GitHub MCP server","46 tools",show);node(svg,"c7s",555,210,195,60,"Context7 MCP server","2 tools",show);
+  node(svg,"gh",802,105,165,60,"Your GitHub","repos · issues · PRs",show);node(svg,"docs",802,210,165,60,"Docs index","library documentation",show);
+  let k=-1;const sel=$("#arch-path"),prev=$("#arch-prev"),next=$("#arch-next");
+  function step(){const p=PATHS[sel.value];$$(".ed",svg).forEach(e=>e.classList.remove("on"));$$(".nd",svg).forEach(n=>n.classList.remove("on"));
+    prev.disabled=k<=0;next.disabled=k>=p.length-1;if(k<0){info.innerHTML=`<h3>Press "Next step"</h3><p>Follow one ${sel.value==="gh"?"GitHub":"Context7"} request from start to finish.</p>`;return}
+    const [n,es,h,txt]=p[k];es.forEach(id=>{const e=$(`[data-id="${id}"]`,svg);e&&e.classList.add("on")});const nd=$(`.nd[data-id="${n}"]`,svg);nd&&nd.classList.add("on");
+    info.innerHTML=`<h3>${esc(h)} <span class="note">(${k+1} of ${p.length})</span></h3><p>${esc(txt)}</p>`}
+  next.addEventListener("click",()=>{k++;step()});prev.addEventListener("click",()=>{k--;step()});
+  $("#arch-reset").addEventListener("click",()=>{k=-1;step()});sel.addEventListener("change",()=>{k=-1;step()});prev.disabled=true;
+}
+function flowDiagram(el,s){
+  const N=s==="gh"?[["you","You / AI assistant","asks for something","The request starts here, e.g. \"create a repo called my-repo\"."],
+      ["cl","GitHubMCPClient","in your app","Reads GITHUB_MCP_URL and GITHUB_TOKEN from .env, connects, fetches the menu and checks that the tool name exists."],
+      ["sv","GitHub MCP server","api.githubcopilot.com","Checks your token and picks the tool. Runs as you, with your token's permissions only."],
+      ["tg","GitHub","your repos, issues, PRs","The real work happens here: a repo is created, a file is read, an issue is opened."]]
+    :[["you","You / AI assistant","asks a docs question","\"How do I check a JWT cookie in Next.js middleware?\""],
+      ["cl","Context7MCPClient","in your app","Reads CONTEXT_MCP_URL and CONTEXT_TOKEN from .env, connects and fetches the 2-tool menu."],
+      ["sv","Context7 MCP server","mcp.context7.com","Step 1, resolve-library-id: \"Next.js\" → /vercel/next.js. Step 2, query-docs: find the matching passages."],
+      ["tg","Docs index","library documentation","Documentation collected and indexed by Context7. The backend isn't public."]];
+  const L=s==="gh"?["request","HTTPS + token","GitHub API, as you"]:["question","HTTPS + key","search"];
+  const svg=S("svg",{viewBox:"0 0 980 150",role:"img","aria-label":"Request flow for "+SRV[s].name},el);defs(svg);
+  const info=$(`#flow-${s}-info`),w=180,gap=(980-20-4*w)/3;
+  N.forEach((n,i)=>{const x=10+i*(w+gap);if(i<3){edge(svg,"f"+i,`M${x+w+4},79 L${x+w+gap-6},79`,"",L[i],x+w+gap/2,30)}});
+  N.forEach((n,i)=>{const x=10+i*(w+gap);node(svg,n[0],x,44,w,70,n[1],n[2],id=>{$$(".nd",svg).forEach(g=>g.classList.toggle("on",g.dataset.id===id));const m=N.find(z=>z[0]===id);info.innerHTML=`<h3>${esc(m[1])}</h3><p>${esc(m[3])}</p>`})});
+}
+
+
+
+/* ---------- donut ---------- */
+function donut(el,s,opt={}){
+  const parts=GO.map(g=>[g,TOOLS.filter(t=>t.s===s&&t.g===g).length]).filter(p=>p[1]),tot=parts.reduce((a,p)=>a+p[1],0);
+  onSize(el,W=>{el.innerHTML="";const size=Math.min(opt.size||150,W),r=size/2-4,ri=r*.62,cx=size/2,cy=size/2,legendW=opt.legend?Math.min(220,W-size-12):0;
+    const lay=opt.legend&&W>=size+150,H=lay?size:size+(opt.legend?parts.length*24+8:0),VW=lay?size+16+legendW:size;
+    const svg=S("svg",{viewBox:`0 0 ${VW} ${H}`,width:VW,height:H,role:"img","aria-label":`${tot} tools: `+parts.map(p=>`${p[1]} ${G[p[0]].label}`).join(", ")},el);
+    let a0=-Math.PI/2;const gap=parts.length>1?0.035:0;
+    parts.forEach(([g,v])=>{const a1=a0+v/tot*Math.PI*2,s0=a0+gap/2,s1=a1-gap/2,large=s1-s0>Math.PI?1:0;
+      const P=(rr,a)=>`${cx+rr*Math.cos(a)},${cy+rr*Math.sin(a)}`;
+      const d=parts.length===1?`M${cx},${cy-r}A${r},${r} 0 1 1 ${cx-0.01},${cy-r}L${cx-0.01},${cy-ri}A${ri},${ri} 0 1 0 ${cx},${cy-ri}Z`
+        :`M${P(r,s0)}A${r},${r} 0 ${large} 1 ${P(r,s1)}L${P(ri,s1)}A${ri},${ri} 0 ${large} 0 ${P(ri,s0)}Z`;
+      const p=S("path",{d,class:"arc g-"+g,tabindex:opt.pick?0:-1},svg);
+      bindTip(p,`<b>${G[g].label}</b>: ${v} tool${v>1?"s":""}<br>${G[g].hint}`);a0=a1});
+    T(svg,cx,cy-4,tot,"big",{"text-anchor":"middle","dominant-baseline":"central"});T(svg,cx,cy+20,"tools","ax",{"text-anchor":"middle"});
+    if(opt.legend)parts.forEach(([g,v],i)=>{const x=lay?size+16:4,y=lay?cy-(parts.length*26)/2+i*26+13:size+14+i*24;
+      S("rect",{x,y:y-6,width:12,height:12,rx:3,class:"g-"+g},svg);T(svg,x+20,y,`${v}  ${G[g].label}`,"ax-l",{"dominant-baseline":"central"});
+      T(svg,x+20,y+13,G[g].hint,"ax",{"dominant-baseline":"central"})});
+  });
+}
+
+/* ---------- compare rows (overview) ---------- */
+function compare(){const R=[["Tools",46,2,v=>v,""],["Typical call",0.85,2.3,v=>v+" s",""],["Menu size for AI",34299,1280,v=>"≈ "+fmt(v)+" tokens",""]];
+  $("#cmp").innerHTML=R.map(([k,a,b,f])=>{const m=Math.max(a,b)||1;return `<div class="cmp-row"><b>${k}</b>
+    <div class="cmp-bar"><span>GitHub</span><span class="track"><span class="fill" style="width:${Math.max(1,a/m*100)*0.7}%"></span><span class="val">${f(a)}</span></span></div>
+    <div class="cmp-bar alt"><span>Context7</span><span class="track"><span class="fill" style="width:${Math.max(1,b/m*100)*0.7}%"></span><span class="val">${f(b)}</span></span></div></div>`}).join("")}
+
+/* ---------- tool map ---------- */
+function toolmap(){$$("[data-tmap]").forEach(el=>{const s=el.dataset.tmap,list=TOOLS.filter(t=>t.s===s),areas=[...new Set(list.map(t=>t.a))];
+  el.innerHTML=areas.map(a=>{const ts=list.filter(t=>t.a===a).sort((x,y)=>GO.indexOf(x.g)-GO.indexOf(y.g));return `<div class="tmap-row"><span>${esc(a)} · ${ts.length}</span><div class="chips">${ts.map(t=>tagBtn(t.n)).join("")}</div></div>`}).join("")})}
+
+/* ---------- tested strips ---------- */
+const TESTED={gh:[["create_repository","Made private repo my-repo"],["create_or_update_file","Added hello.py + commit"],["get_file_contents","Read hello.py back"],["search_users","Found 1 user"],["search_code","163,328 hits: narrow it!"],["get_me","0.85 s · benchmark"],["search_repositories","1.2 s · benchmark"]],
+  c7:[["resolve-library-id","next.js → 5 matches · 2.3 s"],["query-docs","Doc snippets · 7 KB · 2.6 s"]]};
+function strips(){$$("[data-strip]").forEach(ol=>{ol.innerHTML=TESTED[ol.dataset.strip].map(([n,r],i)=>`<li><span class="n">STEP ${i+1}</span><div>${tagBtn(n)}</div><p>${esc(r)}</p></li>`).join("")})}
+
+/* ---------- context7 tool cards ---------- */
+function c7cards(){const C=[["resolve-library-id","Step 1 · find the library","libraryName, query",'"Next.js" + what you want to do',"Ranked list of matching library IDs","book"],
+  ["query-docs","Step 2 · ask the docs","libraryId, query",'"/vercel/next.js" + one topic',"Current doc passages and code examples","search"]];
+  $("#c7-tools").innerHTML=C.map(([n,h,inp,ex,out,ic])=>`<div class="panel"><h2>${icon(ic)}${h}</h2><div>${tagBtn(n)} ${gpill("read")}</div>
+    <div class="io"><div><h3>You send</h3><pre>${esc(inp)}\n${esc(ex)}</pre></div><span class="arrow" aria-hidden="true">→</span><div><h3>You get</h3><pre>${esc(out)}</pre></div></div></div>`).join("")}
+
+/* ---------- use cases, limits, decision ---------- */
+const USES={gh:[["file","Start a project with a file","create_repository,→,create_or_update_file"],["eye","Read a file on GitHub","get_file_contents"],["search","Find example code","search_code"],
+  ["bug","Summarise open bugs","list_issues,→,issue_read"],["branch","Summarise a pull request","pull_request_read"],["shield","Check text for leaked secrets","run_secret_scanning"]],
+ c7:[["book","Right way to do X in library Y","resolve-library-id,→,query-docs"],["tag","Docs for an older version","resolve-library-id,→,query-docs"],["robot","Feed real docs to an AI","query-docs"],["search","Pick the most trusted library","resolve-library-id"]]};
+function uses(){$$("[data-uses]").forEach(el=>{el.innerHTML=USES[el.dataset.uses].map(([ic,h,ch])=>`<div class="use">${icon(ic,"ic lg")}<div><b>${esc(h)}</b><div class="chain">${chain(...ch.split(","))}</div></div></div>`).join("")})}
+const IMP={high:"High",med:"Med",low:"Low"};
+const LIM={gh:[["high","Real changes","delete & merge are hard to undo"],["high","Token = power","it can do all your token can"],["med","Big menu","≈34,000 AI tokens for 46 tools"],["med","Easy-to-miss inputs","typos are ignored silently"],["med","Usage limits","too many calls get slowed"],["low","All-of-GitHub search","narrow with repo:"]],
+ c7:[["high","No accuracy guarantee","community-contributed docs"],["high","Questions leave your machine","no secrets in query"],["med","Only indexed libraries","no private company docs"],["med","Similar names","pick by score"],["low","Slower","2.3–2.6 s per call"],["low","Call budget","≤ 3 calls per question"]]};
+function lims(){$$("[data-lims]").forEach(el=>{el.innerHTML=LIM[el.dataset.lims].map(([k,h,p])=>`<div class="lim"><span class="impact i-${k}"><i></i>${IMP[k]}</span><b>${esc(h)}</b><small>${esc(p)}</small></div>`).join("")})}
+const DT={gh:[["read a file","get_file_contents"],["find code","search_code"],["see open bugs","list_issues"],["understand a PR","pull_request_read"],["start a project","create_repository"],["change a file","create_or_update_file"],["report a bug","issue_write"],["propose changes","create_branch,→,create_pull_request"],["accept changes","merge_pull_request"]],
+ c7:[["docs, ID unknown","resolve-library-id,→,query-docs"],["docs, ID known","query-docs"],["compare libraries","resolve-library-id"]]};
+function dts(){$$("[data-dt]").forEach(el=>{el.innerHTML=DT[el.dataset.dt].map(([w,u])=>`<div><span>${esc(w)}</span><div class="chain">${chain(...u.split(","))}</div></div>`).join("")})}
+function decidePage(){
+  $$(".tb .subs div").forEach(d=>d.innerHTML=d.innerHTML.replace(/\$\{pill:(\w+)\}/g,(_,g)=>gpill(g)));
+}
+
+/* ---------- clickable count tiles ---------- */
+function tiles(){$$("[data-tiles]").forEach(box=>{const s=box.dataset.tiles,list=TOOLS.filter(t=>t.s===s),panel=$("#tlist-"+s),speed=box.innerHTML;
+  const F=s==="gh"?[["all","tools in total",null],["read","Read · only looks","read"],["write","Write · changes things","write"],["both","Both · copies or merges","both"],["others","Others · helpers","others"],["tested","tested here",null]]
+    :[["all","tools in total",null],["read","only read","read"],["change","change anything",null],["tested","tested here",null]];
+  const pick=k=>list.filter(t=>k==="all"||(k==="tested"?t.t:k==="change"?!t.ro:t.g===k));
+  box.innerHTML=F.map(([k,lab,g])=>{const n=pick(k).length;return `<button class="tile" type="button" data-k="${k}" aria-pressed="false"${n?"":" disabled"}><span class="v">${g?dot(g):""}${n}</span><span class="k">${lab}</span>${n?'<span class="hint">Show names</span>':""}</button>`}).join("")+speed;
+  let cur="";
+  box.addEventListener("click",e=>{const b=e.target.closest("button.tile");if(!b)return;const k=b.dataset.k;cur=cur===k?"":k;
+    $$("button.tile",box).forEach(x=>{const on=x.dataset.k===cur;x.setAttribute("aria-pressed",String(on));const h=$(".hint",x);if(h)h.textContent=on?"Hide names":"Show names"});
+    if(!cur){panel.hidden=true;return}
+    const L=pick(cur),f=F.find(x=>x[0]===cur);
+    panel.innerHTML=`<h3>${f[2]?gpill(f[2]):""}${L.length} ${esc(f[1])}</h3><div class="chips">${L.map(t=>tagBtn(t.n)).join("")}</div><p class="note">Click a name for details. Bold border = tested here.</p>`;
+    panel.hidden=false})})}
+
+/* ---------- drawer ---------- */
+const drawer=$("#drawer"),scrim=$("#scrim");let lastFocus=null;
+function openTool(n){const t=BY[n];if(!t)return;if(drawer.hidden)lastFocus=document.activeElement;
+  const sib=TOOLS.filter(x=>x.s===t.s).map(x=>x.n),i=sib.indexOf(n),prev=sib[i-1],next=sib[i+1];
+  drawer.innerHTML=`<div class="dh"><div><span class="eyebrow">${SRV[t.s].name} · ${esc(t.a)}</span><h2 id="dr-title">${t.n}</h2></div><button class="btn" id="dr-close" type="button">Close</button></div>
+    <p class="plain">${esc(PLAIN[t.n])}</p>
+    <div class="chips">${gpill(t.g)}<span class="pill">Server: ${t.ro?"read-only":"makes changes"}</span>${t.x?'<span class="impact i-high"><i></i>Destructive</span>':""}${t.t?`<span class="pill">${icon("check","ic")} Tested</span>`:""}</div>
+    ${t.t?`<div class="ds"><h3>Our test</h3><p>${esc(t.t)}</p></div>`:""}
+    <div class="ds"><h3>Needs</h3><div class="chips">${t.req.length?t.req.map(r=>`<span class="tag">${r}</span>`).join(""):'<span class="note">nothing</span>'}</div></div>
+    ${t.opt.length?`<div class="ds"><h3>Optional</h3><div class="chips">${t.opt.map(r=>`<span class="tag">${r}</span>`).join("")}</div></div>`:""}
+    ${t.m?`<div class="ds"><h3>Actions</h3><div class="chips">${t.m.map(r=>`<span class="tag">${r}</span>`).join("")}</div></div>`:""}
+    <details class="more"><summary>Server's own description</summary><p class="note" style="font-size:.86rem">${esc(t.d)}</p></details>
+    <div class="stepper" style="justify-content:space-between">${prev?`<button class="btn" data-open="${prev}" type="button">← ${prev}</button>`:"<span></span>"}${next?`<button class="btn" data-open="${next}" type="button">${next} →</button>`:""}</div>`;
+  drawer.hidden=false;scrim.hidden=false;$("#dr-close").focus()}
+function closeTool(){if(drawer.hidden)return;drawer.hidden=true;scrim.hidden=true;lastFocus&&lastFocus.focus&&lastFocus.focus()}
+drawer.addEventListener("click",e=>{if(e.target.id==="dr-close")closeTool();const o=e.target.closest("[data-open]");if(o)openTool(o.dataset.open)});
+scrim.addEventListener("click",closeTool);
+document.addEventListener("click",e=>{const b=e.target.closest("[data-tool]");if(b){e.preventDefault();openTool(b.dataset.tool)}});
+
+/* ---------- copy ---------- */
+function addCopy(){$$(".code").forEach(c=>{const b=document.createElement("button");b.className="btn copy";b.type="button";b.textContent="Copy";
+  b.addEventListener("click",()=>{const txt=$("pre",c).innerText,done=()=>{b.textContent="Copied";setTimeout(()=>b.textContent="Copy",1500)};
+    const sel=()=>{const r=document.createRange();r.selectNodeContents($("pre",c));const s=getSelection();s.removeAllRanges();s.addRange(r)};
+    try{navigator.clipboard.writeText(txt).then(done,sel)}catch(_){sel()}});c.appendChild(b)})}
+
+/* ---------- pager ---------- */
+const PAGES=$$(".page").map(p=>p.id);let cur=null;
+function show(id,push=true){if(!PAGES.includes(id))id="overview";closeTool();
+  if(push){try{history.pushState(null,"","#"+id)}catch(_){}}
+  PAGES.forEach(p=>$("#"+p).hidden=p!==id);cur=id;const i=PAGES.indexOf(id),pg=$("#"+id);
+  $$(".pnav a").forEach(a=>a.dataset.p===id?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  $("#prog").style.width=((i+1)/PAGES.length*100)+"%";
+  $("#where").innerHTML=`<b>${esc(pg.dataset.name)}</b> · ${esc(pg.dataset.title)} · ${i+1} / ${PAGES.length}`;
+  $("#prev").disabled=i===0;$("#next").disabled=i===PAGES.length-1;
+  $("#next").textContent=i<PAGES.length-1?"Next →":"End";
+  scrollTo({top:0,behavior:"auto"})}
+$("#prev").addEventListener("click",()=>show(PAGES[PAGES.indexOf(cur)-1]));
+$("#next").addEventListener("click",()=>show(PAGES[PAGES.indexOf(cur)+1]));
+document.addEventListener("keydown",e=>{if(e.key==="Escape"){closeTool();return}
+  if(!drawer.hidden||/INPUT|SELECT|TEXTAREA/.test(document.activeElement.tagName)||e.altKey||e.ctrlKey||e.metaKey)return;
+  const i=PAGES.indexOf(cur);if(e.key==="ArrowRight"&&i<PAGES.length-1)show(PAGES[i+1]);if(e.key==="ArrowLeft"&&i>0)show(PAGES[i-1])});
+document.addEventListener("click",e=>{const a=e.target.closest("a[href^='#']");if(!a||e.defaultPrevented)return;e.preventDefault();show(a.getAttribute("href").slice(1))});
+addEventListener("popstate",()=>show(location.hash.slice(1),false));
+addEventListener("hashchange",()=>{const h=location.hash.slice(1);if(h!==cur)show(h,false)});
+
+/* ---------- boot ---------- */
+$$("[data-legend=groups]").forEach(l=>l.innerHTML=GO.map(g=>`<span><i class="sw d-${g}"></i>${G[g].label}: ${G[g].hint.toLowerCase()}</span>`).join(""));
+donut($("[data-chart=donut-gh]"),"gh",{size:140});donut($("[data-chart=donut-c7]"),"c7",{size:140});
+compare();tiles();toolmap();strips();c7cards();uses();lims();dts();decidePage();addCopy();
+const nx=[["/vercel/next.js",5143,90.67],["/websites/nextjs",6180,86.26],["/workos/authkit-nextjs",430,87.03],["/auth0/nextjs-auth0",1030,85.81],["/ixartz/next-js-boilerplate",448,58.97]];
+hbar($("[data-chart=nextjs]"),nx.map(([id,sn,sc],i)=>({label:id,v:sc,text:`${sc} · ${fmt(sn)}`,alt:i>0,tip:`<b>${id}</b><br>Score ${sc} / 100<br>${fmt(sn)} code snippets`})),
+  {max:100,label:"Quality score per matching library",head:["Library ID","Score · snippets"],valW:96,labW:200});
+archDiagram($("[data-diagram=arch]"));flowDiagram($("[data-diagram=flow-gh]"),"gh");flowDiagram($("[data-diagram=flow-c7]"),"c7");
+show(location.hash.slice(1)||"overview",false);
+})();
+</script>
+
+</body>
+</html>

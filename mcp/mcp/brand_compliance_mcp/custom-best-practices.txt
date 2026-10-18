@@ -1,0 +1,75 @@
+# Python Best Practices
+
+## Style
+- Follow PEP 8
+- Use 4 spaces for indentation, never tabs
+- Max line length: 88 characters
+- Use f-strings for string formatting
+
+## Naming
+- Variables and functions: snake_case
+- Classes: PascalCase
+- Constants: UPPER_SNAKE_CASE
+- Private members: _leading_underscore
+
+## Type Hints
+- Always add type hints to function signatures
+- Use Optional[T] for nullable values
+- Import from typing module when needed
+
+## Functions
+- Keep functions small and single-purpose
+- Use None as default for mutable arguments, not [] or {}
+- Write docstrings for all public functions and classes
+
+## Error Handling
+- Always catch specific exceptions, never bare except
+- Never silently suppress exceptions with pass
+- Always log errors with context
+
+## File & Resource Handling
+- Always use context managers (with) for files, DB connections, and locks
+
+## Logging
+- Use logging module instead of print statements
+- Use __name__ as logger name
+- Log at appropriate levels: DEBUG, INFO, WARNING, ERROR
+
+## Imports
+- Group imports: stdlib → third-party → local
+- Never use wildcard imports (from x import *)
+- Keep imports at the top of the file
+
+## Code Quality
+- DRY: Don't repeat yourself
+- Avoid deeply nested code (max 3 levels)
+- Prefer list/dict comprehensions over loops when readable
+- Avoid global variables
+
+## Testing
+- Write tests for all public functions
+- Use pytest
+- Aim for 80%+ code coverage
+- Name tests: test_<function>_<scenario>
+
+## Dependencies
+- Always use virtual environments
+- Pin dependencies in requirements.txt
+- Separate dev dependencies from production
+
+## Security
+- Never hardcode secrets or API keys
+- Use environment variables for config
+- Validate all external inputs
+
+## Root Layout
+- Keep source code in src/ directory
+- Never mix tests with source code
+- Never mix config files with source code
+
+## tests/ Rules
+- Mirror the src/ structure inside tests/
+- Unit tests: tests/unit/
+- Integration tests: tests/integration/
+- Fixtures and shared mocks: tests/conftest.py only
+- No business logic inside test files

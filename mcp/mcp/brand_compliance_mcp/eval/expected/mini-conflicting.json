@@ -1,0 +1,203 @@
+{
+  "id": "mini-conflicting",
+  "description": "A guide that contradicts itself twice: two different sizes for the same heading, and 'Lato only' next to a Playfair Display style. Neither side of a contradiction may be applied.",
+  "synthetic": true,
+  "guide": "eval/guides/mini-conflicting.md",
+  "artifact": "eval/artifacts/mini-clean.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "static",
+    "rules": [
+      {
+        "selector": {
+          "role": "heading.h1",
+          "property": "font-size",
+          "value": "2.5rem"
+        },
+        "status": "conflict_unresolved",
+        "why": "2.5rem vs 3.25rem for the same heading"
+      },
+      {
+        "selector": {
+          "role": "heading.h1",
+          "property": "font-size",
+          "value": "3.25rem"
+        },
+        "status": "conflict_unresolved",
+        "why": "2.5rem vs 3.25rem for the same heading"
+      },
+      {
+        "selector": {
+          "category": "font_only"
+        },
+        "status": "conflict_unresolved",
+        "why": "Lato only vs Playfair Display"
+      },
+      {
+        "selector": {
+          "role": "heading.h2",
+          "property": "font-size"
+        },
+        "status": "applied",
+        "why": "not part of the contradiction"
+      }
+    ],
+    "changes": [
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-weight",
+        "after": "700",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "line-height",
+        "after": "1.15",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "font-size",
+        "after": "1.75rem",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "font-weight",
+        "after": "700",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "line-height",
+        "after": "1.2",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-size",
+        "after": "1rem",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "line-height",
+        "after": "1.6",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "document"
+        },
+        "property": "font-family",
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "page.surface"
+        },
+        "property": "background",
+        "after": "#faf7f2",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body",
+          "scope": "light"
+        },
+        "property": "color",
+        "after": "#1b2a41",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-weight",
+        "after": "400",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.primary"
+        },
+        "property": "background",
+        "after": "#b23a22",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.primary"
+        },
+        "property": "color",
+        "after": "#faf7f2",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.primary"
+        },
+        "property": "border",
+        "after": "none",
+        "why": ""
+      }
+    ],
+    "conflicts": [
+      {
+        "kind": "value_clash",
+        "resolved": false,
+        "guide_lines": [
+          41,
+          42
+        ]
+      },
+      {
+        "kind": "font_restriction",
+        "resolved": false,
+        "guide_lines": [
+          34
+        ]
+      }
+    ],
+    "exact_conflict_count": 2
+  }
+}

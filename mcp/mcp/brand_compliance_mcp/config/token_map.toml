@@ -1,0 +1,84 @@
+# Which of a page's own colour variables take which brand token.
+#
+# Many pages keep their colours in CSS variables (--accent, --bar, ...). Role
+# rules (button, heading...) never reach those, so a page can stay off-brand
+# (e.g. blue links and charts). Each entry names a page variable and the guide
+# token that replaces it, per surface. Tokens are looked up BY NAME in the
+# brand guide's palette, so the values always come from the guide.
+#
+# The tool only overrides a variable the page really defines; it never adds one.
+# Choices that must stay readable are checked by the contrast verifier (light)
+# and were chosen from the guide's dark-mode table (dark).
+#
+# Variables not listed here are left alone; the guide defines no equivalent.
+
+# Accent: used for links, focus rings, active states and primary buttons, so it
+# must work as text. #09A78D (--virtual-tide) is only 2.7:1 on --base-linen, so
+# the guide's secondary accent (--digital-pavo, 5:1) is used on light surfaces.
+[[maps]]
+variable = "--accent"
+light = "--digital-pavo"
+dark = "--dm-accent-tide"
+
+[[maps]]
+variable = "--accent-ink"
+light = "--cloud-white"
+dark = "--carbon-moss"
+
+[[maps]]
+variable = "--accent-soft"
+light = "--base-linen"
+dark = "--quantum-leaf"
+
+# Page and card backgrounds
+[[maps]]
+variable = "--bg"
+light = "--base-linen"
+dark = "--carbon-moss"
+
+[[maps]]
+variable = "--surface"
+light = "--cloud-white"
+dark = "--carbon-moss"
+
+[[maps]]
+variable = "--surface-2"
+light = "--base-linen"
+dark = "--quantum-leaf"
+
+[[maps]]
+variable = "--code-bg"
+light = "--base-linen"
+dark = "--quantum-leaf"
+
+# Primary text
+[[maps]]
+variable = "--ink"
+light = "--quantum-leaf"
+dark = "--dm-text-linen"
+
+# Chart colours, in the guide's chart-palette order (guide section 2.4)
+[[maps]]
+variable = "--bar"
+light = "--pulse-green"
+dark = "--pulse-green"
+
+[[maps]]
+variable = "--s-read"
+light = "--pulse-green"
+dark = "--pulse-green"
+
+[[maps]]
+variable = "--s-write"
+light = "--digital-pavo"
+dark = "--dm-accent-pavo"
+
+[[maps]]
+variable = "--s-both"
+light = "--virtual-tide"
+dark = "--dm-accent-tide"
+
+[[maps]]
+variable = "--s-others"
+light = "--quantum-leaf"
+dark = "--neural-beam"

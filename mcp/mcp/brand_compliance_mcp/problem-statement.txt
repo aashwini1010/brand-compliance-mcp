@@ -1,0 +1,61 @@
+Problem Statement 
+
+Automated Brand Compliance for HTML Artifacts 
+
+Background 
+
+Teams routinely produce HTML content such as static pages, reports and marketing emails, and each one needs to follow a specific client's or organization's design guidelines. Today, restyling is done by hand: someone reads the guide, interprets it, edits the HTML, and hopes nothing was missed. The work is slow and inconsistent, and there is no record of what was changed or why. 
+
+Design guidelines also arrive in inconsistent forms. They may be PDFs, web pages, structured style definitions, or a mix, and they combine precise rules (exact colors, font names) with subjective direction that cannot be checked mechanically. 
+
+The Problem 
+
+Build a service, exposed as an MCP server using FastMCP, that accepts a design guide and one or more HTML artifacts, applies the guide's branding and styling to those artifacts without human intervention, and produces a report explaining what was changed, what was left unchanged, and why. 
+
+Inputs 
+
+A design guide, in any of the forms described in the Background, with no control over its structure. 
+
+HTML artifacts: standalone static pages and email HTML. 
+
+Expected Behavior 
+
+Apply whatever the guide specifies that can be applied to the artifact. 
+
+Operate fully automatically. There is no approval step before changes are made. 
+
+Produce a report that records every change (what, where, before and after, which guideline drove it) and every guideline or element that was not applied, with the reason. 
+
+Distinguish clearly between rules it understood and applied, rules it understood but could not apply, and guidance it could not interpret. 
+
+Constraints and Considerations 
+
+Output must remain usable: readable, structurally intact, and free of broken layout or missing assets. 
+
+The original artifact must not be destroyed. 
+
+The guides and artifacts may contain confidential client material, which may limit how and where they can be processed. 
+
+Static pages and email HTML behave very differently in real-world rendering. How to handle that difference is part of the problem. 
+
+Guidelines will sometimes be ambiguous, contradictory or incomplete. The system must handle this without silently guessing. 
+
+Expected Deliverables 
+
+A working MCP server with documented tools. 
+
+A sample evaluation set of guides and artifacts, with expected outcomes. 
+
+Sample reports generated from that set. 
+
+A short write-up of the chosen approach, its limitations, and how success was measured. 
+
+Open for the Candidate to Define 
+
+How guidelines are interpreted and represented. 
+
+How changes are applied and verified. 
+
+How correctness is measured. 
+
+What is in scope for a first version and what is deferred. 

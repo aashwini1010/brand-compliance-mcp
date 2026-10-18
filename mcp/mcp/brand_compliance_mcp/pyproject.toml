@@ -1,0 +1,41 @@
+[project]
+name = "brand-compliance-mcp"
+version = "0.1.0"
+description = "MCP server that applies a brand guide to HTML artifacts and reports every change."
+requires-python = ">=3.12,<3.13"
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "N", "UP", "B", "SIM", "T20", "BLE", "S"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/**" = ["S101"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+mypy_path = "src"
+packages = ["brand_compliance"]
+# Plugin lookup passes Protocol classes as type[T]; mypy reports that as abstract.
+disable_error_code = ["type-abstract"]
+
+# tinycss2 ships no type information
+[[tool.mypy.overrides]]
+module = ["tinycss2", "tinycss2.*"]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "--cov=brand_compliance --cov-report=term-missing --cov-fail-under=80"
+pythonpath = ["src"]

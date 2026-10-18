@@ -1,0 +1,20 @@
+# Default settings. Override any value with an env var: BRAND_MCP_<NAME>.
+
+[server]
+host = "127.0.0.1"
+port = 8010
+transport = "sse"
+# Refuse to start without a bearer token (set BRAND_MCP_AUTH_TOKEN). Only turn this
+# off for local experiments on 127.0.0.1.
+require_auth = true
+# Extra Host / Origin values to accept besides loopback (empty = loopback only).
+allowed_hosts = []
+allowed_origins = []
+
+[limits]
+max_guide_bytes = 5_000_000
+max_artifact_bytes = 5_000_000
+
+[paths]
+allowed_input_dirs = ["."]
+allowed_output_dirs = ["output"]

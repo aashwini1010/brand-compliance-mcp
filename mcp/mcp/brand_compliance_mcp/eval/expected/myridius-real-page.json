@@ -1,0 +1,721 @@
+{
+  "id": "myridius-real-page",
+  "description": "The Myridius guide applied to the real 'MCP Team Briefing' page (static, variable-driven, with a dark theme). Expectations were written from the guide; every edit pattern was checked against the guide line it comes from.",
+  "synthetic": false,
+  "guide": "myridius-brand-guide.md",
+  "artifact": "eval/artifacts/mcp-servers-report-simple-v2.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "static",
+    "rules": [
+      {
+        "selector": {
+          "guide_line": 30,
+          "category": "color_token",
+          "property": "--virtual-tide"
+        },
+        "status": "applied",
+        "why": "palette token that a page colour variable (--s-both) must use"
+      },
+      {
+        "selector": {
+          "guide_line": 67,
+          "category": "forbid_color"
+        },
+        "status": "applied",
+        "why": "bans pulse-green/neural-beam as body text on light, enforced by a check"
+      },
+      {
+        "selector": {
+          "guide_line": 68,
+          "category": "min_contrast"
+        },
+        "status": "applied",
+        "why": "4.5:1 minimum, enforced by a check"
+      },
+      {
+        "selector": {
+          "guide_line": 80,
+          "category": "font_family"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 81,
+          "category": "font_source"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 89,
+          "role": "heading.h1",
+          "property": "font-size"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 90,
+          "role": "heading.h2",
+          "property": "font-size"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 94,
+          "role": "text.body",
+          "property": "font-size"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 105,
+          "role": "text.body",
+          "scope": "light",
+          "property": "color"
+        },
+        "status": "applied",
+        "why": "body copy colour on light surfaces"
+      },
+      {
+        "selector": {
+          "guide_line": 105,
+          "role": "text.body",
+          "scope": "dark",
+          "property": "color"
+        },
+        "status": "understood_not_applicable",
+        "why": "the page has no text on a dark surface in its base styles"
+      },
+      {
+        "selector": {
+          "guide_line": 104,
+          "role": "text.eyebrow",
+          "scope": "light",
+          "property": "color"
+        },
+        "status": "understood_not_applicable",
+        "why": "teal on linen is 2.74:1: undone for contrast"
+      },
+      {
+        "selector": {
+          "guide_line": 218,
+          "role": "button.primary",
+          "property": "background"
+        },
+        "status": "understood_not_applicable",
+        "why": "white on teal is 3.03:1: undone for contrast"
+      },
+      {
+        "selector": {
+          "guide_line": 219,
+          "role": "button.secondary",
+          "property": "background"
+        },
+        "status": "understood_not_applicable",
+        "why": "the page has no secondary buttons"
+      },
+      {
+        "selector": {
+          "guide_line": 219,
+          "role": "button.secondary",
+          "property": "hover"
+        },
+        "status": "could_not_interpret",
+        "why": "hover behaviour is prose, not property values"
+      },
+      {
+        "selector": {
+          "guide_line": 223,
+          "role": "button",
+          "property": "border-radius"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "guide_line": 107,
+          "category": "font_only"
+        },
+        "status": "applied",
+        "why": "only Montserrat, enforced through the font changes"
+      },
+      {
+        "selector": {
+          "guide_line": 156,
+          "category": "directive"
+        },
+        "status": "understood_not_applicable",
+        "why": "logo rule; no logo asset"
+      },
+      {
+        "selector": {
+          "guide_line": 393
+        },
+        "status": "understood_not_applicable",
+        "why": "logo rule; no logo asset"
+      },
+      {
+        "selector": {
+          "guide_line": 394,
+          "category": "directive"
+        },
+        "status": "understood_not_applicable",
+        "why": "needs wave artwork"
+      },
+      {
+        "selector": {
+          "guide_line": 396
+        },
+        "status": "understood_not_applicable",
+        "why": "icon styling not supported in V1"
+      },
+      {
+        "selector": {
+          "guide_line": 319
+        },
+        "status": "understood_not_applicable",
+        "why": "chart styling not supported in V1"
+      },
+      {
+        "selector": {
+          "guide_line": 377
+        },
+        "status": "could_not_interpret",
+        "why": "subjective voice guidance"
+      },
+      {
+        "selector": {
+          "guide_line": 378
+        },
+        "status": "could_not_interpret",
+        "why": "subjective voice guidance"
+      },
+      {
+        "selector": {
+          "guide_line": 379
+        },
+        "status": "could_not_interpret",
+        "why": "subjective voice guidance"
+      },
+      {
+        "selector": {
+          "guide_line": 398
+        },
+        "status": "could_not_interpret",
+        "why": "'authentic' photography is subjective"
+      },
+      {
+        "selector": {
+          "guide_line": 103
+        },
+        "status": "could_not_interpret",
+        "why": "a minimum, a range and a vague phrase, none a single value"
+      },
+      {
+        "selector": {
+          "guide_line": 258,
+          "role": "input"
+        },
+        "status": "could_not_interpret",
+        "why": "two options with no rule for choosing"
+      },
+      {
+        "selector": {
+          "guide_line": 202,
+          "category": "css_declaration",
+          "property": "background"
+        },
+        "status": "conflict_unresolved",
+        "why": "no gradients vs the gradient card"
+      },
+      {
+        "selector": {
+          "guide_line": 394,
+          "category": "forbid_effect",
+          "value": "gradient"
+        },
+        "status": "conflict_unresolved",
+        "why": "no gradients vs the gradient card"
+      },
+      {
+        "selector": {
+          "guide_line": 228,
+          "property": "outline-offset"
+        },
+        "status": "conflict_unresolved",
+        "why": "focus offset 2px vs 4px"
+      },
+      {
+        "selector": {
+          "guide_line": 460,
+          "property": "outline-offset"
+        },
+        "status": "conflict_unresolved",
+        "why": "focus offset 2px vs 4px"
+      }
+    ],
+    "changes": [
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-size",
+        "after": "clamp(2.25rem, 4vw + 1rem, 4rem)",
+        "why": "guide line 89"
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-weight",
+        "after": "700",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "line-height",
+        "after": "1.1",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "letter-spacing",
+        "after": "-0.015em",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "font-size",
+        "after": "clamp(1.75rem, 2.5vw + 0.75rem, 2.75rem)",
+        "why": "guide line 90"
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "letter-spacing",
+        "after": "-0.01em",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-size",
+        "after": "1rem",
+        "why": "guide line 94"
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-weight",
+        "after": "400",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "line-height",
+        "after": "1.6",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body",
+          "scope": "light"
+        },
+        "property": "color",
+        "after": "#194247",
+        "why": "guide line 105: body copy on light"
+      },
+      {
+        "rule": {
+          "role": "text.eyebrow"
+        },
+        "property": "font-size",
+        "after": "0.75rem",
+        "why": "guide line 97"
+      },
+      {
+        "rule": {
+          "role": "text.eyebrow"
+        },
+        "property": "font-weight",
+        "after": "600",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.eyebrow"
+        },
+        "property": "line-height",
+        "after": "1.4",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.eyebrow"
+        },
+        "property": "letter-spacing",
+        "after": "0.12em",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button"
+        },
+        "property": "border-radius",
+        "after": "999px",
+        "why": "guide line 223: pill shape"
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "font-family",
+        "after": null,
+        "why": "guide line 225"
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "font-size",
+        "after": "0.9375rem",
+        "why": "guide line 98"
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "font-weight",
+        "after": "600",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "letter-spacing",
+        "after": "0.02em",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.label"
+        },
+        "property": "line-height",
+        "after": "1",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.primary"
+        },
+        "property": "border",
+        "after": "none",
+        "why": "guide line 218"
+      },
+      {
+        "rule": {
+          "role": "document"
+        },
+        "property": "font-family",
+        "after": null,
+        "why": "guide line 80: the brand font everywhere"
+      },
+      {
+        "rule": {
+          "category": "font_source",
+          "guide_line": 81
+        },
+        "property": null,
+        "after": null,
+        "why": "guide line 81: web-font stylesheet"
+      },
+      {
+        "rule": {
+          "role": "page.surface"
+        },
+        "property": "background",
+        "after": "#f6f3f0",
+        "why": "guide line 391: default surface"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--digital-pavo"
+        },
+        "property": "--accent",
+        "after": "#337077",
+        "why": "page colour variable should use the guide token (line 31)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--dm-accent-tide"
+        },
+        "property": "--accent",
+        "after": "#09a78d",
+        "why": "page colour variable should use the guide token (line 45)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--cloud-white"
+        },
+        "property": "--accent-ink",
+        "after": "#ffffff",
+        "why": "page colour variable should use the guide token (line 26)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--carbon-moss"
+        },
+        "property": "--accent-ink",
+        "after": "#0c2226",
+        "why": "page colour variable should use the guide token (line 28)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--base-linen"
+        },
+        "property": "--accent-soft",
+        "after": "#f6f3f0",
+        "why": "page colour variable should use the guide token (line 27)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--quantum-leaf"
+        },
+        "property": "--accent-soft",
+        "after": "#194247",
+        "why": "page colour variable should use the guide token (line 29)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--base-linen"
+        },
+        "property": "--bg",
+        "after": "#f6f3f0",
+        "why": "page colour variable should use the guide token (line 27)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--carbon-moss"
+        },
+        "property": "--bg",
+        "after": "#0c2226",
+        "why": "page colour variable should use the guide token (line 28)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--cloud-white"
+        },
+        "property": "--surface",
+        "after": "#ffffff",
+        "why": "page colour variable should use the guide token (line 26)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--carbon-moss"
+        },
+        "property": "--surface",
+        "after": "#0c2226",
+        "why": "page colour variable should use the guide token (line 28)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--base-linen"
+        },
+        "property": "--surface-2",
+        "after": "#f6f3f0",
+        "why": "page colour variable should use the guide token (line 27)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--quantum-leaf"
+        },
+        "property": "--surface-2",
+        "after": "#194247",
+        "why": "page colour variable should use the guide token (line 29)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--base-linen"
+        },
+        "property": "--code-bg",
+        "after": "#f6f3f0",
+        "why": "page colour variable should use the guide token (line 27)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--quantum-leaf"
+        },
+        "property": "--code-bg",
+        "after": "#194247",
+        "why": "page colour variable should use the guide token (line 29)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--quantum-leaf"
+        },
+        "property": "--ink",
+        "after": "#194247",
+        "why": "page colour variable should use the guide token (line 29)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--dm-text-linen"
+        },
+        "property": "--ink",
+        "after": "#f6f3f0",
+        "why": "page colour variable should use the guide token (line 42)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--pulse-green"
+        },
+        "property": "--bar",
+        "after": "#52e081",
+        "why": "page colour variable should use the guide token (line 32)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--pulse-green"
+        },
+        "property": "--s-read",
+        "after": "#52e081",
+        "why": "page colour variable should use the guide token (line 32)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--digital-pavo"
+        },
+        "property": "--s-write",
+        "after": "#337077",
+        "why": "page colour variable should use the guide token (line 31)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--dm-accent-pavo"
+        },
+        "property": "--s-write",
+        "after": "#337077",
+        "why": "page colour variable should use the guide token (line 46)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--virtual-tide"
+        },
+        "property": "--s-both",
+        "after": "#09a78d",
+        "why": "page colour variable should use the guide token (line 30)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--dm-accent-tide"
+        },
+        "property": "--s-both",
+        "after": "#09a78d",
+        "why": "page colour variable should use the guide token (line 45)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--quantum-leaf"
+        },
+        "property": "--s-others",
+        "after": "#194247",
+        "why": "page colour variable should use the guide token (line 29)"
+      },
+      {
+        "rule": {
+          "category": "color_token",
+          "property": "--neural-beam"
+        },
+        "property": "--s-others",
+        "after": "#e5fd84",
+        "why": "page colour variable should use the guide token (line 33)"
+      }
+    ],
+    "conflicts": [
+      {
+        "kind": "forbidden_effect",
+        "resolved": false,
+        "guide_lines": [
+          202,
+          394
+        ]
+      },
+      {
+        "kind": "font_restriction",
+        "resolved": true,
+        "guide_lines": [
+          107,
+          194
+        ]
+      },
+      {
+        "kind": "value_clash",
+        "resolved": false,
+        "guide_lines": [
+          228,
+          460
+        ]
+      }
+    ],
+    "exact_conflict_count": 3,
+    "rolled_back_at_least": 6,
+    "notes_contain": [
+      "conditional style block",
+      "dark-theme styles"
+    ]
+  }
+}

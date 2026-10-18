@@ -1,0 +1,70 @@
+{
+  "id": "mini-dark-surface",
+  "description": "A page that is dark on purpose. The guide's 'default surface' is light, but forcing it would make the page unreadable, so that edit must be undone and the dark-surface text colour used.",
+  "synthetic": true,
+  "guide": "eval/guides/mini-brand.md",
+  "artifact": "eval/artifacts/mini-dark.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "static",
+    "exact_conflict_count": 0,
+    "rolled_back_at_least": 1,
+    "rules": [
+      {
+        "selector": {
+          "category": "surface"
+        },
+        "status": "understood_not_applicable",
+        "why": "light page background would break the dark page"
+      },
+      {
+        "selector": {
+          "role": "text.body",
+          "scope": "dark",
+          "property": "color",
+          "value": "#f2efe8"
+        },
+        "status": "applied",
+        "why": "dark-surface text colour"
+      },
+      {
+        "selector": {
+          "role": "text.body",
+          "scope": "light",
+          "property": "color"
+        },
+        "status": "understood_not_applicable",
+        "why": "no text sits on a light surface"
+      }
+    ],
+    "changes": [
+      {
+        "rule": {
+          "role": "text.body",
+          "scope": "dark"
+        },
+        "property": "color",
+        "after": "#f2efe8",
+        "why": ""
+      }
+    ],
+    "allowed_changes": [
+      {
+        "rule": {
+          "category": "typography"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "category": "font_family"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      }
+    ]
+  }
+}

@@ -1,0 +1,57 @@
+# What email clients cannot do. Used when the artifact is an email.
+# A planned change that needs an unsupported feature is skipped and reported
+# with the reason shown here. Nothing is approximated.
+# Edit this file as client support changes; no code change needed.
+
+[settings]
+# `rem` is converted to px using this root font size (the browser default).
+rem_base_px = 16
+
+[[unsupported_values]]
+pattern = "clamp("
+reason = "clamp() is not supported by most email clients"
+
+[[unsupported_values]]
+pattern = "var("
+reason = "CSS variables are not supported by most email clients"
+
+[[unsupported_values]]
+pattern = "calc("
+reason = "calc() is not supported by several major email clients"
+
+[[unsupported_values]]
+pattern = "vw"
+reason = "Viewport units (vw) are not supported by email clients"
+
+[[unsupported_values]]
+pattern = "vh"
+reason = "Viewport units (vh) are not supported by email clients"
+
+[[unsupported_properties]]
+property = "backdrop-filter"
+reason = "backdrop-filter is not supported by email clients"
+
+[[unsupported_properties]]
+property = "gap"
+reason = "gap (flex/grid spacing) is not supported by email clients"
+
+[[unsupported_properties]]
+property = "outline-offset"
+reason = "outline-offset is not supported by most email clients"
+
+# Applied, but known to be ignored by some clients; the change carries this note.
+[[partial_properties]]
+property = "border-radius"
+note = "Outlook desktop ignores border-radius; other clients show it"
+
+[[partial_properties]]
+property = "box-shadow"
+note = "Outlook desktop and some webmail clients ignore box-shadow"
+
+[[partial_properties]]
+property = "letter-spacing"
+note = "Outlook desktop ignores letter-spacing"
+
+[[partial_properties]]
+property = "font-family"
+note = "Web fonts (Montserrat) load only in clients that support them; others show the fallback fonts"

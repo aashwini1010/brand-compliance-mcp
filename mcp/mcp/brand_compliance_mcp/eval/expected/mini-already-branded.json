@@ -1,0 +1,51 @@
+{
+  "id": "mini-already-branded",
+  "description": "A page that already follows the guide exactly. Nothing should change, and the rules should say the page already matches.",
+  "synthetic": true,
+  "guide": "eval/guides/mini-brand.md",
+  "artifact": "eval/artifacts/mini-already-branded.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "static",
+    "zero_changes": true,
+    "exact_conflict_count": 0,
+    "rules": [
+      {
+        "selector": {
+          "role": "heading.h1",
+          "property": "font-size",
+          "value": "2.5rem"
+        },
+        "status": "applied",
+        "why": "already matches"
+      },
+      {
+        "selector": {
+          "role": "text.body",
+          "scope": "light",
+          "property": "color"
+        },
+        "status": "applied",
+        "why": "already matches"
+      },
+      {
+        "selector": {
+          "role": "button.primary",
+          "property": "background"
+        },
+        "status": "applied",
+        "why": "already matches"
+      },
+      {
+        "selector": {
+          "category": "surface"
+        },
+        "status": "applied",
+        "why": "already matches"
+      }
+    ],
+    "notes_contain": [
+      "already matches"
+    ]
+  }
+}

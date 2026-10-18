@@ -1,0 +1,1314 @@
+{
+  "cases_passed": 12,
+  "cases_total": 12,
+  "all_passed": true,
+  "aggregate": [
+    {
+      "metric": "artifact type",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "comments preserved",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "contradicting rules never applied",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "expected changes made",
+      "cases_passed": 8,
+      "cases_total": 8,
+      "ratio": 1.0,
+      "items": "124/124"
+    },
+    {
+      "metric": "expected contradictions found",
+      "cases_passed": 3,
+      "cases_total": 3,
+      "ratio": 1.0,
+      "items": "8/8"
+    },
+    {
+      "metric": "idempotent",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "images preserved",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "links preserved",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "no error expected",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "no invented contradictions",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "notes mention what they should",
+      "cases_passed": 5,
+      "cases_total": 5,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "original untouched",
+      "cases_passed": 12,
+      "cases_total": 12,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "refused with the right error",
+      "cases_passed": 2,
+      "cases_total": 2,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "report matches the file",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "rollbacks",
+      "cases_passed": 3,
+      "cases_total": 3,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "rule status accuracy",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": 1.0,
+      "items": "75/75"
+    },
+    {
+      "metric": "run status",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "scripts preserved",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "unexpected changes",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": 0.0,
+      "items": "0/386"
+    },
+    {
+      "metric": "visible text preserved",
+      "cases_passed": 10,
+      "cases_total": 10,
+      "ratio": null,
+      "items": ""
+    },
+    {
+      "metric": "zero changes",
+      "cases_passed": 2,
+      "cases_total": 2,
+      "ratio": null,
+      "items": ""
+    }
+  ],
+  "cases": [
+    {
+      "id": "mini-already-branded",
+      "description": "A page that already follows the guide exactly. Nothing should change, and the rules should say the page already matches.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected static, got static",
+          "score": null
+        },
+        {
+          "name": "zero changes",
+          "passed": true,
+          "detail": "0 change(s) made",
+          "score": null
+        },
+        {
+          "name": "notes mention what they should",
+          "passed": true,
+          "detail": "all present",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "4/4 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 0 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 0, reported 0",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "0 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 3d515fa49f5f… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "0 logged location(s), 0 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "mini-broken-html",
+      "description": "Malformed HTML (unclosed tags, misnested bold/italic, unclosed table cells, an unquoted attribute). The tool must not crash and must preserve every word and link.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected static, got static",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "3/3 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "expected changes made",
+          "passed": true,
+          "detail": "1/1 expected edit(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 21 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 0, reported 0",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "0 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 7d22bfa9068c… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "5 logged location(s), 5 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "mini-clean-page",
+      "description": "The small Acme guide applied to a simple page. The reference happy path: every rule applies, nothing is rolled back.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected static, got static",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "9/9 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "expected changes made",
+          "passed": true,
+          "detail": "18/18 expected edit(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 24 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 0, reported 0",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "0 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 753c215e3175… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "6 logged location(s), 6 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "mini-conflicting",
+      "description": "A guide that contradicts itself twice: two different sizes for the same heading, and 'Lato only' next to a Playfair Display style. Neither side of a contradiction may be applied.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected static, got static",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "4/4 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "expected changes made",
+          "passed": true,
+          "detail": "17/17 expected edit(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 23 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "expected contradictions found",
+          "passed": true,
+          "detail": "2/2 expected contradiction(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 2, reported 2",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "3 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 753c215e3175… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "6 logged location(s), 6 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "mini-dark-surface",
+      "description": "A page that is dark on purpose. The guide's 'default surface' is light, but forcing it would make the page unreadable, so that edit must be undone and the dark-surface text colour used.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected static, got static",
+          "score": null
+        },
+        {
+          "name": "rollbacks",
+          "passed": true,
+          "detail": "expected at least 1, got 1",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "3/3 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "expected changes made",
+          "passed": true,
+          "detail": "1/1 expected edit(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 13 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 0, reported 0",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "0 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 4f17610d7821… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "4 logged location(s), 4 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "mini-low-contrast",
+      "description": "A guide whose own brand colours fail 4.5:1 (soft grey-blue text on paper, paper text on a pale button). Those edits must be undone and explained; the page's own colours stay.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected static, got static",
+          "score": null
+        },
+        {
+          "name": "rollbacks",
+          "passed": true,
+          "detail": "expected at least 3, got 3",
+          "score": null
+        },
+        {
+          "name": "notes mention what they should",
+          "passed": true,
+          "detail": "all present",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "4/4 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "expected changes made",
+          "passed": true,
+          "detail": "16/16 expected edit(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 21 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 0, reported 0",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "0 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 753c215e3175… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "6 logged location(s), 6 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "mini-outlook-email",
+      "description": "Legacy Outlook-style email: conditional comments, VML button, <center>, <font>, bgcolor tables. Everything inside the conditional comments must survive untouched.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected email, got email",
+          "score": null
+        },
+        {
+          "name": "notes mention what they should",
+          "passed": true,
+          "detail": "all present",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "2/2 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "expected changes made",
+          "passed": true,
+          "detail": "1/1 expected edit(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 14 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 0, reported 0",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "0 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 83322e24ac39… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "4 logged location(s), 4 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "mini-subjective",
+      "description": "A guide that is only feelings and tone. Nothing can be checked mechanically, so nothing may be changed and nothing guessed.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected static, got static",
+          "score": null
+        },
+        {
+          "name": "zero changes",
+          "passed": true,
+          "detail": "0 change(s) made",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "2/2 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 0 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 0, reported 0",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "0 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 753c215e3175… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "0 logged location(s), 0 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "myridius-real-page",
+      "description": "The Myridius guide applied to the real 'MCP Team Briefing' page (static, variable-driven, with a dark theme). Expectations were written from the guide; every edit pattern was checked against the guide line it comes from.",
+      "synthetic": false,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected static, got static",
+          "score": null
+        },
+        {
+          "name": "rollbacks",
+          "passed": true,
+          "detail": "expected at least 6, got 6",
+          "score": null
+        },
+        {
+          "name": "notes mention what they should",
+          "passed": true,
+          "detail": "all present",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "31/31 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "expected changes made",
+          "passed": true,
+          "detail": "49/49 expected edit(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 225 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "expected contradictions found",
+          "passed": true,
+          "detail": "3/3 expected contradiction(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 3, reported 3",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "4 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 4ee3f63c96f0… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "74 logged location(s), 48 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "myridius-sample-email",
+      "description": "The Myridius guide applied to a synthetic marketing email (tables, inline styles, Outlook conditional comments). Email clients cannot use clamp(), so those sizes must be skipped and explained; rem becomes px.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": null,
+      "metrics": [
+        {
+          "name": "no error expected",
+          "passed": true,
+          "detail": "ran",
+          "score": null
+        },
+        {
+          "name": "run status",
+          "passed": true,
+          "detail": "expected completed, got completed",
+          "score": null
+        },
+        {
+          "name": "artifact type",
+          "passed": true,
+          "detail": "expected email, got email",
+          "score": null
+        },
+        {
+          "name": "notes mention what they should",
+          "passed": true,
+          "detail": "all present",
+          "score": null
+        },
+        {
+          "name": "rule status accuracy",
+          "passed": true,
+          "detail": "13/13 labelled rules correct",
+          "score": 1.0
+        },
+        {
+          "name": "expected changes made",
+          "passed": true,
+          "detail": "21/21 expected edit(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "unexpected changes",
+          "passed": true,
+          "detail": "0 of 45 change(s) were not expected",
+          "score": 1.0
+        },
+        {
+          "name": "expected contradictions found",
+          "passed": true,
+          "detail": "3/3 expected contradiction(s) found",
+          "score": 1.0
+        },
+        {
+          "name": "no invented contradictions",
+          "passed": true,
+          "detail": "expected exactly 3, reported 3",
+          "score": null
+        },
+        {
+          "name": "contradicting rules never applied",
+          "passed": true,
+          "detail": "4 rule(s) in conflict, 0 of them applied",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 6e4da8d77a0b… before and after",
+          "score": null
+        },
+        {
+          "name": "visible text preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "links preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "images preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "scripts preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "comments preserved",
+          "passed": true,
+          "detail": "identical",
+          "score": null
+        },
+        {
+          "name": "report matches the file",
+          "passed": true,
+          "detail": "9 logged location(s), 9 edited element(s)",
+          "score": null
+        },
+        {
+          "name": "idempotent",
+          "passed": true,
+          "detail": "second run identical",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "refuse-invalid-utf8-artifact",
+      "description": "An HTML file that is not valid UTF-8 text. The tool must refuse with a typed parse error, not crash or guess an encoding.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": "PARSE_FAILED",
+      "metrics": [
+        {
+          "name": "refused with the right error",
+          "passed": true,
+          "detail": "expected PARSE_FAILED, got PARSE_FAILED: invalid-encoding.html is not valid UTF-8 text",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 a5b76b76f058… before and after",
+          "score": null
+        }
+      ]
+    },
+    {
+      "id": "refuse-unsupported-guide-format",
+      "description": "A plain-text guide: no reader exists for it. The tool must refuse with a typed error and change nothing.",
+      "synthetic": true,
+      "passed": true,
+      "error_code": "UNSUPPORTED_FORMAT",
+      "metrics": [
+        {
+          "name": "refused with the right error",
+          "passed": true,
+          "detail": "expected UNSUPPORTED_FORMAT, got UNSUPPORTED_FORMAT: No SourceAdapter can handle this input",
+          "score": null
+        },
+        {
+          "name": "original untouched",
+          "passed": true,
+          "detail": "sha256 753c215e3175… before and after",
+          "score": null
+        }
+      ]
+    }
+  ]
+}

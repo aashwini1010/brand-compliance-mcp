@@ -1,0 +1,235 @@
+{
+  "id": "mini-clean-page",
+  "description": "The small Acme guide applied to a simple page. The reference happy path: every rule applies, nothing is rolled back.",
+  "synthetic": true,
+  "guide": "eval/guides/mini-brand.md",
+  "artifact": "eval/artifacts/mini-clean.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "static",
+    "exact_conflict_count": 0,
+    "rules": [
+      {
+        "selector": {
+          "property": "--acme-ink",
+          "category": "color_token"
+        },
+        "status": "reference",
+        "why": "palette token"
+      },
+      {
+        "selector": {
+          "category": "min_contrast"
+        },
+        "status": "applied",
+        "why": "4.5:1 minimum"
+      },
+      {
+        "selector": {
+          "category": "font_only"
+        },
+        "status": "applied",
+        "why": "Lato everywhere"
+      },
+      {
+        "selector": {
+          "role": "heading.h1",
+          "property": "font-size",
+          "value": "2.5rem"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "category": "unmatched",
+          "value": "Acme's voice is warm, plain and helpful."
+        },
+        "status": "could_not_interpret",
+        "why": "brand-voice prose"
+      },
+      {
+        "selector": {
+          "role": "text.body",
+          "scope": "light",
+          "property": "color",
+          "value": "#1b2a41"
+        },
+        "status": "applied",
+        "why": "body copy on light"
+      },
+      {
+        "selector": {
+          "role": "text.body",
+          "scope": "dark",
+          "property": "color"
+        },
+        "status": "understood_not_applicable",
+        "why": "no text sits on a dark surface"
+      },
+      {
+        "selector": {
+          "role": "button.primary",
+          "property": "background",
+          "value": "#b23a22"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "category": "surface"
+        },
+        "status": "applied",
+        "why": ""
+      }
+    ],
+    "changes": [
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-size",
+        "after": "2.5rem",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-weight",
+        "after": "700",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "line-height",
+        "after": "1.15",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "font-size",
+        "after": "1.75rem",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "font-weight",
+        "after": "700",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "line-height",
+        "after": "1.2",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-size",
+        "after": "1rem",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "line-height",
+        "after": "1.6",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "document"
+        },
+        "property": "font-family",
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "page.surface"
+        },
+        "property": "background",
+        "after": "#faf7f2",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body",
+          "scope": "light"
+        },
+        "property": "color",
+        "after": "#1b2a41",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.primary"
+        },
+        "property": "background",
+        "after": "#b23a22",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.primary"
+        },
+        "property": "color",
+        "after": "#faf7f2",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.primary"
+        },
+        "property": "border",
+        "after": "none",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-weight",
+        "after": "400",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      }
+    ]
+  }
+}

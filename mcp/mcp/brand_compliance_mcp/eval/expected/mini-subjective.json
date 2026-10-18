@@ -1,0 +1,29 @@
+{
+  "id": "mini-subjective",
+  "description": "A guide that is only feelings and tone. Nothing can be checked mechanically, so nothing may be changed and nothing guessed.",
+  "synthetic": true,
+  "guide": "eval/guides/mini-subjective.md",
+  "artifact": "eval/artifacts/mini-clean.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "static",
+    "zero_changes": true,
+    "exact_conflict_count": 0,
+    "rules": [
+      {
+        "selector": {
+          "category": "unmatched"
+        },
+        "status": "could_not_interpret",
+        "why": "prose with no mechanical meaning"
+      },
+      {
+        "selector": {
+          "category": "directive"
+        },
+        "status": "could_not_interpret",
+        "why": "'never use jargon' is not a supported rule shape"
+      }
+    ]
+  }
+}

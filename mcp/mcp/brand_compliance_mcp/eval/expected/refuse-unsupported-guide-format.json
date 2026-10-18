@@ -1,0 +1,10 @@
+{
+  "id": "refuse-unsupported-guide-format",
+  "description": "A plain-text guide: no reader exists for it. The tool must refuse with a typed error and change nothing.",
+  "synthetic": true,
+  "guide": "eval/guides/plain-notes.txt",
+  "artifact": "eval/artifacts/mini-clean.html",
+  "expect": {
+    "error_code": "UNSUPPORTED_FORMAT"
+  }
+}

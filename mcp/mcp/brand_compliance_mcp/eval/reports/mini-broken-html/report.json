@@ -1,0 +1,1146 @@
+{
+  "schema_version": "1.0",
+  "run": {
+    "run_id": "run-20261011-050425-1efabb",
+    "guide_name": "mini-brand.md",
+    "artifact_name": "mini-broken.html",
+    "artifact_type": "static",
+    "status": "completed",
+    "started_at": "2026-10-11T05:04:25+00:00",
+    "detection_signals": [
+      "static +1: no layout tables and no Outlook markup",
+      "no email markup found"
+    ],
+    "classification_ambiguous": false,
+    "source_sha256_before": "7d22bfa9068c60ee56e5cb01b9ad8451ceff168224efc62852e88de08bf7e71e",
+    "source_sha256_after": "7d22bfa9068c60ee56e5cb01b9ad8451ceff168224efc62852e88de08bf7e71e",
+    "rules": [
+      {
+        "id": "R001",
+        "category": "unmatched",
+        "target_role": null,
+        "property": null,
+        "value": "A small, complete guide used to evaluate the brand compliance tool. Synthetic.",
+        "scope": "all",
+        "severity": "soft",
+        "status": "could_not_interpret",
+        "reason": "No extractor understood this text.",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 3,
+          "line_end": 3,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R002",
+        "category": "unmatched",
+        "target_role": null,
+        "property": null,
+        "value": "Acme's voice is warm, plain and helpful.",
+        "scope": "all",
+        "severity": "soft",
+        "status": "could_not_interpret",
+        "reason": "No extractor understood this text.",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 7,
+          "line_end": 7,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "1. Brand Identity"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R003",
+        "category": "color_token",
+        "target_role": null,
+        "property": "--acme-ink",
+        "value": "#1b2a41",
+        "scope": "all",
+        "severity": "soft",
+        "status": "reference",
+        "reason": "Palette token; its value is used by the rules that refer to it",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 15,
+          "line_end": 15,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "2. Color Palette",
+            "2.1 Core Tokens"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R004",
+        "category": "color_token",
+        "target_role": null,
+        "property": "--acme-paper",
+        "value": "#faf7f2",
+        "scope": "all",
+        "severity": "soft",
+        "status": "reference",
+        "reason": "Palette token; its value is used by the rules that refer to it",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 16,
+          "line_end": 16,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "2. Color Palette",
+            "2.1 Core Tokens"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R005",
+        "category": "color_token",
+        "target_role": null,
+        "property": "--acme-night",
+        "value": "#0b1220",
+        "scope": "all",
+        "severity": "soft",
+        "status": "reference",
+        "reason": "Palette token; its value is used by the rules that refer to it",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 17,
+          "line_end": 17,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "2. Color Palette",
+            "2.1 Core Tokens"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R006",
+        "category": "color_token",
+        "target_role": null,
+        "property": "--acme-chalk",
+        "value": "#f2efe8",
+        "scope": "all",
+        "severity": "soft",
+        "status": "reference",
+        "reason": "Palette token; its value is used by the rules that refer to it",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 18,
+          "line_end": 18,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "2. Color Palette",
+            "2.1 Core Tokens"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R007",
+        "category": "color_token",
+        "target_role": null,
+        "property": "--acme-coral",
+        "value": "#b23a22",
+        "scope": "all",
+        "severity": "soft",
+        "status": "reference",
+        "reason": "Palette token; its value is used by the rules that refer to it",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 19,
+          "line_end": 19,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "2. Color Palette",
+            "2.1 Core Tokens"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R008",
+        "category": "min_contrast",
+        "target_role": "text.body",
+        "property": "contrast-ratio",
+        "value": "4.5",
+        "scope": "all",
+        "severity": "hard",
+        "status": "applied",
+        "reason": "Enforced by the contrast check: 10 text element(s) checked against 4.5:1",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 23,
+          "line_end": 24,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "2. Color Palette",
+            "2.5 Accessibility Rules (HARD)"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R009",
+        "category": "font_family",
+        "target_role": "document",
+        "property": "font-family",
+        "value": "\"Lato\", Arial, sans-serif",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "1 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 30,
+          "line_end": 30,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.1 Font Stack"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [
+          "defined by --font-sans"
+        ],
+        "ai_assisted": false
+      },
+      {
+        "id": "R010",
+        "category": "typography",
+        "target_role": "heading.h1",
+        "property": "font-size",
+        "value": "2.5rem",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "1 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 37,
+          "line_end": 37,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R011",
+        "category": "typography",
+        "target_role": "heading.h1",
+        "property": "font-weight",
+        "value": "700",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "1 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 37,
+          "line_end": 37,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R012",
+        "category": "typography",
+        "target_role": "heading.h1",
+        "property": "line-height",
+        "value": "1.15",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "1 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 37,
+          "line_end": 37,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R013",
+        "category": "typography",
+        "target_role": "heading.h1",
+        "property": "letter-spacing",
+        "value": "0",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "1 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 37,
+          "line_end": 37,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R014",
+        "category": "typography",
+        "target_role": "heading.h2",
+        "property": "font-size",
+        "value": "1.75rem",
+        "scope": "all",
+        "severity": "soft",
+        "status": "understood_not_applicable",
+        "reason": "No element in the artifact has the role 'heading.h2'",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 38,
+          "line_end": 38,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R015",
+        "category": "typography",
+        "target_role": "heading.h2",
+        "property": "font-weight",
+        "value": "700",
+        "scope": "all",
+        "severity": "soft",
+        "status": "understood_not_applicable",
+        "reason": "No element in the artifact has the role 'heading.h2'",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 38,
+          "line_end": 38,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R016",
+        "category": "typography",
+        "target_role": "heading.h2",
+        "property": "line-height",
+        "value": "1.2",
+        "scope": "all",
+        "severity": "soft",
+        "status": "understood_not_applicable",
+        "reason": "No element in the artifact has the role 'heading.h2'",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 38,
+          "line_end": 38,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R017",
+        "category": "typography",
+        "target_role": "heading.h2",
+        "property": "letter-spacing",
+        "value": "0",
+        "scope": "all",
+        "severity": "soft",
+        "status": "understood_not_applicable",
+        "reason": "No element in the artifact has the role 'heading.h2'",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 38,
+          "line_end": 38,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R018",
+        "category": "typography",
+        "target_role": "text.body",
+        "property": "font-size",
+        "value": "1rem",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "3 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 39,
+          "line_end": 39,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R019",
+        "category": "typography",
+        "target_role": "text.body",
+        "property": "font-weight",
+        "value": "400",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "3 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 39,
+          "line_end": 39,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [
+          "Also stated at mini-brand.md:43"
+        ],
+        "ai_assisted": false
+      },
+      {
+        "id": "R020",
+        "category": "typography",
+        "target_role": "text.body",
+        "property": "line-height",
+        "value": "1.6",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "3 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 39,
+          "line_end": 39,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [
+          "Also stated at mini-brand.md:43"
+        ],
+        "ai_assisted": false
+      },
+      {
+        "id": "R021",
+        "category": "typography",
+        "target_role": "text.body",
+        "property": "letter-spacing",
+        "value": "0",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "3 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 39,
+          "line_end": 39,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.2 Scale"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R022",
+        "category": "color",
+        "target_role": "text.body",
+        "property": "color",
+        "value": "#1b2a41",
+        "scope": "light",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "3 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 43,
+          "line_end": 44,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.3 Style Rules"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R023",
+        "category": "color",
+        "target_role": "text.body",
+        "property": "color",
+        "value": "#f2efe8",
+        "scope": "dark",
+        "severity": "soft",
+        "status": "understood_not_applicable",
+        "reason": "No 'text.body' element sits on a dark surface",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 43,
+          "line_end": 44,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "3. Typography",
+            "3.3 Style Rules"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R024",
+        "category": "component",
+        "target_role": "button.primary",
+        "property": "background",
+        "value": "#b23a22",
+        "scope": "all",
+        "severity": "soft",
+        "status": "understood_not_applicable",
+        "reason": "No element in the artifact has the role 'button.primary'",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 51,
+          "line_end": 51,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "7. Components",
+            "7.1 Buttons"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R025",
+        "category": "component",
+        "target_role": "button.primary",
+        "property": "color",
+        "value": "#faf7f2",
+        "scope": "all",
+        "severity": "soft",
+        "status": "understood_not_applicable",
+        "reason": "No element in the artifact has the role 'button.primary'",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 51,
+          "line_end": 51,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "7. Components",
+            "7.1 Buttons"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R026",
+        "category": "component",
+        "target_role": "button.primary",
+        "property": "border",
+        "value": "none",
+        "scope": "all",
+        "severity": "soft",
+        "status": "understood_not_applicable",
+        "reason": "No element in the artifact has the role 'button.primary'",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 51,
+          "line_end": 51,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "7. Components",
+            "7.1 Buttons"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R027",
+        "category": "component",
+        "target_role": "button.primary",
+        "property": "hover",
+        "value": "darken 8%",
+        "scope": "all",
+        "severity": "soft",
+        "status": "could_not_interpret",
+        "reason": "Hover behaviour is described in prose, not as property values.",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 51,
+          "line_end": 51,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "7. Components",
+            "7.1 Buttons"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R028",
+        "category": "surface",
+        "target_role": "page.surface",
+        "property": "background",
+        "value": "#faf7f2",
+        "scope": "all",
+        "severity": "soft",
+        "status": "applied",
+        "reason": "1 change(s) made",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 57,
+          "line_end": 57,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "10. Do's & Don'ts (Hard Rules)"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R029",
+        "category": "directive",
+        "target_role": null,
+        "property": null,
+        "value": "Make the entire site dark",
+        "scope": "all",
+        "severity": "soft",
+        "status": "could_not_interpret",
+        "reason": "Directive wording is not one of the supported patterns.",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 57,
+          "line_end": 57,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "10. Do's & Don'ts (Hard Rules)"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R030",
+        "category": "font_only",
+        "target_role": null,
+        "property": "font-family",
+        "value": "Lato",
+        "scope": "all",
+        "severity": "hard",
+        "status": "applied",
+        "reason": "Enforced through the font-family changes",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 58,
+          "line_end": 58,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "10. Do's & Don'ts (Hard Rules)"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      },
+      {
+        "id": "R031",
+        "category": "directive",
+        "target_role": null,
+        "property": null,
+        "value": "Mix in other typefaces",
+        "scope": "all",
+        "severity": "soft",
+        "status": "could_not_interpret",
+        "reason": "Directive wording is not one of the supported patterns.",
+        "source_span": {
+          "file": "mini-brand.md",
+          "line_start": 58,
+          "line_end": 58,
+          "page": null,
+          "heading_path": [
+            "Acme Mini Brand Guide",
+            "10. Do's & Don'ts (Hard Rules)"
+          ]
+        },
+        "conflicts_with": [],
+        "notes": [],
+        "ai_assisted": false
+      }
+    ],
+    "conflicts": [],
+    "changes": [
+      {
+        "id": "CH001",
+        "rule_id": "R028",
+        "location": "/html/body",
+        "property": "background",
+        "before": "#ffffff",
+        "after": "#faf7f2",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH002",
+        "rule_id": "R009",
+        "location": "/html/body",
+        "property": "font-family",
+        "before": null,
+        "after": "\"Lato\", Arial, sans-serif",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH003",
+        "rule_id": "R010",
+        "location": "/html/body/h1",
+        "property": "font-size",
+        "before": "2rem",
+        "after": "2.5rem",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH004",
+        "rule_id": "R011",
+        "location": "/html/body/h1",
+        "property": "font-weight",
+        "before": null,
+        "after": "700",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH005",
+        "rule_id": "R013",
+        "location": "/html/body/h1",
+        "property": "letter-spacing",
+        "before": null,
+        "after": "0",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH006",
+        "rule_id": "R012",
+        "location": "/html/body/h1",
+        "property": "line-height",
+        "before": null,
+        "after": "1.15",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH007",
+        "rule_id": "R022",
+        "location": "/html/body/p[1]",
+        "property": "color",
+        "before": null,
+        "after": "#1b2a41",
+        "surface": "light",
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH008",
+        "rule_id": "R018",
+        "location": "/html/body/p[1]",
+        "property": "font-size",
+        "before": null,
+        "after": "1rem",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH009",
+        "rule_id": "R019",
+        "location": "/html/body/p[1]",
+        "property": "font-weight",
+        "before": null,
+        "after": "400",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH010",
+        "rule_id": "R021",
+        "location": "/html/body/p[1]",
+        "property": "letter-spacing",
+        "before": null,
+        "after": "0",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH011",
+        "rule_id": "R020",
+        "location": "/html/body/p[1]",
+        "property": "line-height",
+        "before": null,
+        "after": "1.6",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH012",
+        "rule_id": "R022",
+        "location": "/html/body/p[2]",
+        "property": "color",
+        "before": null,
+        "after": "#1b2a41",
+        "surface": "light",
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH013",
+        "rule_id": "R018",
+        "location": "/html/body/p[2]",
+        "property": "font-size",
+        "before": null,
+        "after": "1rem",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH014",
+        "rule_id": "R019",
+        "location": "/html/body/p[2]",
+        "property": "font-weight",
+        "before": null,
+        "after": "400",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH015",
+        "rule_id": "R021",
+        "location": "/html/body/p[2]",
+        "property": "letter-spacing",
+        "before": null,
+        "after": "0",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH016",
+        "rule_id": "R020",
+        "location": "/html/body/p[2]",
+        "property": "line-height",
+        "before": null,
+        "after": "1.6",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH017",
+        "rule_id": "R022",
+        "location": "/html/body/p[3]",
+        "property": "color",
+        "before": null,
+        "after": "#1b2a41",
+        "surface": "light",
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH018",
+        "rule_id": "R018",
+        "location": "/html/body/p[3]",
+        "property": "font-size",
+        "before": null,
+        "after": "1rem",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH019",
+        "rule_id": "R019",
+        "location": "/html/body/p[3]",
+        "property": "font-weight",
+        "before": null,
+        "after": "400",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH020",
+        "rule_id": "R021",
+        "location": "/html/body/p[3]",
+        "property": "letter-spacing",
+        "before": null,
+        "after": "0",
+        "surface": null,
+        "important": false,
+        "note": null
+      },
+      {
+        "id": "CH021",
+        "rule_id": "R020",
+        "location": "/html/body/p[3]",
+        "property": "line-height",
+        "before": null,
+        "after": "1.6",
+        "surface": null,
+        "important": false,
+        "note": null
+      }
+    ],
+    "skipped": [
+      {
+        "rule_id": "R014",
+        "reason": "No element in the artifact has the role 'heading.h2'",
+        "location": null
+      },
+      {
+        "rule_id": "R015",
+        "reason": "No element in the artifact has the role 'heading.h2'",
+        "location": null
+      },
+      {
+        "rule_id": "R016",
+        "reason": "No element in the artifact has the role 'heading.h2'",
+        "location": null
+      },
+      {
+        "rule_id": "R017",
+        "reason": "No element in the artifact has the role 'heading.h2'",
+        "location": null
+      },
+      {
+        "rule_id": "R023",
+        "reason": "No 'text.body' element sits on a dark surface",
+        "location": null
+      },
+      {
+        "rule_id": "R024",
+        "reason": "No element in the artifact has the role 'button.primary'",
+        "location": null
+      },
+      {
+        "rule_id": "R025",
+        "reason": "No element in the artifact has the role 'button.primary'",
+        "location": null
+      },
+      {
+        "rule_id": "R026",
+        "reason": "No element in the artifact has the role 'button.primary'",
+        "location": null
+      }
+    ],
+    "rolled_back": {},
+    "checks": [
+      {
+        "name": "contrast",
+        "passed": true,
+        "details": [
+          "10 text element(s) checked against 4.5:1",
+          "0 could not be checked (background or colour unknown)",
+          "0 already failed before any change (not caused by this tool)",
+          "0 change(s) caused a failure"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "forbidden-color",
+        "passed": true,
+        "details": [
+          "0 colour ban(s) checked, 0 violation(s)"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "structure",
+        "passed": true,
+        "details": [
+          "18 nodes identical, in the same order"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "assets",
+        "passed": true,
+        "details": [
+          "1 asset reference(s) preserved, anchors intact"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "original-intact",
+        "passed": true,
+        "details": [
+          "source unchanged (sha256 7d22bfa9068c...)"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      },
+      {
+        "name": "idempotence",
+        "passed": true,
+        "details": [
+          "a second run gives identical output"
+        ],
+        "failed_change_ids": [],
+        "change_reasons": {}
+      }
+    ],
+    "unmapped_elements": [
+      "/html/body/p[1]/b <b> line 8",
+      "/html/body/p[1]/b/i <i> line 8",
+      "/html/body/table/tr/td[1] <td> line 10",
+      "/html/body/table/tr/td[2] <td> line 10",
+      "/html/body/p[3]/a/div/span <span> line 12"
+    ],
+    "notes": [
+      "Marked 5 element(s) with data-brand-role so brand rules target them exactly"
+    ],
+    "outputs": [
+      "branded.html",
+      "guide_rules.json",
+      "report.json",
+      "report.md"
+    ]
+  }
+}

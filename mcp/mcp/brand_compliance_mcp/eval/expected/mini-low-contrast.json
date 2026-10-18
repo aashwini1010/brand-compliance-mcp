@@ -1,0 +1,183 @@
+{
+  "id": "mini-low-contrast",
+  "description": "A guide whose own brand colours fail 4.5:1 (soft grey-blue text on paper, paper text on a pale button). Those edits must be undone and explained; the page's own colours stay.",
+  "synthetic": true,
+  "guide": "eval/guides/mini-low-contrast.md",
+  "artifact": "eval/artifacts/mini-clean.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "static",
+    "rules": [
+      {
+        "selector": {
+          "role": "text.body",
+          "scope": "light",
+          "property": "color",
+          "value": "#9aa5b1"
+        },
+        "status": "understood_not_applicable",
+        "why": "2.34:1 on paper: undone"
+      },
+      {
+        "selector": {
+          "role": "button.primary",
+          "property": "background",
+          "value": "#e8a598"
+        },
+        "status": "understood_not_applicable",
+        "why": "paper on pale coral is 1.91:1: undone"
+      },
+      {
+        "selector": {
+          "category": "min_contrast"
+        },
+        "status": "applied",
+        "why": "still enforced"
+      },
+      {
+        "selector": {
+          "role": "heading.h1",
+          "property": "font-size",
+          "value": "2.5rem"
+        },
+        "status": "applied",
+        "why": ""
+      }
+    ],
+    "changes": [
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-size",
+        "after": "2.5rem",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-weight",
+        "after": "700",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "line-height",
+        "after": "1.15",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "font-size",
+        "after": "1.75rem",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "font-weight",
+        "after": "700",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "line-height",
+        "after": "1.2",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-size",
+        "after": "1rem",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "line-height",
+        "after": "1.6",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "document"
+        },
+        "property": "font-family",
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "page.surface"
+        },
+        "property": "background",
+        "after": "#faf7f2",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.primary"
+        },
+        "property": "color",
+        "after": "#faf7f2",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "button.primary"
+        },
+        "property": "border",
+        "after": "none",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "font-weight",
+        "after": "400",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "text.body"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      },
+      {
+        "rule": {
+          "role": "heading.h2"
+        },
+        "property": "letter-spacing",
+        "after": "0",
+        "why": ""
+      }
+    ],
+    "exact_conflict_count": 0,
+    "rolled_back_at_least": 3,
+    "notes_contain": [
+      "is below 4.5:1"
+    ]
+  }
+}

@@ -1,0 +1,85 @@
+{
+  "id": "mini-outlook-email",
+  "description": "Legacy Outlook-style email: conditional comments, VML button, <center>, <font>, bgcolor tables. Everything inside the conditional comments must survive untouched.",
+  "synthetic": true,
+  "guide": "eval/guides/mini-brand.md",
+  "artifact": "eval/artifacts/mini-outlook-email.html",
+  "expect": {
+    "run_status": "completed",
+    "artifact_type": "email",
+    "rules": [
+      {
+        "selector": {
+          "role": "heading.h1",
+          "property": "font-size",
+          "value": "2.5rem"
+        },
+        "status": "applied",
+        "why": ""
+      },
+      {
+        "selector": {
+          "category": "min_contrast"
+        },
+        "status": "applied",
+        "why": ""
+      }
+    ],
+    "changes": [
+      {
+        "rule": {
+          "role": "heading.h1"
+        },
+        "property": "font-size",
+        "after": "40px",
+        "why": "2.5rem converted to px"
+      }
+    ],
+    "allowed_changes": [
+      {
+        "rule": {
+          "category": "typography"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "category": "color"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "category": "surface"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "category": "font_family"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      },
+      {
+        "rule": {
+          "category": "component"
+        },
+        "property": null,
+        "after": null,
+        "why": ""
+      }
+    ],
+    "exact_conflict_count": 0,
+    "notes_contain": [
+      "Outlook conditional comment(s) were left untouched"
+    ]
+  }
+}
